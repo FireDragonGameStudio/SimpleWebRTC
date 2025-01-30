@@ -30,8 +30,9 @@ public class SimpleLobbyManager : MonoBehaviour {
         StartAudioButton.onClick.AddListener(OnStartAudio);
 
         // register events for connection
-        webRTCConnection.WebSocketConnection.AddListener(OnWebSocketStateChange);
+        webRTCConnection.WebSocketConnected.AddListener(OnWebSocketConnected);
         webRTCConnection.WebRTCConnected.AddListener(OnSignalingComplete);
+        webRTCConnection.DataChannelConnected.AddListener(OnDataChannelConnected);
 
         SetUIElements(false);
     }
@@ -42,10 +43,15 @@ public class SimpleLobbyManager : MonoBehaviour {
         SendChatMessageButton.onClick.RemoveAllListeners();
         StartVideoButton.onClick.RemoveAllListeners();
         StartAudioButton.onClick.RemoveAllListeners();
+
+        // de-register events for connection
+        webRTCConnection.WebSocketConnected.RemoveListener(OnWebSocketConnected);
+        webRTCConnection.WebRTCConnected.RemoveListener(OnSignalingComplete);
+        webRTCConnection.DataChannelConnected.RemoveListener(OnDataChannelConnected);
     }
 
     private void OnJoinLobby() {
-        webRTCConnection.WebSocketConnectionActive = true;
+        webRTCConnection.gameObject.SetActive(true);
     }
 
     private void OnLeaveLobby() {
@@ -53,26 +59,9 @@ public class SimpleLobbyManager : MonoBehaviour {
         Debug.Log(message);
         SendLobbyChatMessage(message);
 
-        if (webRTCConnection.IsWebSocketConnected) {
-            webRTCConnection.WebSocketConnectionActive = false;
-        }
+        webRTCConnection.gameObject.SetActive(false);
 
         SetUIElements(false);
-    }
-
-    private void OnWebSocketStateChange(WebSocketState webSocketState) {
-        switch (webSocketState) {
-            case WebSocketState.Open:
-                var message = $"{playerName} joined the lobby.";
-                Debug.Log(message);
-                SendLobbyChatMessage(message);
-                SetUIElements(true);
-
-                break;
-            case WebSocketState.Closed:
-                Debug.Log($"{playerName} left the lobby and disconnected form WebSocket server.");
-                break;
-        }
     }
 
     private void SetUIElements(bool inLobby) {
@@ -84,11 +73,28 @@ public class SimpleLobbyManager : MonoBehaviour {
         lobbyChatText.gameObject.SetActive(inLobby);
     }
 
+    private void OnWebSocketConnected(WebSocketState state) {
+        Debug.Log($"WebSocket connection state is: {state}");
+
+        if (state == WebSocketState.Open) {
+            JoinLobbyButton.gameObject.SetActive(false);
+            LeaveLobbyButton.gameObject.SetActive(true);
+        }
+    }
+
     private void OnSignalingComplete() {
         Debug.Log("WebRTC is now ready. You can start the game now!");
+        SetUIElements(true);
+    }
+
+    private void OnDataChannelConnected(string peerId) {
+        var message = $"{playerName} can now send messages.";
+        Debug.Log(message);
+        SendLobbyChatMessageToPlayer(peerId, message);
     }
 
     private void OnStartVideo() {
+        webRTCConnection.RestartVideoTransmission();
         webRTCConnection.StartStopVideoTransmission = true;
     }
 
@@ -104,6 +110,13 @@ public class SimpleLobbyManager : MonoBehaviour {
         if (webRTCConnection.IsWebSocketConnected && webRTCConnection.IsWebRTCActive) {
             lobbyChatText.text += "\n" + message;
             webRTCConnection.SendDataChannelMessage(message);
+        }
+    }
+
+    private void SendLobbyChatMessageToPlayer(string targetPeerId, string message) {
+        if (webRTCConnection.IsWebSocketConnected && webRTCConnection.IsWebRTCActive) {
+            lobbyChatText.text += "\n" + message;
+            webRTCConnection.SendDataChannelMessageToPeer(targetPeerId, message);
         }
     }
 

@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Unity.WebRTC;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +11,7 @@ public class WebRTCManager {
 
     public event Action<WebSocketState> OnWebSocketConnection;
     public event Action OnWebRTCConnection;
+    public event Action<string> OnDataChannelConnection;
     public event Action<string> OnDataChannelMessageReceived;
     public event Action OnVideoStreamEstablished;
     public event Action OnAudioStreamEstablished;
@@ -29,7 +29,6 @@ public class WebRTCManager {
     private Dictionary<string, AudioSource> audioReceivers = new Dictionary<string, AudioSource>();
 
     private WebSocket ws;
-    private RawImage optionalPreviewRawImage;
 
     private readonly string localPeerId;
     private readonly string stunServerAddress;
@@ -69,8 +68,11 @@ public class WebRTCManager {
                 OnWebSocketConnection?.Invoke(WebSocketState.Closed);
             };
 
-            connectionGameObject.StartCoroutine(WebRTC.Update());
         }
+
+        // important for video transmission, to restart webrtc update coroutine
+        connectionGameObject.StopCoroutine(WebRTC.Update());
+        connectionGameObject.StartCoroutine(WebRTC.Update());
 
         await ws.Connect();
     }
@@ -107,6 +109,9 @@ public class WebRTCManager {
             SimpleWebRTCLogger.Log($"{localPeerId} connection {peerId} changed to {state}");
             if (state == RTCIceConnectionState.Connected) {
                 connectionGameObject.WebRTCConnectionActive = true;
+                //OnWebRTCConnection?.Invoke();
+            }
+            if (state == RTCIceConnectionState.Completed) {
                 OnWebRTCConnection?.Invoke();
             }
         };
@@ -130,6 +135,7 @@ public class WebRTCManager {
             };
 
             SimpleWebRTCLogger.LogDataChannel($"ReceiverDataChannel connection for {peerId} established on {localPeerId}.");
+            OnDataChannelConnection?.Invoke(peerId);
         };
         SimpleWebRTCLogger.LogDataChannel($"ReceiverDataChannel for {peerId} created on {localPeerId}.");
 
@@ -316,10 +322,6 @@ public class WebRTCManager {
         peerConnections[senderPeerId].AddIceCandidate(candidate);
     }
 
-    public void SetOptionalVideoStreamPreviewImage(RawImage optionalPreviewRawImage) {
-        this.optionalPreviewRawImage = optionalPreviewRawImage;
-    }
-
     public void CloseWebRTC() {
         connectionGameObject.StopAllCoroutines();
 
@@ -373,9 +375,7 @@ public class WebRTCManager {
     }
 
     public void DispatchMessageQueue() {
-        if (ws != null) {
-            ws.DispatchMessageQueue();
-        }
+        ws?.DispatchMessageQueue();
     }
 
     public void SendViaDataChannel(string message) {
@@ -384,12 +384,16 @@ public class WebRTCManager {
         }
     }
 
+    public void SendViaDataChannel(string targetPeerId, string message) {
+        senderDataChannels[targetPeerId]?.Send(message);
+    }
+
     public void AddVideoTrack(Camera streamingCamera, int width, int height) {
         var videoStreamTrack = streamingCamera.CaptureStreamTrack(width, height);
 
         // optional video stream preview
-        if (optionalPreviewRawImage != null) {
-            optionalPreviewRawImage.texture = videoStreamTrack.Texture;
+        if (connectionGameObject.OptionalPreviewRawImage != null) {
+            connectionGameObject.OptionalPreviewRawImage.texture = videoStreamTrack.Texture;
         }
 
         foreach (var peerConnection in peerConnections) {
@@ -400,8 +404,10 @@ public class WebRTCManager {
 
     public void RemoveVideoTrack() {
         foreach (var peerConnection in peerConnections) {
-            peerConnection.Value.RemoveTrack(videoTrackSenders[peerConnection.Key]);
-            videoTrackSenders.Remove(peerConnection.Key);
+            if (videoTrackSenders.ContainsKey(peerConnection.Key)) {
+                peerConnection.Value.RemoveTrack(videoTrackSenders[peerConnection.Key]);
+                videoTrackSenders.Remove(peerConnection.Key);
+            }
         }
     }
 
@@ -417,12 +423,14 @@ public class WebRTCManager {
 
     public void RemoveAudioTrack() {
         foreach (var peerConnection in peerConnections) {
-            peerConnection.Value.RemoveTrack(audioTrackSenders[peerConnection.Key]);
-            audioTrackSenders.Remove(peerConnection.Key);
+            if (audioTrackSenders.ContainsKey(peerConnection.Key)) {
+                peerConnection.Value.RemoveTrack(audioTrackSenders[peerConnection.Key]);
+                audioTrackSenders.Remove(peerConnection.Key);
+            }
         }
     }
 
     public void SendWebSocketMessage(string message) {
-        ws.SendText(message);
+        ws?.SendText(message);
     }
 }
