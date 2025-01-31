@@ -19,16 +19,16 @@ public class WebRTCManager {
     public bool IsWebSocketConnected { get; private set; }
     public bool IsWebSocketConnectionInProgress { get; private set; }
 
-    private Dictionary<string, RTCPeerConnection> peerConnections = new Dictionary<string, RTCPeerConnection>();
-    private Dictionary<string, RTCDataChannel> senderDataChannels = new Dictionary<string, RTCDataChannel>();
-    private Dictionary<string, RTCDataChannel> receiverDataChannels = new Dictionary<string, RTCDataChannel>();
-    private Dictionary<string, RTCRtpSender> videoTrackSenders = new Dictionary<string, RTCRtpSender>();
-    private Dictionary<string, RTCRtpSender> audioTrackSenders = new Dictionary<string, RTCRtpSender>();
-
-    private Dictionary<string, RawImage> videoReceivers = new Dictionary<string, RawImage>();
-    private Dictionary<string, AudioSource> audioReceivers = new Dictionary<string, AudioSource>();
-
     private WebSocket ws;
+
+    private readonly Dictionary<string, RTCPeerConnection> peerConnections = new Dictionary<string, RTCPeerConnection>();
+    private readonly Dictionary<string, RTCDataChannel> senderDataChannels = new Dictionary<string, RTCDataChannel>();
+    private readonly Dictionary<string, RTCDataChannel> receiverDataChannels = new Dictionary<string, RTCDataChannel>();
+    private readonly Dictionary<string, RTCRtpSender> videoTrackSenders = new Dictionary<string, RTCRtpSender>();
+    private readonly Dictionary<string, RTCRtpSender> audioTrackSenders = new Dictionary<string, RTCRtpSender>();
+
+    private readonly Dictionary<string, RawImage> videoReceivers = new Dictionary<string, RawImage>();
+    private readonly Dictionary<string, AudioSource> audioReceivers = new Dictionary<string, AudioSource>();
 
     private readonly string localPeerId;
     private readonly string stunServerAddress;
@@ -46,7 +46,7 @@ public class WebRTCManager {
 
         if (ws == null) {
             // using header data using e.g. glitch.com, or without header using e.g. repl.it
-            ws ??= (useHTTPHeader
+            ws = (useHTTPHeader
                 ? new WebSocket(webSocketUrl, new Dictionary<string, string>() { { "user-agent", "unity webrtc" } })
                 : new WebSocket(webSocketUrl));
 
@@ -67,7 +67,6 @@ public class WebRTCManager {
                 IsWebSocketConnectionInProgress = false;
                 OnWebSocketConnection?.Invoke(WebSocketState.Closed);
             };
-
         }
 
         // important for video transmission, to restart webrtc update coroutine
@@ -107,12 +106,14 @@ public class WebRTCManager {
 
         peerConnections[peerId].OnIceConnectionChange = state => {
             SimpleWebRTCLogger.Log($"{localPeerId} connection {peerId} changed to {state}");
-            if (state == RTCIceConnectionState.Connected) {
-                connectionGameObject.WebRTCConnectionActive = true;
-                //OnWebRTCConnection?.Invoke();
-            }
             if (state == RTCIceConnectionState.Completed) {
+                connectionGameObject.Connect();
+
+                // will only be invoked on offering side
                 OnWebRTCConnection?.Invoke();
+
+                // send completed to other peer of connection too
+                SendWebSocketMessage($"COMPLETE|{localPeerId}|{peerId}|Peerconnection between {localPeerId} and {peerId} completed.");
             }
         };
 
@@ -135,7 +136,9 @@ public class WebRTCManager {
             };
 
             SimpleWebRTCLogger.LogDataChannel($"ReceiverDataChannel connection for {peerId} established on {localPeerId}.");
-            OnDataChannelConnection?.Invoke(peerId);
+
+            // peerconnection is now rdy to receive, tell sender side about it and trigger datachannel event
+            SendWebSocketMessage($"DATA|{localPeerId}|{peerId}|ReceiverDataChannel on {localPeerId} for {peerId} established.");
         };
         SimpleWebRTCLogger.LogDataChannel($"ReceiverDataChannel for {peerId} created on {localPeerId}.");
 
@@ -184,7 +187,7 @@ public class WebRTCManager {
 
                     // is every connection updated?
                     if (int.Parse(signalingMessage.Message) == peerConnections.Count) {
-                        connectionGameObject.WebRTCConnectionActive = true;
+                        connectionGameObject.ConnectWebRTC();
                     }
                 }
                 break;
@@ -218,6 +221,17 @@ public class WebRTCManager {
                     audioReceivers.Remove(signalingMessage.SenderPeerId);
 
                     SimpleWebRTCLogger.Log($"DISPOSE: Peerconnection for {signalingMessage.SenderPeerId} removed on peer {localPeerId}");
+                }
+                break;
+            case SignalingMessageType.DATA:
+                if (localPeerId.Equals(signalingMessage.ReceiverPeerId) && senderDataChannels[signalingMessage.SenderPeerId].ReadyState == RTCDataChannelState.Open) {
+                    OnDataChannelConnection?.Invoke(signalingMessage.SenderPeerId);
+                }
+                break;
+            case SignalingMessageType.COMPLETE:
+                if (localPeerId.Equals(signalingMessage.ReceiverPeerId)) {
+                    // invoke complete on answering side
+                    OnWebRTCConnection?.Invoke();
                 }
                 break;
             default:
@@ -285,7 +299,6 @@ public class WebRTCManager {
         yield return answer;
 
         var answerDesc = answer.Desc;
-        SimpleWebRTCLogger.LogSpecial($"{localPeerId} created answer for {senderPeerId}: {answerDesc.sdp}");
         var localDescOp = peerConnections[senderPeerId].SetLocalDescription(ref answerDesc);
         yield return localDescOp;
 
@@ -367,6 +380,9 @@ public class WebRTCManager {
     public async void CloseWebSocket() {
         if (ws != null) {
             await ws.Close();
+
+            // reset manually, because ws is not reusable after closing
+            ws = null;
         }
     }
 
@@ -408,6 +424,10 @@ public class WebRTCManager {
                 peerConnection.Value.RemoveTrack(videoTrackSenders[peerConnection.Key]);
                 videoTrackSenders.Remove(peerConnection.Key);
             }
+        }
+        // reset optional video stream preview
+        if (connectionGameObject.OptionalPreviewRawImage != null) {
+            connectionGameObject.OptionalPreviewRawImage.texture = null;
         }
     }
 

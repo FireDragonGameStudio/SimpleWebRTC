@@ -5,11 +5,13 @@ using UnityEngine.UI;
 
 public class SimpleLobbyManager : MonoBehaviour {
 
-    [SerializeField] private Button JoinLobbyButton;
-    [SerializeField] private Button LeaveLobbyButton;
-    [SerializeField] private Button SendChatMessageButton;
-    [SerializeField] private Button StartVideoButton;
-    [SerializeField] private Button StartAudioButton;
+    [SerializeField] private Button joinLobbyButton;
+    [SerializeField] private Button leaveLobbyButton;
+    [SerializeField] private Button sendChatMessageButton;
+    [SerializeField] private Button startVideoButton;
+    [SerializeField] private Button stopVideoButton;
+    [SerializeField] private Button startAudioButton;
+    [SerializeField] private Button stopAudioButton;
     [SerializeField] private TextMeshProUGUI lobbyChatText;
 
     [Header("Player Data")]
@@ -20,38 +22,69 @@ public class SimpleLobbyManager : MonoBehaviour {
 
     private void Awake() {
         playerName = playerName + SystemInfo.deviceName;
-        webRTCConnection.LocalPeerId = playerName;
+        webRTCConnection.SetUniquePlayerName(playerName);
 
         // register events for lobby
-        JoinLobbyButton.onClick.AddListener(OnJoinLobby);
-        LeaveLobbyButton.onClick.AddListener(OnLeaveLobby);
-        SendChatMessageButton.onClick.AddListener(OnSendLobbyChatMessage);
-        StartVideoButton.onClick.AddListener(OnStartVideo);
-        StartAudioButton.onClick.AddListener(OnStartAudio);
+        joinLobbyButton.onClick.AddListener(OnJoinLobby);
+        leaveLobbyButton.onClick.AddListener(OnLeaveLobby);
+        sendChatMessageButton.onClick.AddListener(OnSendLobbyChatMessage);
+        startVideoButton.onClick.AddListener(OnStartVideo);
+        stopVideoButton.onClick.AddListener(OnStopVideo);
+        startAudioButton.onClick.AddListener(OnStartAudio);
+        stopAudioButton.onClick.AddListener(OnStopAudio);
 
         // register events for connection
-        webRTCConnection.WebSocketConnected.AddListener(OnWebSocketConnected);
-        webRTCConnection.WebRTCConnected.AddListener(OnSignalingComplete);
-        webRTCConnection.DataChannelConnected.AddListener(OnDataChannelConnected);
+        webRTCConnection.WebSocketConnectionChanged.AddListener(OnJoinedLobby);
+        webRTCConnection.WebRTCConnected.AddListener(OnLobbySetupComplete);
+        webRTCConnection.DataChannelConnected.AddListener(OnLobbyChatConnected);
 
         SetUIElements(false);
     }
 
     private void OnDestroy() {
-        JoinLobbyButton.onClick.RemoveAllListeners();
-        LeaveLobbyButton.onClick.RemoveAllListeners();
-        SendChatMessageButton.onClick.RemoveAllListeners();
-        StartVideoButton.onClick.RemoveAllListeners();
-        StartAudioButton.onClick.RemoveAllListeners();
+        joinLobbyButton.onClick.RemoveAllListeners();
+        leaveLobbyButton.onClick.RemoveAllListeners();
+        sendChatMessageButton.onClick.RemoveAllListeners();
+        startVideoButton.onClick.RemoveAllListeners();
+        stopVideoButton.onClick.RemoveAllListeners();
+        startAudioButton.onClick.RemoveAllListeners();
+        stopAudioButton.onClick.RemoveAllListeners();
 
         // de-register events for connection
-        webRTCConnection.WebSocketConnected.RemoveListener(OnWebSocketConnected);
-        webRTCConnection.WebRTCConnected.RemoveListener(OnSignalingComplete);
-        webRTCConnection.DataChannelConnected.RemoveListener(OnDataChannelConnected);
+        webRTCConnection.WebSocketConnectionChanged.RemoveListener(OnJoinedLobby);
+        webRTCConnection.WebRTCConnected.RemoveListener(OnLobbySetupComplete);
+        webRTCConnection.DataChannelConnected.RemoveListener(OnLobbyChatConnected);
     }
 
     private void OnJoinLobby() {
-        webRTCConnection.gameObject.SetActive(true);
+        lobbyChatText.gameObject.SetActive(true);
+        lobbyChatText.text = "Connecting...";
+
+        // start client connection
+        webRTCConnection.Connect();
+    }
+
+    private void OnJoinedLobby(WebSocketState state) {
+        Debug.Log($"WebSocket connection state is: {state}");
+
+        if (state == WebSocketState.Open) {
+            joinLobbyButton.gameObject.SetActive(false);
+            leaveLobbyButton.gameObject.SetActive(true);
+            SetUIElements(true);
+        }
+        if (state == WebSocketState.Closed) {
+            lobbyChatText.text = $"{playerName} (you) disconnected from Lobby.";
+        }
+    }
+
+    private void OnLobbySetupComplete() {
+        Debug.Log("WebRTC is now ready. You can start the game now!");
+    }
+
+    private void OnLobbyChatConnected(string peerId) {
+        var message = $"{playerName} can now send messages.";
+        Debug.Log(message);
+        SendLobbyChatMessageToPlayer(peerId, message);
     }
 
     private void OnLeaveLobby() {
@@ -59,47 +92,26 @@ public class SimpleLobbyManager : MonoBehaviour {
         Debug.Log(message);
         SendLobbyChatMessage(message);
 
-        webRTCConnection.gameObject.SetActive(false);
+        // disconnect client
+        webRTCConnection.Disconnect();
 
         SetUIElements(false);
     }
 
-    private void SetUIElements(bool inLobby) {
-        JoinLobbyButton.gameObject.SetActive(!inLobby);
-        LeaveLobbyButton.gameObject.SetActive(inLobby);
-        SendChatMessageButton.gameObject.SetActive(inLobby);
-        StartVideoButton.gameObject.SetActive(inLobby);
-        StartAudioButton.gameObject.SetActive(inLobby);
-        lobbyChatText.gameObject.SetActive(inLobby);
-    }
-
-    private void OnWebSocketConnected(WebSocketState state) {
-        Debug.Log($"WebSocket connection state is: {state}");
-
-        if (state == WebSocketState.Open) {
-            JoinLobbyButton.gameObject.SetActive(false);
-            LeaveLobbyButton.gameObject.SetActive(true);
-        }
-    }
-
-    private void OnSignalingComplete() {
-        Debug.Log("WebRTC is now ready. You can start the game now!");
-        SetUIElements(true);
-    }
-
-    private void OnDataChannelConnected(string peerId) {
-        var message = $"{playerName} can now send messages.";
-        Debug.Log(message);
-        SendLobbyChatMessageToPlayer(peerId, message);
-    }
-
     private void OnStartVideo() {
-        webRTCConnection.RestartVideoTransmission();
-        webRTCConnection.StartStopVideoTransmission = true;
+        webRTCConnection.StartVideoTransmission();
+    }
+
+    private void OnStopVideo() {
+        webRTCConnection.StopVideoTransmission();
     }
 
     private void OnStartAudio() {
-        webRTCConnection.StartStopAudioChannel = true;
+        webRTCConnection.StartAudioTransmission();
+    }
+
+    private void OnStopAudio() {
+        webRTCConnection.StopAudioTransmission();
     }
 
     private void OnSendLobbyChatMessage() {
@@ -107,22 +119,27 @@ public class SimpleLobbyManager : MonoBehaviour {
     }
 
     private void SendLobbyChatMessage(string message) {
-        if (webRTCConnection.IsWebSocketConnected && webRTCConnection.IsWebRTCActive) {
-            lobbyChatText.text += "\n" + message;
-            webRTCConnection.SendDataChannelMessage(message);
-        }
+        lobbyChatText.text += "\n" + message;
+        webRTCConnection.SendDataChannelMessage(message);
     }
 
     private void SendLobbyChatMessageToPlayer(string targetPeerId, string message) {
-        if (webRTCConnection.IsWebSocketConnected && webRTCConnection.IsWebRTCActive) {
-            lobbyChatText.text += "\n" + message;
-            webRTCConnection.SendDataChannelMessageToPeer(targetPeerId, message);
-        }
+        lobbyChatText.text += "\n" + message;
+        webRTCConnection.SendDataChannelMessageToPeer(targetPeerId, message);
     }
 
     public void ReceiveLobbyChatMessage(string message) {
-        if (webRTCConnection.IsWebSocketConnected && webRTCConnection.IsWebRTCActive) {
-            lobbyChatText.text += "\n" + message;
-        }
+        lobbyChatText.text += "\n" + message;
+    }
+
+    private void SetUIElements(bool inLobby) {
+        joinLobbyButton.gameObject.SetActive(!inLobby);
+        leaveLobbyButton.gameObject.SetActive(inLobby);
+        sendChatMessageButton.gameObject.SetActive(inLobby);
+        startVideoButton.gameObject.SetActive(inLobby);
+        stopVideoButton.gameObject.SetActive(inLobby);
+        startAudioButton.gameObject.SetActive(inLobby);
+        stopAudioButton.gameObject.SetActive(inLobby);
+        lobbyChatText.gameObject.SetActive(inLobby);
     }
 }

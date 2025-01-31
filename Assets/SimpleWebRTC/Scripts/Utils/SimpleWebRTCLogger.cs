@@ -3,7 +3,6 @@ using UnityEngine;
 public static class SimpleWebRTCLogger {
     public static bool EnableLogging { get; set; }
     public static bool EnableDataChannelLogging { get; set; }
-    public static bool EnableSpecialLogging { get; set; }
 
     public static void Log(object message) {
         if (EnableLogging) {
@@ -25,12 +24,6 @@ public static class SimpleWebRTCLogger {
 
     public static void LogDataChannel(object message) {
         if (EnableDataChannelLogging) {
-            Debug.Log(message);
-        }
-    }
-
-    public static void LogSpecial(object message) {
-        if (EnableSpecialLogging) {
             Debug.Log(message);
         }
     }

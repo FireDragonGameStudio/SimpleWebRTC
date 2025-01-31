@@ -1067,10 +1067,9 @@ MonoBehaviour:
   UseHTTPHeader: 1
   ShowLogs: 1
   ShowDataChannelLogs: 1
-  ShowSpecialLogs: 0
   WebSocketConnectionActive: 1
   SendWebSocketTestMessage: 0
-  WebSocketConnection:
+  WebSocketConnectionChanged:
     m_PersistentCalls:
       m_Calls: []
   WebRTCConnectionActive: 0
@@ -1078,6 +1077,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   SendDataChannelTestMessage: 0
+  DataChannelConnected:
+    m_PersistentCalls:
+      m_Calls: []
   DataChannelMessageReceived:
     m_PersistentCalls:
       m_Calls: []
@@ -1101,7 +1103,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-  StartStopAudioChannel: 0
+  StartStopAudioTransmission: 0
   StreamingAudioSource: {fileID: 344879534}
   ReceivingAudioSourceParent: {fileID: 397287550}
   AudioTransmissionReceived:
@@ -1370,10 +1372,9 @@ MonoBehaviour:
   UseHTTPHeader: 1
   ShowLogs: 1
   ShowDataChannelLogs: 1
-  ShowSpecialLogs: 0
   WebSocketConnectionActive: 1
   SendWebSocketTestMessage: 0
-  WebSocketConnection:
+  WebSocketConnectionChanged:
     m_PersistentCalls:
       m_Calls: []
   WebRTCConnectionActive: 0
@@ -1381,6 +1382,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   SendDataChannelTestMessage: 0
+  DataChannelConnected:
+    m_PersistentCalls:
+      m_Calls: []
   DataChannelMessageReceived:
     m_PersistentCalls:
       m_Calls: []
@@ -1404,7 +1408,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-  StartStopAudioChannel: 0
+  StartStopAudioTransmission: 0
   StreamingAudioSource: {fileID: 503156765}
   ReceivingAudioSourceParent: {fileID: 1643128624}
   AudioTransmissionReceived:
@@ -2420,10 +2424,9 @@ MonoBehaviour:
   UseHTTPHeader: 1
   ShowLogs: 1
   ShowDataChannelLogs: 1
-  ShowSpecialLogs: 0
   WebSocketConnectionActive: 1
   SendWebSocketTestMessage: 0
-  WebSocketConnection:
+  WebSocketConnectionChanged:
     m_PersistentCalls:
       m_Calls: []
   WebRTCConnectionActive: 0
@@ -2431,6 +2434,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   SendDataChannelTestMessage: 0
+  DataChannelConnected:
+    m_PersistentCalls:
+      m_Calls: []
   DataChannelMessageReceived:
     m_PersistentCalls:
       m_Calls: []
@@ -2454,7 +2460,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-  StartStopAudioChannel: 0
+  StartStopAudioTransmission: 0
   StreamingAudioSource: {fileID: 837564658}
   ReceivingAudioSourceParent: {fileID: 1101018954}
   AudioTransmissionReceived:
@@ -2762,7 +2768,7 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2089958069}
-  m_CullTransparentMesh: 0
+  m_CullTransparentMesh: 1
 --- !u!1 &2134975631
 GameObject:
   m_ObjectHideFlags: 0

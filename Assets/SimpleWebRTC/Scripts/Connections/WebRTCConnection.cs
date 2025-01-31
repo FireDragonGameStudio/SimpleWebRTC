@@ -13,42 +13,41 @@ public class WebRTCConnection : MonoBehaviour {
 
     public bool IsWebRTCActive { get; private set; }
     public bool IsVideoTransmissionActive { get; private set; }
-    public bool IsAudioChannelActive { get; private set; }
+    public bool IsAudioTransmissionActive { get; private set; }
 
     [Header("Connection Setup")]
-    public string WebSocketServerAddress = "wss://unity-webrtc-signaling.glitch.me";
-    public string StunServerAddress = "stun:stun.l.google.com:19302";
-    public string LocalPeerId = "PeerId";
-    public bool UseHTTPHeader = true;
-    public bool ShowLogs = true;
-    public bool ShowDataChannelLogs = true;
-    public bool ShowSpecialLogs = false;
+    [SerializeField] private string WebSocketServerAddress = "wss://unity-webrtc-signaling.glitch.me";
+    [SerializeField] private string StunServerAddress = "stun:stun.l.google.com:19302";
+    [SerializeField] private string LocalPeerId = "PeerId";
+    [SerializeField] private bool UseHTTPHeader = true;
+    [SerializeField] private bool ShowLogs = true;
+    [SerializeField] private bool ShowDataChannelLogs = true;
 
     [Header("WebSocket Connection")]
-    public bool WebSocketConnectionActive;
-    public bool SendWebSocketTestMessage = false;
-    public UnityEvent<WebSocketState> WebSocketConnected;
+    [SerializeField] private bool WebSocketConnectionActive;
+    [SerializeField] private bool SendWebSocketTestMessage = false;
+    public UnityEvent<WebSocketState> WebSocketConnectionChanged;
 
     [Header("WebRTC Connection")]
-    public bool WebRTCConnectionActive = false;
+    [SerializeField] private bool WebRTCConnectionActive = false;
     public UnityEvent WebRTCConnected;
 
     [Header("Data Transmission")]
-    public bool SendDataChannelTestMessage = false;
+    [SerializeField] private bool SendDataChannelTestMessage = false;
     public UnityEvent<string> DataChannelConnected;
     public UnityEvent<string> DataChannelMessageReceived;
 
     [Header("Video Transmission")]
-    public bool StartStopVideoTransmission = false;
-    public Vector2Int VideoResolution = new Vector2Int(1280, 720);
-    public Camera StreamingCamera;
+    [SerializeField] private bool StartStopVideoTransmission = false;
+    [SerializeField] private Vector2Int VideoResolution = new Vector2Int(1280, 720);
+    [SerializeField] private Camera StreamingCamera;
     public RawImage OptionalPreviewRawImage;
     public RectTransform ReceivingRawImagesParent;
     public UnityEvent VideoTransmissionReceived;
 
     [Header("Audio Transmission")]
-    public bool StartStopAudioChannel = false;
-    public AudioSource StreamingAudioSource;
+    [SerializeField] private bool StartStopAudioTransmission = false;
+    [SerializeField] private AudioSource StreamingAudioSource;
     public Transform ReceivingAudioSourceParent;
     public UnityEvent AudioTransmissionReceived;
 
@@ -61,7 +60,7 @@ public class WebRTCConnection : MonoBehaviour {
         webRTCManager = new WebRTCManager(LocalPeerId, StunServerAddress, this);
 
         // register events for webrtc connection
-        webRTCManager.OnWebSocketConnection += WebSocketConnected.Invoke;
+        webRTCManager.OnWebSocketConnection += WebSocketConnectionChanged.Invoke;
         webRTCManager.OnWebRTCConnection += WebRTCConnected.Invoke;
         webRTCManager.OnDataChannelConnection += DataChannelConnected.Invoke;
         webRTCManager.OnDataChannelMessageReceived += DataChannelMessageReceived.Invoke;
@@ -79,9 +78,9 @@ public class WebRTCConnection : MonoBehaviour {
             SimpleWebRTCLogger.EnableLogging = ShowLogs;
         }
 
-        ConnectToWebSocket();
+        ConnectClient();
 
-        if (!WebSocketConnectionActive) {
+        if (!WebSocketConnectionActive && IsWebSocketConnected) {
             DisconnectClient();
         }
 
@@ -121,23 +120,23 @@ public class WebRTCConnection : MonoBehaviour {
             webRTCManager.RemoveVideoTrack();
         }
 
-        if (StartStopAudioChannel && !IsAudioChannelActive) {
-            IsAudioChannelActive = !IsAudioChannelActive;
-            StreamingAudioSource.gameObject.SetActive(IsAudioChannelActive);
+        if (StartStopAudioTransmission && !IsAudioTransmissionActive) {
+            IsAudioTransmissionActive = !IsAudioTransmissionActive;
+            StreamingAudioSource.gameObject.SetActive(IsAudioTransmissionActive);
             StreamingAudioSource.Play();
             webRTCManager.AddAudioTrack(StreamingAudioSource);
         }
 
-        if (!StartStopAudioChannel && IsAudioChannelActive) {
-            IsAudioChannelActive = !IsAudioChannelActive;
+        if (!StartStopAudioTransmission && IsAudioTransmissionActive) {
+            IsAudioTransmissionActive = !IsAudioTransmissionActive;
             StreamingAudioSource.Stop();
-            StreamingAudioSource.gameObject.SetActive(IsAudioChannelActive);
+            StreamingAudioSource.gameObject.SetActive(IsAudioTransmissionActive);
             webRTCManager.RemoveAudioTrack();
         }
     }
 
     private void OnEnable() {
-        ConnectToWebSocket();
+        ConnectClient();
     }
 
     private void OnDisable() {
@@ -148,7 +147,7 @@ public class WebRTCConnection : MonoBehaviour {
         DisconnectClient();
 
         // de-register events for connection
-        webRTCManager.OnWebSocketConnection -= WebSocketConnected.Invoke;
+        webRTCManager.OnWebSocketConnection -= WebSocketConnectionChanged.Invoke;
         webRTCManager.OnWebRTCConnection -= WebRTCConnected.Invoke;
         webRTCManager.OnDataChannelConnection += DataChannelConnected.Invoke;
         webRTCManager.OnDataChannelMessageReceived -= DataChannelMessageReceived.Invoke;
@@ -156,13 +155,17 @@ public class WebRTCConnection : MonoBehaviour {
         webRTCManager.OnAudioStreamEstablished -= AudioTransmissionReceived.Invoke;
     }
 
-    private void ConnectToWebSocket() {
+    private void ConnectClient() {
         if (WebSocketConnectionActive && !ConnectionToWebSocketInProgress && !IsWebSocketConnected) {
             webRTCManager.Connect(WebSocketServerAddress, UseHTTPHeader);
         }
     }
 
     private void DisconnectClient() {
+        // stop websocket
+        WebSocketConnectionActive = false;
+
+        // stop webRTC
         IsWebRTCActive = false;
         WebRTCConnectionActive = false;
 
@@ -176,10 +179,10 @@ public class WebRTCConnection : MonoBehaviour {
         webRTCManager.RemoveVideoTrack();
 
         // stop audio
-        StartStopAudioChannel = false;
-        IsAudioChannelActive = false;
+        StartStopAudioTransmission = false;
+        IsAudioTransmissionActive = false;
         StreamingAudioSource.Stop();
-        StreamingAudioSource.gameObject.SetActive(IsAudioChannelActive);
+        StreamingAudioSource.gameObject.SetActive(IsAudioTransmissionActive);
         webRTCManager.RemoveAudioTrack();
 
         webRTCManager.CloseWebRTC();
@@ -188,6 +191,22 @@ public class WebRTCConnection : MonoBehaviour {
         StreamingCamera.gameObject.SetActive(false);
         StreamingAudioSource.Stop();
         StreamingAudioSource.gameObject.SetActive(false);
+    }
+
+    public void SetUniquePlayerName(string playerName) {
+        LocalPeerId = playerName;
+    }
+
+    public void Connect() {
+        WebSocketConnectionActive = true;
+    }
+
+    public void ConnectWebRTC() {
+        WebRTCConnectionActive = true;
+    }
+
+    public void Disconnect() {
+        WebSocketConnectionActive = false;
     }
 
     public void SendDataChannelMessage(string message) {
@@ -206,10 +225,29 @@ public class WebRTCConnection : MonoBehaviour {
         webRTCManager.SendViaDataChannel(targetPeerId, message);
     }
 
-    public void RestartVideoTransmission() {
+    public void StartVideoTransmission() {
         if (IsVideoTransmissionActive) {
+            // for restarting without stopping
             webRTCManager.RemoveVideoTrack();
             webRTCManager.AddVideoTrack(StreamingCamera, VideoResolution.x, VideoResolution.y);
         }
+        StartStopVideoTransmission = true;
+    }
+
+    public void StopVideoTransmission() {
+        StartStopVideoTransmission = false;
+    }
+
+    public void StartAudioTransmission() {
+        if (IsAudioTransmissionActive) {
+            // for restarting without stopping
+            webRTCManager.RemoveAudioTrack();
+            webRTCManager.AddAudioTrack(StreamingAudioSource);
+        }
+        StartStopAudioTransmission = true;
+    }
+
+    public void StopAudioTransmission() {
+        StartStopAudioTransmission = false;
     }
 }

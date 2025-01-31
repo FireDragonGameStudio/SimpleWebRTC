@@ -7,6 +7,8 @@ public enum SignalingMessageType {
     OFFER,
     ANSWER,
     CANDIDATE,
+    DATA,
     DISPOSE,
+    COMPLETE,
     OTHER
 }
