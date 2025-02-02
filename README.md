@@ -14,13 +14,13 @@ SimpleWebRTC is a Unity-based WebRTC wrapper that facilitates peer-to-peer audio
 A tutorial YouTube video can be found here: ()[]
 
 ## Simple Installation
-1. Make sure, that the required dependencies are installed (`TextMeshPro`, `Unity WebRTC`, `NativeWebSocket`).
-2. Go to the Unity AssetStore page: ()[]
+1. Make sure, that the required dependencies are installed (`TextMeshPro`, `Unity WebRTC`, `NativeWebSocket` [https://github.com/endel/NativeWebSocket](https://github.com/endel/NativeWebSocket)).
+2. Go to the Unity AssetStore page: [https://assetstore.unity.com/packages/slug/309727](https://assetstore.unity.com/packages/slug/309727)
 4. Install the package via Unity AssetStore.
 
 ## Installation using the releases page
 1. Got to the releases page and download the latest release.
-2. Make sure, that the required dependencies are installed (`TextMeshPro`, `Unity WebRTC`, `NativeWebSocket`).
+2. Make sure, that the required dependencies are installed (`TextMeshPro`, `Unity WebRTC`, `NativeWebSocket` [https://github.com/endel/NativeWebSocket](https://github.com/endel/NativeWebSocket)).
 3. Import the package into your Unity project.
 
 ## Manual Installation
@@ -29,7 +29,7 @@ A tutorial YouTube video can be found here: ()[]
    git clone https://github.com/yourusername/simplewebrtc.git
    ```
 2. Open the Unity project in the Unity Editor.
-3. Ensure that the required dependencies (such as `TextMeshPro`, `Unity WebRTC` and `NativeWebSocket`) are installed.
+3. Ensure that the required dependencies (such as `TextMeshPro`, `Unity WebRTC` and `NativeWebSocket` [https://github.com/endel/NativeWebSocket](https://github.com/endel/NativeWebSocket)) are installed.
 
 ## Usage
 ### WebRTCConnection Component
