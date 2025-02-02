@@ -1,7 +1,7 @@
 ![simple-webrtc-logo](https://github.com/user-attachments/assets/4a243ff7-8260-4277-8d7a-844f67ffdcff)
 
 # SimpleWebRTC
-SimpleWebRTC is a Unity-based WebRTC wrapper that facilitates peer-to-peer audio, video, and data communication over WebRTC. It leverages WebSockets for signaling and supports both video and audio streaming.
+SimpleWebRTC is a Unity-based WebRTC wrapper that facilitates peer-to-peer audio, video, and data communication over WebRTC using Unitys WebRTC package [https://docs.unity3d.com/Packages/com.unity.webrtc@3.0/manual/index.html](https://docs.unity3d.com/Packages/com.unity.webrtc@3.0/manual/index.html). It leverages WebSockets for signaling and supports both video and audio streaming.
 
 ## Features
 - WebRTC peer-to-peer connection management
@@ -14,13 +14,13 @@ SimpleWebRTC is a Unity-based WebRTC wrapper that facilitates peer-to-peer audio
 A tutorial YouTube video can be found here: ()[]
 
 ## Simple Installation
-1. Make sure, that the required dependencies are installed (`TextMeshPro`, `NativeWebSocket`).
+1. Make sure, that the required dependencies are installed (`TextMeshPro`, `Unity WebRTC`, `NativeWebSocket`).
 2. Go to the Unity AssetStore page: ()[]
 4. Install the package via Unity AssetStore.
 
 ## Installation using the releases page
 1. Got to the releases page and download the latest release.
-2. Make sure, that the required dependencies are installed (`TextMeshPro`, `NativeWebSocket`).
+2. Make sure, that the required dependencies are installed (`TextMeshPro`, `Unity WebRTC`, `NativeWebSocket`).
 3. Import the package into your Unity project.
 
 ## Manual Installation
@@ -29,7 +29,7 @@ A tutorial YouTube video can be found here: ()[]
    git clone https://github.com/yourusername/simplewebrtc.git
    ```
 2. Open the Unity project in the Unity Editor.
-3. Ensure that the required dependencies (such as `TextMeshPro` and `NativeWebSocket`) are installed.
+3. Ensure that the required dependencies (such as `TextMeshPro`, `Unity WebRTC` and `NativeWebSocket`) are installed.
 
 ## Usage
 ### WebRTCConnection Component
