@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/SimpleWebRTC/Scenes/WebRTC-SingleClient-wLobby-STUNConnection.unity
-    guid: bb73e2aaaacc75c47ac8672051fe96d3
+    path: Assets/SimpleWebRTC/Scenes/WebRTC-SingleClient-STUNConnection.unity
+    guid: f1ff9ff62f9da534bb581098b2f4afd8
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
