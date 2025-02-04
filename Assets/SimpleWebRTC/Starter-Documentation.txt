@@ -1,5 +1,5 @@
 # SimpleWebRTC
-SimpleWebRTC is a Unity-based WebRTC wrapper that facilitates peer-to-peer audio, video, and data communication over WebRTC using Unitys WebRTC package [https://docs.unity3d.com/Packages/com.unity.webrtc@3.0/manual/index.html](https://docs.unity3d.com/Packages/com.unity.webrtc@3.0/manual/index.html). It leverages WebSockets for signaling and supports both video and audio streaming.
+SimpleWebRTC is a Unity-based WebRTC wrapper that facilitates peer-to-peer audio, video, and data communication over WebRTC using Unitys WebRTC package [https://docs.unity3d.com/Packages/com.unity.webrtc@3.0/manual/index.html](https://docs.unity3d.com/Packages/com.unity.webrtc@3.0/manual/index.html). It leverages NativeWebSocket [https://github.com/endel/NativeWebSocket](https://github.com/endel/NativeWebSocket) for signaling and supports both video and audio streaming.
 
 ## Features
 - WebRTC peer-to-peer connection management
@@ -9,11 +9,11 @@ SimpleWebRTC is a Unity-based WebRTC wrapper that facilitates peer-to-peer audio
 - Logging and debugging tools
 
 ## Tutorial video
-A tutorial YouTube video can be found here: ()[]
+A tutorial YouTube video can be found here: [https://www.youtube.com/watch?v=-CwJTgt_Z3M](https://www.youtube.com/watch?v=-CwJTgt_Z3M)
 
 ## Simple Installation
 1. Make sure, that the required dependencies are installed (`TextMeshPro`, `Unity WebRTC`, `NativeWebSocket`).
-2. Go to the Unity AssetStore page: ()[]
+2. Go to the Unity AssetStore page: [https://assetstore.unity.com/packages/slug/309727](https://assetstore.unity.com/packages/slug/309727)
 4. Install the package via Unity AssetStore.
 
 ## Installation using the releases page
