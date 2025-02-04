@@ -11,7 +11,7 @@ SimpleWebRTC is a Unity-based WebRTC wrapper that facilitates peer-to-peer audio
 - Logging and debugging tools
 
 ## Tutorial video
-A tutorial YouTube video can be found here: ()[]
+A tutorial YouTube video can be found here: [https://www.youtube.com/watch?v=-CwJTgt_Z3M](https://www.youtube.com/watch?v=-CwJTgt_Z3M)
 
 ## Simple Installation
 1. Make sure, that the required dependencies are installed (`TextMeshPro`, `Unity WebRTC`, `NativeWebSocket`).
