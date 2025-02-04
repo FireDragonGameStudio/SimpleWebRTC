@@ -1,10 +1,19 @@
 # ninja log v5
 21	686	7598822552082281	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	2a18d3fc4b8c5368
 13	699	7598822552215214	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	b836cf0ff23b9bad
-25	717	7598822552425322	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	df90ebb24be8d764
-0	718	7598822552425322	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	b59786bf041cfe2f
-31	772	7598822552948393	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	83cbcb0b1919f69e
 5	817	7598822553392848	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	4dc38f2748b081e0
+25	717	7598822552425322	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	df90ebb24be8d764
+31	772	7598822552948393	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	83cbcb0b1919f69e
+0	718	7598822552425322	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	b59786bf041cfe2f
 18	917	7598822554409218	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	73a35f509489ca78
 10	1024	7598822555458235	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	af9cf969ecb2fa2b
 1024	1132	7598822556603488	C:/Users/marku/Unity/SimpleWebRTC/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/45lv473o/obj/arm64-v8a/libgame.so	76c6c098e7b2b1d8
+21	584	7603813253956724	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	2a18d3fc4b8c5368
+14	593	7603813254052207	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	df90ebb24be8d764
+11	597	7603813254117594	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	b59786bf041cfe2f
+5	635	7603813254471651	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	b836cf0ff23b9bad
+24	643	7603813254516955	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	83cbcb0b1919f69e
+8	677	7603813254853557	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	4dc38f2748b081e0
+17	786	7603813255939802	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	73a35f509489ca78
+2	873	7603813256828735	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	af9cf969ecb2fa2b
+873	1091	7603813259062104	C:/Users/marku/Unity/SimpleWebRTC/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/45lv473o/obj/arm64-v8a/libgame.so	76c6c098e7b2b1d8

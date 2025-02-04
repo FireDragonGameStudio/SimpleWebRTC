@@ -2736,6 +2736,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2360244695844763642, guid: 2884c322692e8cb4fa7aeed7d35cb11a, type: 3}
+      propertyPath: WebSocketConnectionChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2360244695844763642, guid: 2884c322692e8cb4fa7aeed7d35cb11a, type: 3}
+      propertyPath: WebSocketConnectionChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2360244695844763642, guid: 2884c322692e8cb4fa7aeed7d35cb11a, type: 3}
+      propertyPath: WebSocketConnectionChanged.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 5412547114386104584, guid: 2884c322692e8cb4fa7aeed7d35cb11a, type: 3}
       propertyPath: m_Name
       value: Client-STUNConnection

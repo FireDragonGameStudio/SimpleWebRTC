@@ -455,6 +455,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb62461af639848478eef9fb851119c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  webSocketServerAddress: wss://unity-webrtc-signaling.glitch.me
+  useHTTPHeader: 1
 --- !u!4 &862746968
 Transform:
   m_ObjectHideFlags: 0

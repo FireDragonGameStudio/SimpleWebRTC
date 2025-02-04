@@ -39,7 +39,7 @@ namespace SimpleWebRTC {
                 // Debug.Log("OnMessage! " + message);
             };
 
-            // Keep sending messages at every 0.3s
+            // Keep sending messages at every 1s
             InvokeRepeating(nameof(SendWebSocketMessage), 0.0f, 1f);
 
             // waiting for messages

@@ -89,8 +89,8 @@ namespace SimpleWebRTC {
 
             RTCConfiguration config = new RTCConfiguration {
                 iceServers = new[] {
-                new RTCIceServer { urls = new[] { stunServerAddress } }
-            }
+                    new RTCIceServer { urls = new[] { stunServerAddress } }
+                }
             };
             return new RTCPeerConnection(ref config);
         }
@@ -231,6 +231,8 @@ namespace SimpleWebRTC {
                     break;
                 case SignalingMessageType.COMPLETE:
                     if (localPeerId.Equals(signalingMessage.ReceiverPeerId)) {
+                        connectionGameObject.ConnectWebRTC();
+
                         // invoke complete on answering side
                         OnWebRTCConnection?.Invoke();
                     }
