@@ -27,7 +27,9 @@ A tutorial YouTube video can be found here: [https://www.youtube.com/watch?v=-Cw
 1. Create a new Unity project
 2. Open the Package Manager, click on the + sign in the upper left/right corner
 3. Select "Add package from git URL"
-4. Insert this link `https://github.com/FireDragonGameStudio/SimpleWebRTC.git?path=/Assets/SimpleWebRTC#upm` and click on Install
+4. Enter URL: `https://github.com/endel/NativeWebSocket.git#upm` and click in Install
+5. After the installation finished, click on the + sign in the upper left/right corner again
+6. Enter URL `https://github.com/FireDragonGameStudio/SimpleWebRTC.git?path=/Assets/SimpleWebRTC#upm` and click on Install
 
 ## Manual Installation
 1. Clone the repository:
