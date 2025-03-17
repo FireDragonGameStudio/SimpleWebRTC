@@ -32,7 +32,7 @@ A tutorial YouTube video can be found here: [https://www.youtube.com/watch?v=-Cw
 ## Manual Installation
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/simplewebrtc.git
+   git clone https://github.com/firedragongamestudio/simplewebrtc.git
    ```
 2. Open the Unity project in the Unity Editor.
 3. Ensure that the required dependencies (such as `TextMeshPro`, `Unity WebRTC` and `NativeWebSocket`) are installed.
