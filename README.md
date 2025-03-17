@@ -23,6 +23,12 @@ A tutorial YouTube video can be found here: [https://www.youtube.com/watch?v=-Cw
 2. Make sure, that the required dependencies are installed (`TextMeshPro`, `Unity WebRTC`, `NativeWebSocket`).
 3. Import the package into your Unity project.
 
+## Installation using Unity Package Manager
+1. Create a new Unity project
+2. Open the Package Manager, click on the + sign in the upper left/right corner
+3. Select "Add package from git URL"
+4. Insert this link `https://github.com/FireDragonGameStudio/SimpleWebRTC.git?path=/Assets/SimpleWebRTC#upm` and click on Install
+
 ## Manual Installation
 1. Clone the repository:
    ```sh
