@@ -1,8 +1,11 @@
 using System.IO;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 public class ExportUPMPackage {
+#if UNITY_EDITOR
     [MenuItem("Tools/Export UPM Package")]
     public static void ExportPackage() {
         string packagePath = "Assets/SimpleWebRTC";  // Change to match your package folder
@@ -17,4 +20,5 @@ public class ExportUPMPackage {
         UnityEditor.PackageManager.Client.Pack(packagePath, exportPath);
         Debug.Log("Exporting package finished! " + exportPath);
     }
+#endif
 }

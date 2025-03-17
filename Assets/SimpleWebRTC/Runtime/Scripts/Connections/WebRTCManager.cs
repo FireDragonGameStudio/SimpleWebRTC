@@ -164,7 +164,12 @@ namespace SimpleWebRTC {
             };
 
             // not needed, because negotiation is done manually
-            //peerConnections[peerId].OnNegotiationNeeded = () => CoroutineRunner.Instance.StartCoroutine(CreateOffer());
+            // rly?
+            peerConnections[peerId].OnNegotiationNeeded = () => {
+                if (peerConnections[peerId].SignalingState != RTCSignalingState.Stable) {
+                    connectionGameObject.StartCoroutine(CreateOffer());
+                }
+            };
         }
 
         private void HandleMessage(byte[] bytes) {
@@ -267,18 +272,23 @@ namespace SimpleWebRTC {
 
         private IEnumerator CreateOffer() {
             foreach (var peerConnection in peerConnections) {
+
                 var offer = peerConnection.Value.CreateOffer();
                 yield return offer;
 
-                var offerDesc = offer.Desc;
-                var localDescOp = peerConnection.Value.SetLocalDescription(ref offerDesc);
-                yield return localDescOp;
+                if (!offer.IsError) {
+                    var offerDesc = offer.Desc;
+                    var localDescOp = peerConnection.Value.SetLocalDescription(ref offerDesc);
+                    yield return localDescOp;
 
-                var offerSessionDesc = new SessionDescription {
-                    SessionType = offerDesc.type.ToString(),
-                    Sdp = offerDesc.sdp
-                };
-                SendWebSocketMessage($"OFFER|{localPeerId}|{peerConnection.Key}|{offerSessionDesc.ConvertToJSON()}");
+                    var offerSessionDesc = new SessionDescription {
+                        SessionType = offerDesc.type.ToString(),
+                        Sdp = offerDesc.sdp
+                    };
+                    SendWebSocketMessage($"OFFER|{localPeerId}|{peerConnection.Key}|{offerSessionDesc.ConvertToJSON()}");
+                } else {
+                    Debug.LogError($"{localPeerId} - Failed create offer for {peerConnection.Key}. {offer.Error.message}");
+                }
             }
         }
 
@@ -290,6 +300,7 @@ namespace SimpleWebRTC {
         private IEnumerator CreateAnswer(string senderPeerId, string offerJson) {
 
             var receivedOfferSessionDesc = SessionDescription.FromJSON(offerJson);
+
             var offerSessionDesc = new RTCSessionDescription {
                 type = RTCSdpType.Offer,
                 sdp = receivedOfferSessionDesc.Sdp
@@ -298,10 +309,22 @@ namespace SimpleWebRTC {
             var remoteDescOp = peerConnections[senderPeerId].SetRemoteDescription(ref offerSessionDesc);
             yield return remoteDescOp;
 
+            if (peerConnections[senderPeerId].RemoteDescription.Equals(default(RTCSessionDescription)) ||
+                peerConnections[senderPeerId].RemoteDescription.type != RTCSdpType.Offer) {
+                Debug.LogError($"{localPeerId} - Failed to set remote description for {senderPeerId}");
+                yield break;
+            }
+
             var answer = peerConnections[senderPeerId].CreateAnswer();
             yield return answer;
 
             var answerDesc = answer.Desc;
+
+            if (answerDesc.type != RTCSdpType.Answer || string.IsNullOrEmpty(answerDesc.sdp)) {
+                Debug.LogWarning($"{localPeerId} has no answer sdp for {senderPeerId}! ANSWER TYPE: {answer.GetType().ToString()} ANSWERDESC TYPE: {answerDesc.type} ANSWERDESC: {answerDesc.ToString()}");
+                yield break;
+            }
+
             var localDescOp = peerConnections[senderPeerId].SetLocalDescription(ref answerDesc);
             yield return localDescOp;
 

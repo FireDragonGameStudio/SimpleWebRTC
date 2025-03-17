@@ -2737,6 +2737,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2360244695844763642, guid: 2884c322692e8cb4fa7aeed7d35cb11a, type: 3}
+      propertyPath: LocalPeerId
+      value: Red-PeerId
+      objectReference: {fileID: 0}
+    - target: {fileID: 2360244695844763642, guid: 2884c322692e8cb4fa7aeed7d35cb11a, type: 3}
       propertyPath: WebSocketConnectionChanged.m_PersistentCalls.m_Calls.Array.size
       value: 0
       objectReference: {fileID: 0}
