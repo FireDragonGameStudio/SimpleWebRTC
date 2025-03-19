@@ -1,4 +1,6 @@
 using NativeWebSocket;
+using System.Collections;
+using Unity.WebRTC;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -56,6 +58,8 @@ namespace SimpleWebRTC {
         public UnityEvent AudioTransmissionReceived;
 
         private WebRTCManager webRTCManager;
+        private VideoStreamTrack videoStreamTrack;
+        private AudioStreamTrack audioStreamTrack;
 
         private void Awake() {
             SimpleWebRTCLogger.EnableLogging = ShowLogs;
@@ -117,28 +121,22 @@ namespace SimpleWebRTC {
 
             if (StartStopVideoTransmission && !IsVideoTransmissionActive && IsVideoAudioSender) {
                 IsVideoTransmissionActive = !IsVideoTransmissionActive;
-                StreamingCamera.gameObject.SetActive(IsVideoTransmissionActive);
-                webRTCManager.AddVideoTrack(StreamingCamera, VideoResolution.x, VideoResolution.y);
+                StartVideoTransmission();
             }
 
             if (!StartStopVideoTransmission && IsVideoTransmissionActive) {
                 IsVideoTransmissionActive = !IsVideoTransmissionActive;
-                StreamingCamera.gameObject.SetActive(IsVideoTransmissionActive);
-                webRTCManager.RemoveVideoTrack();
+                StopVideoTransmission();
             }
 
             if (StartStopAudioTransmission && !IsAudioTransmissionActive && IsVideoAudioSender) {
                 IsAudioTransmissionActive = !IsAudioTransmissionActive;
-                StreamingAudioSource.gameObject.SetActive(IsAudioTransmissionActive);
-                StreamingAudioSource.Play();
-                webRTCManager.AddAudioTrack(StreamingAudioSource);
+                StartAudioTransmission();
             }
 
             if (!StartStopAudioTransmission && IsAudioTransmissionActive) {
                 IsAudioTransmissionActive = !IsAudioTransmissionActive;
-                StreamingAudioSource.Stop();
-                StreamingAudioSource.gameObject.SetActive(IsAudioTransmissionActive);
-                webRTCManager.RemoveAudioTrack();
+                StopAudioTransmission();
             }
         }
 
@@ -254,29 +252,78 @@ namespace SimpleWebRTC {
         }
 
         public void StartVideoTransmission() {
+            StopCoroutine(StartVideoTransmissionAsync());
+            StartCoroutine(StartVideoTransmissionAsync());
+        }
+
+        private IEnumerator StartVideoTransmissionAsync() {
+
+            StreamingCamera.gameObject.SetActive(true);
+
+            // camera activation delay?
+            yield return new WaitForSeconds(1f);
+
             if (IsVideoTransmissionActive) {
                 // for restarting without stopping
                 webRTCManager.RemoveVideoTrack();
-                webRTCManager.AddVideoTrack(StreamingCamera, VideoResolution.x, VideoResolution.y);
             }
+            videoStreamTrack = StreamingCamera.CaptureStreamTrack(VideoResolution.x, VideoResolution.y);
+            webRTCManager.AddVideoTrack(videoStreamTrack);
+
             StartStopVideoTransmission = true;
+            IsVideoTransmissionActive = true;
         }
 
         public void StopVideoTransmission() {
+
+            StopCoroutine(StartVideoTransmissionAsync());
+
+            StreamingCamera.gameObject.SetActive(false);
+
+            webRTCManager.RemoveVideoTrack();
+
             StartStopVideoTransmission = false;
+            IsVideoTransmissionActive = false;
         }
 
         public void StartAudioTransmission() {
+            StopCoroutine(StartAudioTransmissionAsync());
+            StartCoroutine(StartAudioTransmissionAsync());
+        }
+
+        private IEnumerator StartAudioTransmissionAsync() {
+
+            StopCoroutine(StartAudioTransmissionAsync());
+
+            StreamingAudioSource.gameObject.SetActive(IsAudioTransmissionActive);
+
+            // audio activation delay?
+            yield return new WaitForSeconds(1f);
+
+            StreamingAudioSource.Play();
+
             if (IsAudioTransmissionActive) {
                 // for restarting without stopping
                 webRTCManager.RemoveAudioTrack();
-                webRTCManager.AddAudioTrack(StreamingAudioSource);
             }
+            audioStreamTrack = new AudioStreamTrack(StreamingAudioSource) {
+                Loopback = true
+            };
+            webRTCManager.AddAudioTrack(audioStreamTrack);
+
             StartStopAudioTransmission = true;
+            IsAudioTransmissionActive = true;
         }
 
         public void StopAudioTransmission() {
+
+            StreamingAudioSource.Stop();
+            StreamingAudioSource.gameObject.SetActive(IsAudioTransmissionActive);
+
+            webRTCManager.RemoveAudioTrack();
+
             StartStopAudioTransmission = false;
+            IsAudioTransmissionActive = false;
         }
     }
 }

@@ -459,8 +459,7 @@ namespace SimpleWebRTC {
             senderDataChannels[targetPeerId]?.Send(message);
         }
 
-        public void AddVideoTrack(Camera streamingCamera, int width, int height) {
-            var videoStreamTrack = streamingCamera.CaptureStreamTrack(width, height);
+        public void AddVideoTrack(VideoStreamTrack videoStreamTrack) {
 
             // optional video stream preview
             if (connectionGameObject.OptionalPreviewRawImage != null) {
@@ -486,10 +485,8 @@ namespace SimpleWebRTC {
             }
         }
 
-        public void AddAudioTrack(AudioSource streamingAudioSource) {
-            var audioStreamTrack = new AudioStreamTrack(streamingAudioSource) {
-                Loopback = true
-            };
+        public void AddAudioTrack(AudioStreamTrack audioStreamTrack) {
+
             foreach (var peerConnection in peerConnections) {
                 audioTrackSenders.Add(peerConnection.Key, peerConnection.Value.AddTrack(audioStreamTrack));
             }
