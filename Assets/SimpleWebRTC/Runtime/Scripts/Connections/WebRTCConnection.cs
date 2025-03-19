@@ -178,22 +178,30 @@ namespace SimpleWebRTC {
             if (OptionalPreviewRawImage != null) {
                 OptionalPreviewRawImage.texture = null;
             }
-            StreamingCamera.gameObject.SetActive(IsVideoTransmissionActive);
+            if (StreamingCamera != null) {
+                StreamingCamera.gameObject.SetActive(IsVideoTransmissionActive);
+            }
             webRTCManager.RemoveVideoTrack();
 
             // stop audio
             StartStopAudioTransmission = false;
             IsAudioTransmissionActive = false;
-            StreamingAudioSource.Stop();
-            StreamingAudioSource.gameObject.SetActive(IsAudioTransmissionActive);
+            if (StreamingAudioSource != null) {
+                StreamingAudioSource.Stop();
+                StreamingAudioSource.gameObject.SetActive(IsAudioTransmissionActive);
+            }
             webRTCManager.RemoveAudioTrack();
 
             webRTCManager.CloseWebRTC();
             webRTCManager.CloseWebSocket();
 
-            StreamingCamera.gameObject.SetActive(false);
-            StreamingAudioSource.Stop();
-            StreamingAudioSource.gameObject.SetActive(false);
+            if (StreamingCamera != null) {
+                StreamingCamera.gameObject.SetActive(false);
+            }
+            if (StreamingAudioSource != null) {
+                StreamingAudioSource.Stop();
+                StreamingAudioSource.gameObject.SetActive(false);
+            }
         }
 
         public void SetUniquePlayerName(string playerName) {
