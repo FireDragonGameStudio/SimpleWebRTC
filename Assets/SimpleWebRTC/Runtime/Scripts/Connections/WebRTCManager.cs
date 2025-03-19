@@ -417,13 +417,17 @@ namespace SimpleWebRTC {
 
             videoTrackSenders.Clear();
             foreach (var videoReceiver in videoReceivers) {
-                GameObject.Destroy(videoReceiver.Value.gameObject);
+                if (videoReceiver.Value != null) {
+                    GameObject.Destroy(videoReceiver.Value.gameObject);
+                }
             }
             videoReceivers.Clear();
 
             audioTrackSenders.Clear();
             foreach (var audioReceiver in audioReceivers) {
-                GameObject.Destroy(audioReceiver.Value.gameObject);
+                if (audioReceiver.Value != null) {
+                    GameObject.Destroy(audioReceiver.Value.gameObject);
+                }
             }
             audioReceivers.Clear();
         }
