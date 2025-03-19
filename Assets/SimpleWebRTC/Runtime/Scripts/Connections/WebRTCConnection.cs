@@ -21,6 +21,8 @@ namespace SimpleWebRTC {
         [SerializeField] private string StunServerAddress = "stun:stun.l.google.com:19302";
         [SerializeField] private string LocalPeerId = "PeerId";
         [SerializeField] private bool UseHTTPHeader = true;
+        [SerializeField] private bool IsVideoAudioSender = true;
+        [SerializeField] private bool IsVideoAudioReceiver = true;
         [SerializeField] private bool ShowLogs = true;
         [SerializeField] private bool ShowDataChannelLogs = true;
 
@@ -91,7 +93,7 @@ namespace SimpleWebRTC {
 
             if (SendWebSocketTestMessage) {
                 SendWebSocketTestMessage = !SendWebSocketTestMessage;
-                webRTCManager.SendWebSocketMessage($"{webSocketTestMessage} from {LocalPeerId}");
+                webRTCManager.SendWebSocketTestMessage($"{webSocketTestMessage} from {LocalPeerId}");
             }
 
             if (WebRTCConnectionActive && !IsWebRTCActive) {
@@ -109,7 +111,7 @@ namespace SimpleWebRTC {
                 SendDataChannelMessage($"{dataChannelTestMessage} from {LocalPeerId}");
             }
 
-            if (StartStopVideoTransmission && !IsVideoTransmissionActive) {
+            if (StartStopVideoTransmission && !IsVideoTransmissionActive && IsVideoAudioSender) {
                 IsVideoTransmissionActive = !IsVideoTransmissionActive;
                 StreamingCamera.gameObject.SetActive(IsVideoTransmissionActive);
                 webRTCManager.AddVideoTrack(StreamingCamera, VideoResolution.x, VideoResolution.y);
@@ -121,7 +123,7 @@ namespace SimpleWebRTC {
                 webRTCManager.RemoveVideoTrack();
             }
 
-            if (StartStopAudioTransmission && !IsAudioTransmissionActive) {
+            if (StartStopAudioTransmission && !IsAudioTransmissionActive && IsVideoAudioSender) {
                 IsAudioTransmissionActive = !IsAudioTransmissionActive;
                 StreamingAudioSource.gameObject.SetActive(IsAudioTransmissionActive);
                 StreamingAudioSource.Play();
@@ -158,7 +160,7 @@ namespace SimpleWebRTC {
 
         private void ConnectClient() {
             if (WebSocketConnectionActive && !ConnectionToWebSocketInProgress && !IsWebSocketConnected) {
-                webRTCManager.Connect(WebSocketServerAddress, UseHTTPHeader);
+                webRTCManager.Connect(WebSocketServerAddress, UseHTTPHeader, IsVideoAudioSender, IsVideoAudioReceiver);
             }
         }
 

@@ -9,6 +9,8 @@ namespace SimpleWebRTC {
         public readonly string SenderPeerId = "NOID";
         public readonly string ReceiverPeerId = "NOID";
         public readonly string Message = "Default Value";
+        public readonly int ConnectionCount = 0;
+        public readonly bool IsVideoAudioSender = true;
 
         public SignalingMessage(string messageString) {
 
@@ -19,6 +21,8 @@ namespace SimpleWebRTC {
                 SenderPeerId = messageArray[1];
                 ReceiverPeerId = messageArray[2];
                 Message = messageArray[3];
+                ConnectionCount = int.Parse(messageArray[4]);
+                IsVideoAudioSender = bool.Parse(messageArray[5]);
             }
         }
     }
