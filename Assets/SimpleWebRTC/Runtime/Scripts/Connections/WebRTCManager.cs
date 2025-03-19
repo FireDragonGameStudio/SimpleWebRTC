@@ -231,16 +231,28 @@ namespace SimpleWebRTC {
                         peerConnections[signalingMessage.SenderPeerId].Close();
                         peerConnections.Remove(signalingMessage.SenderPeerId);
 
-                        senderDataChannels.Remove(signalingMessage.SenderPeerId);
-                        receiverDataChannels.Remove(signalingMessage.SenderPeerId);
+                        if (senderDataChannels.ContainsKey(signalingMessage.SenderPeerId)) {
+                            senderDataChannels.Remove(signalingMessage.SenderPeerId);
+                        }
+                        if (receiverDataChannels.ContainsKey(signalingMessage.SenderPeerId)) {
+                            receiverDataChannels.Remove(signalingMessage.SenderPeerId);
+                        }
 
-                        videoTrackSenders.Remove(signalingMessage.SenderPeerId);
-                        GameObject.Destroy(videoReceivers[signalingMessage.SenderPeerId].gameObject);
-                        videoReceivers.Remove(signalingMessage.SenderPeerId);
+                        if (videoTrackSenders.ContainsKey(signalingMessage.SenderPeerId)) {
+                            videoTrackSenders.Remove(signalingMessage.SenderPeerId);
+                        }
+                        if (videoReceivers.ContainsKey(signalingMessage.SenderPeerId)) {
+                            GameObject.Destroy(videoReceivers[signalingMessage.SenderPeerId].gameObject);
+                            videoReceivers.Remove(signalingMessage.SenderPeerId);
+                        }
 
-                        audioTrackSenders.Remove(signalingMessage.SenderPeerId);
-                        GameObject.Destroy(audioReceivers[signalingMessage.SenderPeerId].gameObject);
-                        audioReceivers.Remove(signalingMessage.SenderPeerId);
+                        if (audioTrackSenders.ContainsKey(signalingMessage.SenderPeerId)) {
+                            audioTrackSenders.Remove(signalingMessage.SenderPeerId);
+                        }
+                        if (audioReceivers.ContainsKey(signalingMessage.SenderPeerId)) {
+                            GameObject.Destroy(audioReceivers[signalingMessage.SenderPeerId].gameObject);
+                            audioReceivers.Remove(signalingMessage.SenderPeerId);
+                        }
 
                         SimpleWebRTCLogger.Log($"DISPOSE: Peerconnection for {signalingMessage.SenderPeerId} removed on peer {localPeerId}");
                     }

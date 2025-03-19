@@ -516,7 +516,7 @@ GameObject:
   - component: {fileID: 1006722424861623380}
   - component: {fileID: 1690458483688564422}
   m_Layer: 5
-  m_Name: Red-Streaming-RawImage
+  m_Name: Client-Streaming-RawImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -629,6 +629,9 @@ MonoBehaviour:
   StunServerAddress: stun:stun.l.google.com:19302
   LocalPeerId: Red-PeerId
   UseHTTPHeader: 1
+  IsVideoAudioSender: 1
+  IsVideoAudioReceiver: 1
+  RandomUniquePeerId: 1
   ShowLogs: 1
   ShowDataChannelLogs: 1
   WebSocketConnectionActive: 0
@@ -695,7 +698,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2177560443773698946}
   m_Layer: 5
-  m_Name: Red-ReceivingRawImages
+  m_Name: Client-ReceivingRawImages
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
