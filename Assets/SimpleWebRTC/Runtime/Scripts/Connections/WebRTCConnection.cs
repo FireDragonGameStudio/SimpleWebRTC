@@ -23,6 +23,7 @@ namespace SimpleWebRTC {
         [SerializeField] private bool UseHTTPHeader = true;
         [SerializeField] private bool IsVideoAudioSender = true;
         [SerializeField] private bool IsVideoAudioReceiver = true;
+        [SerializeField] private bool RandomUniquePeerId = true;
         [SerializeField] private bool ShowLogs = true;
         [SerializeField] private bool ShowDataChannelLogs = true;
 
@@ -60,6 +61,9 @@ namespace SimpleWebRTC {
             SimpleWebRTCLogger.EnableLogging = ShowLogs;
             SimpleWebRTCLogger.EnableDataChannelLogging = ShowDataChannelLogs;
 
+            if (RandomUniquePeerId) {
+                LocalPeerId = GenerateRandomUniquePeerId();
+            }
             webRTCManager = new WebRTCManager(LocalPeerId, StunServerAddress, this);
 
             // register events for webrtc connection
@@ -156,6 +160,19 @@ namespace SimpleWebRTC {
             webRTCManager.OnDataChannelMessageReceived -= DataChannelMessageReceived.Invoke;
             webRTCManager.OnVideoStreamEstablished -= VideoTransmissionReceived.Invoke;
             webRTCManager.OnAudioStreamEstablished -= AudioTransmissionReceived.Invoke;
+        }
+
+        private string GenerateRandomUniquePeerId() {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+            int length = Random.Range(3, 6); // Generates a length between 3 and 5
+            char[] nameChars = new char[length];
+
+            for (int i = 0; i < length; i++) {
+                nameChars[i] = chars[Random.Range(0, chars.Length)];
+            }
+
+            return new string(nameChars) + "-PeerId";
         }
 
         private void ConnectClient() {

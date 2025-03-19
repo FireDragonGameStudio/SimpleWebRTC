@@ -1065,6 +1065,9 @@ MonoBehaviour:
   StunServerAddress: stun:stun.l.google.com:19302
   LocalPeerId: Blue-PeerId
   UseHTTPHeader: 1
+  IsVideoAudioSender: 1
+  IsVideoAudioReceiver: 1
+  RandomUniquePeerId: 0
   ShowLogs: 1
   ShowDataChannelLogs: 1
   WebSocketConnectionActive: 1
@@ -1370,6 +1373,9 @@ MonoBehaviour:
   StunServerAddress: stun:stun.l.google.com:19302
   LocalPeerId: Red-PeerId
   UseHTTPHeader: 1
+  IsVideoAudioSender: 1
+  IsVideoAudioReceiver: 1
+  RandomUniquePeerId: 0
   ShowLogs: 1
   ShowDataChannelLogs: 1
   WebSocketConnectionActive: 1
@@ -2422,6 +2428,9 @@ MonoBehaviour:
   StunServerAddress: stun:stun.l.google.com:19302
   LocalPeerId: Green-PeerId
   UseHTTPHeader: 1
+  IsVideoAudioSender: 1
+  IsVideoAudioReceiver: 1
+  RandomUniquePeerId: 0
   ShowLogs: 1
   ShowDataChannelLogs: 1
   WebSocketConnectionActive: 1
