@@ -1,0 +1,24 @@
+{
+  "name": "com.firedragongamestudio.simplewebrtc",
+  "displayName": "SimpleWebRTC",
+  "version": "1.1.0",
+  "unity": "2022.3",
+  "description": "Unity-based WebRTC wrapper that facilitates peer-to-peer audio, video, and data communication over WebRTC.",
+  "dependencies": {
+	"com.unity.webrtc": "3.0.0-pre.8",
+    "com.unity.textmeshpro": "3.0.6"
+  },
+  "keywords": ["custom", "package", "upm"],
+  "author": {
+    "name": "FireDragonGameStudio",
+    "email": "info@wave-labs.dev",
+    "url": "https://www.wave-labs.dev/"
+  },
+  "samples": [
+    {
+      "displayName": "Example Scenes",
+      "description": "WebRTC sample scenes to demonstrate functionality.",
+      "path": "Samples~/ExampleScenes"
+    }
+  ]
+}
