@@ -295,7 +295,7 @@ namespace SimpleWebRTC {
 
             StopCoroutine(StartAudioTransmissionAsync());
 
-            StreamingAudioSource.gameObject.SetActive(IsAudioTransmissionActive);
+            StreamingAudioSource.gameObject.SetActive(true);
 
             // audio activation delay?
             yield return new WaitForSeconds(1f);

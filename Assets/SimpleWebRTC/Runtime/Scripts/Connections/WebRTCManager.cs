@@ -43,7 +43,7 @@ namespace SimpleWebRTC {
             this.connectionGameObject = connectionObject;
         }
 
-        public async void Connect(string webSocketUrl, bool useHTTPHeader = true, bool isVideoAudioSender = true, bool isVideoAudioReceiver = true) {
+        public async void Connect(string webSocketUrl, bool useHTTPHeader, bool isVideoAudioSender, bool isVideoAudioReceiver) {
 
             IsWebSocketConnectionInProgress = true;
             isLocalPeerVideoAudioSender = isVideoAudioSender;
