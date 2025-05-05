@@ -9,6 +9,7 @@ SimpleWebRTC is a Unity-based WebRTC wrapper that facilitates peer-to-peer audio
 - Video and audio streaming
 - Data channel communication
 - Logging and debugging tools
+- Usage with Photon Fusion 2
 
 ## Tutorial video
 A tutorial YouTube video can be found here: [https://www.youtube.com/watch?v=-CwJTgt_Z3M](https://www.youtube.com/watch?v=-CwJTgt_Z3M)
@@ -36,6 +37,12 @@ A tutorial YouTube video can be found here: [https://www.youtube.com/watch?v=-Cw
 The `WebRTCConnection` component manages the WebRTC connection and can be attached to a GameObject in Unity.
 
 ![image](https://github.com/user-attachments/assets/e13c49e9-c9dc-4a5c-9200-94efd4800b1c)
+
+### Photon Fusion 2 Integration
+1. Install Photon Fusion 2 from Unity AssetStore -> [Photon Fusion 2](https://assetstore.unity.com/packages/tools/network/photon-fusion-267958)
+2. Import the Photon Fusion sample scene via Unity Package Manager.
+3. Use the `_Generic` scripts and `PhotonSignalServer` to setup the WebRTC connection.
+4. A tutorial/explanation YouTube video can be found here: [https://www.youtube.com/watch?v=z1F_cqfdU6o](https://www.youtube.com/watch?v=z1F_cqfdU6o)
 
 ### Public Properties
 | Property | Type | Description |
