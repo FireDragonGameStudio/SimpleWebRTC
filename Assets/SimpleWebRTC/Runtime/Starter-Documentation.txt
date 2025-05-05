@@ -34,7 +34,6 @@ A tutorial YouTube video can be found here: [https://www.youtube.com/watch?v=-Cw
 ### WebRTCConnection Component
 The `WebRTCConnection` component manages the WebRTC connection and can be attached to a GameObject in Unity.
 
-
 ### Photon Fusion 2 Integration
 1. Install Photon Fusion 2 from Unity AssetStore -> [Photon Fusion 2](https://assetstore.unity.com/packages/tools/network/photon-fusion-267958)
 2. Import the Photon Fusion sample scene via Unity Package Manager.
