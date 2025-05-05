@@ -23,7 +23,7 @@
 	{
       "displayName": "Photon Fusion 2 Sample Scene",
       "description": "WebRTC sample scene to demonstrate functionality, while using Photon Fusion 2 for signaling. Make sure Photon Fusion 2 package is installed before importing this sample.",
-      "path": "Samples~/ExampleScenes"
-    },
+      "path": "Samples~/PhotonFusionSample"
+    }
   ]
 }
