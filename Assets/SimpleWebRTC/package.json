@@ -1,7 +1,7 @@
 {
   "name": "com.firedragongamestudio.simplewebrtc",
   "displayName": "SimpleWebRTC",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "unity": "2022.3",
   "description": "Unity-based WebRTC wrapper that facilitates peer-to-peer audio, video, and data communication over WebRTC.",
   "dependencies": {
@@ -19,6 +19,11 @@
       "displayName": "Example Scenes",
       "description": "WebRTC sample scenes to demonstrate functionality.",
       "path": "Samples~/ExampleScenes"
-    }
+    },
+	{
+      "displayName": "Photon Fusion 2 Sample Scene",
+      "description": "WebRTC sample scene to demonstrate functionality, while using Photon Fusion 2 for signaling. Make sure Photon Fusion 2 package is installed before importing this sample.",
+      "path": "Samples~/ExampleScenes"
+    },
   ]
 }

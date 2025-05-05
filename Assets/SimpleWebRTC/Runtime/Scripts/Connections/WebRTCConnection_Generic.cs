@@ -1,38 +1,36 @@
-using NativeWebSocket;
 using System.Collections;
+using System.Text;
 using Unity.WebRTC;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace SimpleWebRTC {
-    public class WebRTCConnection : MonoBehaviour {
+    public class WebRTCConnection_Generic : MonoBehaviour {
 
-        private const string webSocketTestMessage = "TEST!WEBSOCKET!TEST";
+        private const string signalServerTestMessage = "TEST!SIGNALSERVER!TEST";
         private const string dataChannelTestMessage = "TEST!CHANNEL!TEST";
 
-        public bool IsWebSocketConnected => webRTCManager.IsWebSocketConnected;
-        public bool ConnectionToWebSocketInProgress => webRTCManager.IsWebSocketConnectionInProgress;
+        private const int maxChunkSize = 400; // Max possible size is usually 512 byte, but we'll allow some headroom for message metadata
+
+        public string PeerId => LocalPeerId;
 
         public bool IsWebRTCActive { get; private set; }
         public bool IsVideoTransmissionActive { get; private set; }
         public bool IsAudioTransmissionActive { get; private set; }
 
         [Header("Connection Setup")]
-        [SerializeField] private string WebSocketServerAddress = "wss://unity-webrtc-signaling.glitch.me";
         [SerializeField] private string StunServerAddress = "stun:stun.l.google.com:19302";
         [SerializeField] private string LocalPeerId = "PeerId";
-        [SerializeField] private bool UseHTTPHeader = true;
         [SerializeField] private bool IsVideoAudioSender = true;
         [SerializeField] private bool IsVideoAudioReceiver = true;
         [SerializeField] private bool RandomUniquePeerId = true;
         [SerializeField] private bool ShowLogs = true;
         [SerializeField] private bool ShowDataChannelLogs = true;
 
-        [Header("WebSocket Connection")]
-        [SerializeField] private bool WebSocketConnectionActive;
-        [SerializeField] private bool SendWebSocketTestMessage = false;
-        public UnityEvent<WebSocketState> WebSocketConnectionChanged;
+        [Header("SignalServer Connection")]
+        [SerializeField] private bool SendSignalServerTestMessage = false;
+        [SerializeField] private PhotonSignalServer SignalServerMessageHandler;
 
         [Header("WebRTC Connection")]
         [SerializeField] private bool WebRTCConnectionActive = false;
@@ -57,7 +55,7 @@ namespace SimpleWebRTC {
         public Transform ReceivingAudioSourceParent;
         public UnityEvent AudioTransmissionReceived;
 
-        private WebRTCManager webRTCManager;
+        private WebRTCManager_Generic webRTCManager;
         private VideoStreamTrack videoStreamTrack;
         private AudioStreamTrack audioStreamTrack;
 
@@ -68,40 +66,29 @@ namespace SimpleWebRTC {
             if (RandomUniquePeerId) {
                 LocalPeerId = GenerateRandomUniquePeerId();
             }
-            webRTCManager = new WebRTCManager(LocalPeerId, StunServerAddress, this);
+            webRTCManager = new WebRTCManager_Generic(LocalPeerId, StunServerAddress, this, IsVideoAudioSender, IsVideoAudioReceiver);
 
             // register events for webrtc connection
-            webRTCManager.OnWebSocketConnection += WebSocketConnectionChanged.Invoke;
             webRTCManager.OnWebRTCConnection += WebRTCConnected.Invoke;
             webRTCManager.OnDataChannelConnection += DataChannelConnected.Invoke;
             webRTCManager.OnDataChannelMessageReceived += DataChannelMessageReceived.Invoke;
             webRTCManager.OnVideoStreamEstablished += VideoTransmissionReceived.Invoke;
             webRTCManager.OnAudioStreamEstablished += AudioTransmissionReceived.Invoke;
+
+            if (SignalServerMessageHandler == null) {
+                SimpleWebRTCLogger.LogError("No SignalServerMessageHandler set! WebRTC connection will not work!");
+            }
         }
 
         private void Update() {
-
-#if !UNITY_WEBGL || UNITY_EDITOR
-            webRTCManager.DispatchMessageQueue();
-#endif
 
             if (SimpleWebRTCLogger.EnableLogging != ShowLogs) {
                 SimpleWebRTCLogger.EnableLogging = ShowLogs;
             }
 
-            ConnectClient();
-
-            if (!WebSocketConnectionActive && IsWebSocketConnected) {
-                DisconnectClient();
-            }
-
-            if (!IsWebSocketConnected) {
-                return;
-            }
-
-            if (SendWebSocketTestMessage) {
-                SendWebSocketTestMessage = !SendWebSocketTestMessage;
-                webRTCManager.SendWebSocketTestMessage($"{webSocketTestMessage} from {LocalPeerId}");
+            if (SendSignalServerTestMessage) {
+                SendSignalServerTestMessage = !SendSignalServerTestMessage;
+                webRTCManager.SendSignalServerTestMessage($"{signalServerTestMessage} from {LocalPeerId}");
             }
 
             if (WebRTCConnectionActive && !IsWebRTCActive) {
@@ -140,19 +127,10 @@ namespace SimpleWebRTC {
             }
         }
 
-        private void OnEnable() {
-            ConnectClient();
-        }
-
-        private void OnDisable() {
-            DisconnectClient();
-        }
-
         private void OnDestroy() {
-            DisconnectClient();
+            Disconnect();
 
             // de-register events for connection
-            webRTCManager.OnWebSocketConnection -= WebSocketConnectionChanged.Invoke;
             webRTCManager.OnWebRTCConnection -= WebRTCConnected.Invoke;
             webRTCManager.OnDataChannelConnection += DataChannelConnected.Invoke;
             webRTCManager.OnDataChannelMessageReceived -= DataChannelMessageReceived.Invoke;
@@ -173,15 +151,7 @@ namespace SimpleWebRTC {
             return new string(nameChars) + "-PeerId";
         }
 
-        private void ConnectClient() {
-            if (WebSocketConnectionActive && !ConnectionToWebSocketInProgress && !IsWebSocketConnected) {
-                webRTCManager.Connect(WebSocketServerAddress, UseHTTPHeader, IsVideoAudioSender, IsVideoAudioReceiver);
-            }
-        }
-
-        private void DisconnectClient() {
-            // stop websocket
-            WebSocketConnectionActive = false;
+        public void Disconnect() {
 
             // stop webRTC
             IsWebRTCActive = false;
@@ -208,7 +178,6 @@ namespace SimpleWebRTC {
             webRTCManager.RemoveAudioTrack();
 
             webRTCManager.CloseWebRTC();
-            webRTCManager.CloseWebSocket();
 
             if (StreamingCamera != null) {
                 StreamingCamera.gameObject.SetActive(false);
@@ -217,6 +186,8 @@ namespace SimpleWebRTC {
                 StreamingAudioSource.Stop();
                 StreamingAudioSource.gameObject.SetActive(false);
             }
+
+            webRTCManager.Disconnect();
         }
 
         public void SetUniquePlayerName(string playerName) {
@@ -224,30 +195,18 @@ namespace SimpleWebRTC {
         }
 
         public void Connect() {
-            WebSocketConnectionActive = true;
+            webRTCManager.Connect();
         }
 
         public void ConnectWebRTC() {
             WebRTCConnectionActive = true;
         }
 
-        public void Disconnect() {
-            WebSocketConnectionActive = false;
-        }
-
         public void SendDataChannelMessage(string message) {
-            if (!webRTCManager.IsWebSocketConnected) {
-                SimpleWebRTCLogger.LogError($"WebSocket not connected on {gameObject.name}");
-                return;
-            }
             webRTCManager.SendViaDataChannel(message);
         }
 
         public void SendDataChannelMessageToPeer(string targetPeerId, string message) {
-            if (!webRTCManager.IsWebSocketConnected) {
-                SimpleWebRTCLogger.LogError($"WebSocket not connected on {gameObject.name}");
-                return;
-            }
             webRTCManager.SendViaDataChannel(targetPeerId, message);
         }
 
@@ -318,12 +277,34 @@ namespace SimpleWebRTC {
         public void StopAudioTransmission() {
 
             StreamingAudioSource.Stop();
-            StreamingAudioSource.gameObject.SetActive(IsAudioTransmissionActive);
+            StreamingAudioSource.gameObject.SetActive(false);
 
             webRTCManager.RemoveAudioTrack();
 
             StartStopAudioTransmission = false;
             IsAudioTransmissionActive = false;
+        }
+
+        public void HandleMessage(SignalingMessageType messageType, string senderPeerId, string receiverPeerId, string message, int connectionCount, bool isVideoAudioSender) {
+
+            var messageBytes = Encoding.UTF8.GetBytes($"{System.Enum.GetName(typeof(SignalingMessageType), messageType)}|{senderPeerId}|{receiverPeerId}|{message}|{connectionCount}|{isVideoAudioSender}");
+
+            int totalChunks = Mathf.CeilToInt((float)messageBytes.Length / maxChunkSize);
+
+            for (int i = 0; i < totalChunks; i++) {
+                int offset = i * maxChunkSize;
+                int size = System.Math.Min(maxChunkSize, messageBytes.Length - offset);
+                byte[] chunk = new byte[size];
+                System.Array.Copy(messageBytes, offset, chunk, 0, size);
+
+                if (SignalServerMessageHandler != null) {
+                    SignalServerMessageHandler.HandleMessage(senderPeerId, i, totalChunks, chunk);
+                }
+            }
+        }
+
+        public void ReceiveMessage(byte[] bytes) {
+            webRTCManager?.HandleMessage(bytes);
         }
     }
 }

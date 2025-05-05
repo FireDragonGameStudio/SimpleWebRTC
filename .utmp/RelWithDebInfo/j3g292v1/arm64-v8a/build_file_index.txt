@@ -1,0 +1,2 @@
+C:\Users\marku\Unity\SimpleWebRTC\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\CMakeLists.txt
+C:\Users\marku\Unity\SimpleWebRTC\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\GameActivity\CMakeLists.txt
