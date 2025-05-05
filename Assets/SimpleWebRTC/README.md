@@ -24,6 +24,14 @@ A tutorial YouTube video can be found here: [https://www.youtube.com/watch?v=-Cw
 2. Make sure, that the required dependencies are installed (`TextMeshPro`, `Unity WebRTC`, `NativeWebSocket`).
 3. Import the package into your Unity project.
 
+## Installation using Unity Package Manager
+1. Create a new Unity project
+2. Open the Package Manager, click on the + sign in the upper left/right corner
+3. Select "Add package from git URL"
+4. Enter URL: `https://github.com/endel/NativeWebSocket.git#upm` and click in Install
+5. After the installation finished, click on the + sign in the upper left/right corner again
+6. Enter URL `https://github.com/FireDragonGameStudio/SimpleWebRTC.git?path=/Assets/SimpleWebRTC` and click on Install
+
 ## Manual Installation
 1. Clone the repository:
    ```sh
@@ -95,6 +103,7 @@ Following sample scenes are included in the pacakge:
 * *WebRTC-SingleClient-STUNConnection*: Testing STUN connection for a single client. Works standalone and can be deployed to clients. Make sure to set the `LocalPeerId` for each client individually.
 * *WebRTC-SingleClient-wLobby-STUNConnection*: A simple Lobby example for handling multiple STUN WebRTC clients. `SimpleLobbyManager.cs` shows an example, how to use **SimpleWebRTC** via C#.
 * *WebRTC-MultipleClients-STUNConnection*: Shows how multiple clients can be connected via peer-to-peer connections and share data, video and audio transmissions.
+* * *WebRTC-SingleClient-STUNConnection-PhotonFusion*: Testing STUN connection for a single client using Photon Fusion 2 as signaling server. Works standalone and can be deployed to clients. Make sure to set the `LocalPeerId` for each client individually.
 
 ## Example code
 ```csharp
