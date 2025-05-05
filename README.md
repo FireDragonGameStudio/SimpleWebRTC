@@ -103,6 +103,7 @@ Following sample scenes are included in the pacakge:
 * *WebRTC-SingleClient-STUNConnection*: Testing STUN connection for a single client. Works standalone and can be deployed to clients. Make sure to set the `LocalPeerId` for each client individually.
 * *WebRTC-SingleClient-wLobby-STUNConnection*: A simple Lobby example for handling multiple STUN WebRTC clients. `SimpleLobbyManager.cs` shows an example, how to use **SimpleWebRTC** via C#.
 * *WebRTC-MultipleClients-STUNConnection*: Shows how multiple clients can be connected via peer-to-peer connections and share data, video and audio transmissions.
+* *WebRTC-SingleClient-STUNConnection-PhotonFusion*: Testing STUN connection for a single client using Photon Fusion 2 as signaling server. Works standalone and can be deployed to clients. Make sure to set the `LocalPeerId` for each client individually.
 
 ## Example code
 ```csharp
