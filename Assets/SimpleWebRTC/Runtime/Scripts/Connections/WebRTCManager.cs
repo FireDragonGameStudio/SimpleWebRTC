@@ -1,4 +1,3 @@
-using Codice.Client.Common.GameUI;
 using NativeWebSocket;
 using System;
 using System.Collections;
