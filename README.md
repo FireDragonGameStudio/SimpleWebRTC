@@ -10,6 +10,7 @@ SimpleWebRTC is a Unity-based WebRTC wrapper that facilitates peer-to-peer audio
 - Data channel communication
 - Logging and debugging tools
 - Usage with Photon Fusion 2
+- Usage with [SimpleWebRTC Web Client](https://github.com/FireDragonGameStudio/SimpleWebRTC-Web)
 
 ## Tutorial video
 A tutorial YouTube video can be found here: [https://www.youtube.com/watch?v=-CwJTgt_Z3M](https://www.youtube.com/watch?v=-CwJTgt_Z3M)
@@ -51,6 +52,15 @@ The `WebRTCConnection` component manages the WebRTC connection and can be attach
 2. Import the Photon Fusion sample scene via Unity Package Manager.
 3. Use the `_Generic` scripts and `PhotonSignalServer` to setup the WebRTC connection.
 4. A tutorial/explanation YouTube video can be found here: [https://www.youtube.com/watch?v=z1F_cqfdU6o](https://www.youtube.com/watch?v=z1F_cqfdU6o)
+
+### WebRTC Web Client
+1. Make sure your WebSocket signaling server is reachable, up and running.
+2. Checkout the [SimpleWebRTC Web Client](https://github.com/FireDragonGameStudio/SimpleWebRTC-Web)
+3. Run `npm install` in the web client directory, to get everything ready
+4. Start the web client either locally (`npm run dev` or `npx vite`) or deploy it to a webspace
+5. (Optional) Start your Unity application and make sure the WebRTC logic is up and running.
+6. Connect all clients to your WebSocket signaling server and wait until the signaling procedure is completed.
+7. Stream your video, audio and/or data to every connected client.
 
 ### Public Properties
 | Property | Type | Description |
