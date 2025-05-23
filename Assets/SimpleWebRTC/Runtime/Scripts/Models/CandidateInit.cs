@@ -4,9 +4,9 @@ using UnityEngine;
 namespace SimpleWebRTC {
     [Serializable]
     public class CandidateInit : IJsonObject<CandidateInit> {
-        public string Candidate;
-        public string SdpMid;
-        public int SdpMLineIndex;
+        public string candidate;
+        public string sdpMid;
+        public int sdpMLineIndex;
 
         public static CandidateInit FromJSON(string jsonString) {
             return JsonUtility.FromJson<CandidateInit>(jsonString);

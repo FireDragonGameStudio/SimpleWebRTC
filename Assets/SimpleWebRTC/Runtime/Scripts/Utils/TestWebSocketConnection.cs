@@ -65,6 +65,5 @@ namespace SimpleWebRTC {
         private async void OnApplicationQuit() {
             await webSocket.Close();
         }
-
     }
 }

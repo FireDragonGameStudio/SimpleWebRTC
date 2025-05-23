@@ -1,7 +1,9 @@
+using Codice.Client.Common.GameUI;
 using NativeWebSocket;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Unity.WebRTC;
 using UnityEngine;
@@ -102,9 +104,9 @@ namespace SimpleWebRTC {
         private void SetupEventHandlers(string peerId) {
             peerConnections[peerId].OnIceCandidate = candidate => {
                 var candidateInit = new CandidateInit() {
-                    SdpMid = candidate.SdpMid,
-                    SdpMLineIndex = candidate.SdpMLineIndex ?? 0,
-                    Candidate = candidate.Candidate
+                    sdpMid = candidate.SdpMid,
+                    sdpMLineIndex = candidate.SdpMLineIndex ?? 0,
+                    candidate = candidate.Candidate
                 };
                 SendWebSocketMessage(SignalingMessageType.CANDIDATE, localPeerId, peerId, candidateInit.ConvertToJSON());
             };
@@ -224,7 +226,9 @@ namespace SimpleWebRTC {
                     }
                     break;
                 case SignalingMessageType.CANDIDATE:
-                    HandleCandidate(signalingMessage.SenderPeerId, signalingMessage.Message);
+                    if (signalingMessage.ReceiverPeerId.Equals(localPeerId)) {
+                        HandleCandidate(signalingMessage.SenderPeerId, signalingMessage.Message);
+                    }
                     break;
                 case SignalingMessageType.DISPOSE:
                     if (peerConnections.ContainsKey(signalingMessage.SenderPeerId)) {
@@ -293,10 +297,23 @@ namespace SimpleWebRTC {
             receivingAudioSource.name = $"{senderPeerId}-Receiving-AudioSource";
             receivingAudioSource.transform.SetParent(connectionGameObject.ReceivingAudioSourceParent);
             audioReceivers[senderPeerId] = receivingAudioSource;
+
+            // refresh layout group for proper display - not needed i guess
+            //var parentGroupLayout = connectionGameObject.ReceivingRawImagesParent.GetComponent<LayoutGroup>();
+            //LayoutRebuilder.ForceRebuildLayoutImmediate(parentGroupLayout.GetComponent<RectTransform>());
         }
 
         private IEnumerator CreateOffer() {
             foreach (var peerConnection in peerConnections) {
+
+                // enforce unified codec profiles
+                var transceivers = peerConnection.Value.GetTransceivers();
+                foreach (var transceiver in transceivers) {
+                    if (transceiver.Sender != null && transceiver.Sender?.Track?.Kind == TrackKind.Video) {
+                        var vp8 = RTCRtpSender.GetCapabilities(TrackKind.Video).codecs.Where(c => c.mimeType == "video/VP8").ToArray();
+                        transceiver.SetCodecPreferences(vp8);
+                    }
+                }
 
                 var offer = peerConnection.Value.CreateOffer();
                 yield return offer;
@@ -307,8 +324,8 @@ namespace SimpleWebRTC {
                     yield return localDescOp;
 
                     var offerSessionDesc = new SessionDescription {
-                        SessionType = offerDesc.type.ToString(),
-                        Sdp = offerDesc.sdp
+                        type = peerConnection.Value.LocalDescription.type.ToString().ToLower(),
+                        sdp = peerConnection.Value.LocalDescription.sdp
                     };
                     SendWebSocketMessage(SignalingMessageType.OFFER, localPeerId, peerConnection.Key, offerSessionDesc.ConvertToJSON());
                 } else {
@@ -326,9 +343,12 @@ namespace SimpleWebRTC {
 
             var receivedOfferSessionDesc = SessionDescription.FromJSON(offerJson);
 
+            // Only use VP8 codecs before setting remote description
+            string sdp = receivedOfferSessionDesc.StripNonVP8CodecsFromSdp();
+
             var offerSessionDesc = new RTCSessionDescription {
                 type = RTCSdpType.Offer,
-                sdp = receivedOfferSessionDesc.Sdp
+                sdp = sdp
             };
 
             var remoteDescOp = peerConnections[senderPeerId].SetRemoteDescription(ref offerSessionDesc);
@@ -354,8 +374,8 @@ namespace SimpleWebRTC {
             yield return localDescOp;
 
             var answerSessionDesc = new SessionDescription {
-                SessionType = answerDesc.type.ToString(),
-                Sdp = answerDesc.sdp
+                type = answerDesc.type.ToString().ToLower(),
+                sdp = answerDesc.sdp
             };
             SendWebSocketMessage(SignalingMessageType.ANSWER, localPeerId, senderPeerId, answerSessionDesc.ConvertToJSON());
         }
@@ -367,7 +387,7 @@ namespace SimpleWebRTC {
             var receivedAnswerSessionDesc = SessionDescription.FromJSON(answerJson);
             RTCSessionDescription answerSessionDesc = new RTCSessionDescription() {
                 type = RTCSdpType.Answer,
-                sdp = receivedAnswerSessionDesc.Sdp
+                sdp = receivedAnswerSessionDesc.sdp
             };
             peerConnections[senderPeerId].SetRemoteDescription(ref answerSessionDesc);
         }
@@ -377,10 +397,16 @@ namespace SimpleWebRTC {
             SimpleWebRTCLogger.Log($"{localPeerId} got CANDIDATE from {senderPeerId} : {candidateJson}");
 
             var candidateInit = CandidateInit.FromJSON(candidateJson);
+
+            if (string.IsNullOrEmpty(candidateInit.candidate)) {
+                SimpleWebRTCLogger.Log($"{localPeerId} got CANDIDATE GATHERING END from {senderPeerId}.");
+                return;
+            }
+
             RTCIceCandidateInit init = new RTCIceCandidateInit() {
-                sdpMid = candidateInit.SdpMid,
-                sdpMLineIndex = candidateInit.SdpMLineIndex,
-                candidate = candidateInit.Candidate
+                sdpMid = candidateInit.sdpMid,
+                sdpMLineIndex = candidateInit.sdpMLineIndex,
+                candidate = candidateInit.candidate
             };
             var candidate = new RTCIceCandidate(init);
             peerConnections[senderPeerId].AddIceCandidate(candidate);
@@ -486,7 +512,6 @@ namespace SimpleWebRTC {
         }
 
         public void AddAudioTrack(AudioStreamTrack audioStreamTrack) {
-
             foreach (var peerConnection in peerConnections) {
                 audioTrackSenders.Add(peerConnection.Key, peerConnection.Value.AddTrack(audioStreamTrack));
             }

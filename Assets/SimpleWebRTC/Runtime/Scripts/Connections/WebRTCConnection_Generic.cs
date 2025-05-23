@@ -239,7 +239,11 @@ namespace SimpleWebRTC {
 
             StreamingCamera.gameObject.SetActive(false);
 
+            videoStreamTrack?.Stop();
             webRTCManager.RemoveVideoTrack();
+
+            videoStreamTrack?.Dispose();
+            videoStreamTrack = null;
 
             StartStopVideoTransmission = false;
             IsVideoTransmissionActive = false;
@@ -279,7 +283,11 @@ namespace SimpleWebRTC {
             StreamingAudioSource.Stop();
             StreamingAudioSource.gameObject.SetActive(false);
 
+            audioStreamTrack?.Stop();
             webRTCManager.RemoveAudioTrack();
+
+            audioStreamTrack?.Dispose();
+            audioStreamTrack = null;
 
             StartStopAudioTransmission = false;
             IsAudioTransmissionActive = false;
