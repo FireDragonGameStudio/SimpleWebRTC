@@ -626,7 +626,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7588ce98b751e28419e83a73016454e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WebSocketServerAddress: wss://unity-webrtc-signaling-priv.glitch.me
+  WebSocketServerAddress: wss://unity-webrtc-signaling.glitch.me
   StunServerAddress: stun:stun.l.google.com:19302
   LocalPeerId: Red-PeerId
   UseHTTPHeader: 1

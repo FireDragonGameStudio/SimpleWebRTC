@@ -2737,33 +2737,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2360244695844763642, guid: 2884c322692e8cb4fa7aeed7d35cb11a, type: 3}
-      propertyPath: LocalPeerId
-      value: Red-PeerId
-      objectReference: {fileID: 0}
-    - target: {fileID: 2360244695844763642, guid: 2884c322692e8cb4fa7aeed7d35cb11a, type: 3}
-      propertyPath: IsVideoAudioSender
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2360244695844763642, guid: 2884c322692e8cb4fa7aeed7d35cb11a, type: 3}
-      propertyPath: IsVideoAudioReceiver
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2360244695844763642, guid: 2884c322692e8cb4fa7aeed7d35cb11a, type: 3}
-      propertyPath: WebSocketConnectionChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2360244695844763642, guid: 2884c322692e8cb4fa7aeed7d35cb11a, type: 3}
-      propertyPath: WebSocketConnectionChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2360244695844763642, guid: 2884c322692e8cb4fa7aeed7d35cb11a, type: 3}
-      propertyPath: WebSocketConnectionChanged.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4742940825921038815, guid: 2884c322692e8cb4fa7aeed7d35cb11a, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
+      propertyPath: DataChannelMessageReceived.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1144258515}
     - target: {fileID: 5412547114386104584, guid: 2884c322692e8cb4fa7aeed7d35cb11a, type: 3}
       propertyPath: m_Name
       value: Client-STUNConnection
