@@ -154,7 +154,7 @@ namespace SimpleWebRTC {
             // de-register events for connection
             webRTCManager.OnWebSocketConnection -= WebSocketConnectionChanged.Invoke;
             webRTCManager.OnWebRTCConnection -= WebRTCConnected.Invoke;
-            webRTCManager.OnDataChannelConnection += DataChannelConnected.Invoke;
+            webRTCManager.OnDataChannelConnection -= DataChannelConnected.Invoke;
             webRTCManager.OnDataChannelMessageReceived -= DataChannelMessageReceived.Invoke;
             webRTCManager.OnVideoStreamEstablished -= VideoTransmissionReceived.Invoke;
             webRTCManager.OnAudioStreamEstablished -= AudioTransmissionReceived.Invoke;
