@@ -101,7 +101,7 @@ namespace SimpleWebRTC {
 
             if (SendWebSocketTestMessage) {
                 SendWebSocketTestMessage = !SendWebSocketTestMessage;
-                webRTCManager.SendWebSocketTestMessage($"{webSocketTestMessage} from {LocalPeerId}");
+                WebSocketTestMessage();
             }
 
             if (WebRTCConnectionActive && !IsWebRTCActive) {
@@ -233,6 +233,14 @@ namespace SimpleWebRTC {
 
         public void Disconnect() {
             WebSocketConnectionActive = false;
+        }
+
+        public void WebSocketTestMessage() {
+            WebSocketTestMessage(webSocketTestMessage);
+        }
+
+        public void WebSocketTestMessage(string message) {
+            webRTCManager.SendWebSocketTestMessage($"{message} from {LocalPeerId}");
         }
 
         public void SendDataChannelMessage(string message) {
