@@ -11,6 +11,7 @@ SimpleWebRTC is a Unity-based WebRTC wrapper that facilitates peer-to-peer audio
 - Logging and debugging tools
 - Usage with Photon Fusion 2
 - Usage with [SimpleWebRTC Web Client](https://github.com/FireDragonGameStudio/SimpleWebRTC-Web)
+- Support for [Unity Visual Scripting](https://docs.unity3d.com/Packages/com.unity.visualscripting@latest)
 
 ## Tutorial video
 A tutorial YouTube video can be found here: [https://www.youtube.com/watch?v=-CwJTgt_Z3M](https://www.youtube.com/watch?v=-CwJTgt_Z3M)
@@ -61,6 +62,14 @@ The `WebRTCConnection` component manages the WebRTC connection and can be attach
 5. (Optional) Start your Unity application and make sure the WebRTC logic is up and running.
 6. Connect all clients to your WebSocket signaling server and wait until the signaling procedure is completed.
 7. Stream your video, audio and/or data to every connected client.
+
+### Support for Unity Visual Scripting
+
+1. Make sure [Unity Visual Scripting](https://docs.unity3d.com/Packages/com.unity.visualscripting@latest) package is imported.
+2. Import SimpleWebRTC Visual Scripting samples, via Unity Package Manager.
+3. Regenerate Nodes under Edit/Project Settings/Visual Scripting.
+4. Mind to add the WebRTCConnectionVisualScriptingEvents component to your WebRTCConnection GameObject.
+5. Add your WebRTCConnection GameObject to the scene variables of your graph - look at the sample scene for an example.
 
 ### Public Properties
 | Property | Type | Description |
@@ -114,6 +123,7 @@ Following sample scenes are included in the pacakge:
 * *WebRTC-SingleClient-wLobby-STUNConnection*: A simple Lobby example for handling multiple STUN WebRTC clients. `SimpleLobbyManager.cs` shows an example, how to use **SimpleWebRTC** via C#.
 * *WebRTC-MultipleClients-STUNConnection*: Shows how multiple clients can be connected via peer-to-peer connections and share data, video and audio transmissions.
 * *WebRTC-SingleClient-STUNConnection-PhotonFusion*: Testing STUN connection for a single client using Photon Fusion 2 as signaling server. Works standalone and can be deployed to clients. Make sure to set the `LocalPeerId` for each client individually.
+* *WebRTC-SingleClient-STUNConnection-VisualScripting*: Using Unity Visual Scripting with SimpleWebRTC. Works with all SimpleWebRTC features and can be deployed to clients.
 
 ## Example code
 ```csharp
