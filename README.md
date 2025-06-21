@@ -18,7 +18,7 @@ A tutorial YouTube video can be found here: [https://www.youtube.com/watch?v=-Cw
 
 ## Simple Installation
 1. Make sure, that the required dependencies are installed (`TextMeshPro`, `Unity WebRTC`, `NativeWebSocket`).
-2. Go to the Unity AssetStore page: [https://assetstore.unity.com/packages/slug/309727](https://assetstore.unity.com/packages/slug/309727)
+2. Go to the Unity AssetStore page: [https://assetstore.unity.com/packages/tools/network/simplewebrtc-309727](https://assetstore.unity.com/packages/tools/network/simplewebrtc-309727)
 4. Install the package via Unity AssetStore.
 
 ## Installation using the releases page
