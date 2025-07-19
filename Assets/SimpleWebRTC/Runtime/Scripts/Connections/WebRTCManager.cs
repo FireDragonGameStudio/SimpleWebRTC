@@ -20,6 +20,7 @@ namespace SimpleWebRTC {
 
         public bool IsWebSocketConnected { get; private set; }
         public bool IsWebSocketConnectionInProgress { get; private set; }
+        public Texture ImmersiveVideoTexture { get; private set; }
 
         private WebSocket ws;
         private bool isLocalPeerVideoAudioSender;
@@ -152,7 +153,11 @@ namespace SimpleWebRTC {
                 if (e.Track is VideoStreamTrack video) {
                     OnVideoStreamEstablished?.Invoke();
 
-                    video.OnVideoReceived += tex => videoReceivers[peerId].texture = tex;
+                    if (connectionGameObject.IsImmersiveSetupActive) {
+                        video.OnVideoReceived += tex => ImmersiveVideoTexture = tex;
+                    } else {
+                        video.OnVideoReceived += tex => videoReceivers[peerId].texture = tex;
+                    }
 
                     SimpleWebRTCLogger.Log("Receiving video stream.");
                 }
@@ -280,16 +285,18 @@ namespace SimpleWebRTC {
         }
 
         private void CreateNewPeerVideoAudioReceivingResources(string senderPeerId) {
-            // create new video receiver gameobject
-            var receivingRawImage = new GameObject().AddComponent<RawImage>();
-            receivingRawImage.name = $"{senderPeerId}-Receiving-RawImage";
-            receivingRawImage.rectTransform.SetParent(connectionGameObject.ReceivingRawImagesParent, false);
-            receivingRawImage.rectTransform.localScale = Vector3.one;
-            receivingRawImage.rectTransform.anchorMin = Vector2.zero;
-            receivingRawImage.rectTransform.anchorMax = Vector2.one;
-            receivingRawImage.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            receivingRawImage.rectTransform.sizeDelta = Vector2.zero;
-            videoReceivers[senderPeerId] = receivingRawImage;
+            if (!connectionGameObject.IsImmersiveSetupActive) {
+                // create new video receiver gameobject
+                var receivingRawImage = new GameObject().AddComponent<RawImage>();
+                receivingRawImage.name = $"{senderPeerId}-Receiving-RawImage";
+                receivingRawImage.rectTransform.SetParent(connectionGameObject.ReceivingRawImagesParent, false);
+                receivingRawImage.rectTransform.localScale = Vector3.one;
+                receivingRawImage.rectTransform.anchorMin = Vector2.zero;
+                receivingRawImage.rectTransform.anchorMax = Vector2.one;
+                receivingRawImage.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+                receivingRawImage.rectTransform.sizeDelta = Vector2.zero;
+                videoReceivers[senderPeerId] = receivingRawImage;
+            }
 
             // create new audio receiver gameobject
             var receivingAudioSource = new GameObject().AddComponent<AudioSource>();

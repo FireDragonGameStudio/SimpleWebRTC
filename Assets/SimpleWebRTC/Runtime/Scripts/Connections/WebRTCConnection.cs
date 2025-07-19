@@ -3,6 +3,7 @@ using System.Collections;
 using Unity.WebRTC;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 namespace SimpleWebRTC {
@@ -17,6 +18,10 @@ namespace SimpleWebRTC {
         public bool IsWebRTCActive { get; private set; }
         public bool IsVideoTransmissionActive { get; private set; }
         public bool IsAudioTransmissionActive { get; private set; }
+        public bool IsImmersiveSetupActive => UseImmersiveSetup;
+        public Camera VideoStreamingCamera => StreamingCamera;
+        public bool IsSender => IsVideoAudioSender;
+        public bool IsReceiver => IsVideoAudioReceiver;
 
         [Header("Connection Setup")]
         [SerializeField] private string WebSocketServerAddress = "wss://unity-webrtc-signaling.glitch.me";
@@ -28,6 +33,18 @@ namespace SimpleWebRTC {
         [SerializeField] private bool RandomUniquePeerId = true;
         [SerializeField] private bool ShowLogs = true;
         [SerializeField] private bool ShowDataChannelLogs = true;
+
+        [Header("Immersive Setup")]
+        [SerializeField] private bool UseImmersiveSetup = false;
+        [Header("Immersive Sender")]
+        [SerializeField] private bool RenderStereo = false;
+        [SerializeField] private float StereoSeparation = 0.064f;
+        [SerializeField] private int OneEyeRenderWidth = 1024;
+        [SerializeField] private int OneEyeRenderHeight = 1024;
+        [SerializeField] private RenderTextureDepth RTDepth = RenderTextureDepth.Depth24;
+        [SerializeField] private bool OneFacePerFrame = false;
+        [Header("Immersive Receiver")]
+        [SerializeField] private RenderTexture receivingRenderTexture;
 
         [Header("WebSocket Connection")]
         [SerializeField] private bool WebSocketConnectionActive;
@@ -61,6 +78,13 @@ namespace SimpleWebRTC {
         private VideoStreamTrack videoStreamTrack;
         private AudioStreamTrack audioStreamTrack;
 
+        private RenderTexture cubemapLeftEye;
+        private RenderTexture cubemapRightEye;
+        private RenderTexture videoEquirect;
+
+        private int faceToRender;
+        private int faceMask = 63;
+
         private void Awake() {
             SimpleWebRTCLogger.EnableLogging = ShowLogs;
             SimpleWebRTCLogger.EnableDataChannelLogging = ShowDataChannelLogs;
@@ -77,6 +101,29 @@ namespace SimpleWebRTC {
             webRTCManager.OnDataChannelMessageReceived += DataChannelMessageReceived.Invoke;
             webRTCManager.OnVideoStreamEstablished += VideoTransmissionReceived.Invoke;
             webRTCManager.OnAudioStreamEstablished += AudioTransmissionReceived.Invoke;
+
+            // setup immersive if selected
+            if (UseImmersiveSetup) {
+                if (IsVideoAudioSender) {
+                    cubemapLeftEye = new RenderTexture(OneEyeRenderWidth, OneEyeRenderHeight, (int)RTDepth, RenderTextureFormat.BGRA32);
+                    cubemapLeftEye.dimension = TextureDimension.Cube;
+                    cubemapLeftEye.hideFlags = HideFlags.HideAndDontSave;
+                    cubemapLeftEye.Create();
+
+                    if (RenderStereo) {
+                        cubemapRightEye = new RenderTexture(OneEyeRenderWidth, OneEyeRenderHeight, (int)RTDepth, RenderTextureFormat.BGRA32);
+                        cubemapRightEye.dimension = TextureDimension.Cube;
+                        cubemapRightEye.hideFlags = HideFlags.HideAndDontSave;
+                        cubemapRightEye.Create();
+                        //equirect height should be twice the height of cubemap if we render in stereo
+                        videoEquirect = new RenderTexture(OneEyeRenderWidth, OneEyeRenderHeight * 2, (int)RTDepth, RenderTextureFormat.BGRA32);
+                    } else {
+                        videoEquirect = new RenderTexture(OneEyeRenderWidth, OneEyeRenderHeight, (int)RTDepth, RenderTextureFormat.BGRA32);
+                    }
+                    videoEquirect.hideFlags = HideFlags.HideAndDontSave;
+                    videoEquirect.Create();
+                }
+            }
         }
 
         private void Update() {
@@ -138,6 +185,36 @@ namespace SimpleWebRTC {
                 IsAudioTransmissionActive = !IsAudioTransmissionActive;
                 StopAudioTransmission();
             }
+
+            if (IsImmersiveSetupActive && IsVideoAudioReceiver) {
+                if (webRTCManager.ImmersiveVideoTexture != null) {
+                    Graphics.Blit(webRTCManager.ImmersiveVideoTexture, receivingRenderTexture);
+                }
+            }
+        }
+
+        private void LateUpdate() {
+            if (UseImmersiveSetup && IsVideoAudioSender) {
+                if (OneFacePerFrame) {
+                    faceToRender = Time.frameCount % 6;
+                    faceMask = 1 << faceToRender;
+                }
+                if (RenderStereo) {
+                    // render left and right eye for IPD StereoSeparation
+                    StreamingCamera.stereoSeparation = StereoSeparation;
+                    StreamingCamera.RenderToCubemap(cubemapLeftEye, faceMask, Camera.MonoOrStereoscopicEye.Left);
+                    StreamingCamera.RenderToCubemap(cubemapRightEye, faceMask, Camera.MonoOrStereoscopicEye.Right);
+
+                    // convert into equirect rendertexture for streaming
+                    cubemapLeftEye.ConvertToEquirect(videoEquirect, Camera.MonoOrStereoscopicEye.Left);
+                    cubemapRightEye.ConvertToEquirect(videoEquirect, Camera.MonoOrStereoscopicEye.Right);
+                } else {
+                    // render left eye
+                    StreamingCamera.RenderToCubemap(cubemapLeftEye, faceMask, Camera.MonoOrStereoscopicEye.Mono);
+                    // convert into equirect rendertexture for streaming
+                    cubemapLeftEye.ConvertToEquirect(videoEquirect, Camera.MonoOrStereoscopicEye.Mono);
+                }
+            }
         }
 
         private void OnEnable() {
@@ -158,6 +235,13 @@ namespace SimpleWebRTC {
             webRTCManager.OnDataChannelMessageReceived -= DataChannelMessageReceived.Invoke;
             webRTCManager.OnVideoStreamEstablished -= VideoTransmissionReceived.Invoke;
             webRTCManager.OnAudioStreamEstablished -= AudioTransmissionReceived.Invoke;
+
+            // release rendertextures to free memory
+            cubemapLeftEye?.Release();
+            if (RenderStereo) {
+                cubemapRightEye?.Release();
+            }
+            videoEquirect?.Release();
         }
 
         private string GenerateRandomUniquePeerId() {
@@ -275,7 +359,13 @@ namespace SimpleWebRTC {
                 // for restarting without stopping
                 webRTCManager.RemoveVideoTrack();
             }
-            videoStreamTrack = StreamingCamera.CaptureStreamTrack(VideoResolution.x, VideoResolution.y);
+
+            if (UseImmersiveSetup) {
+                videoStreamTrack = new VideoStreamTrack(videoEquirect);
+            } else {
+                videoStreamTrack = StreamingCamera.CaptureStreamTrack(VideoResolution.x, VideoResolution.y);
+            }
+
             webRTCManager.AddVideoTrack(videoStreamTrack);
 
             StartStopVideoTransmission = true;
