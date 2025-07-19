@@ -827,8 +827,9 @@ PlayerSettings:
   webWasm2023: 0
   webEnableSubmoduleStrippingCompatibility: 0
   scriptingDefineSymbols:
-    Android: 
-    Standalone: 
+    Android: VISUAL_SCRIPTING_INSTALLED
+    Standalone: VISUAL_SCRIPTING_INSTALLED
+    iPhone: VISUAL_SCRIPTING_INSTALLED
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:
