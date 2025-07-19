@@ -1,4 +1,8 @@
+#if USE_META_NATIVEWEBSOCKET
+using Meta.Net.NativeWebSocket;
+#else
 using NativeWebSocket;
+#endif
 using System.Collections;
 using Unity.WebRTC;
 using UnityEngine;

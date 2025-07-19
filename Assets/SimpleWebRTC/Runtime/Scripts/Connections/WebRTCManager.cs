@@ -1,4 +1,8 @@
+#if USE_META_NATIVEWEBSOCKET
+using Meta.Net.NativeWebSocket;
+#else
 using NativeWebSocket;
+#endif
 using System;
 using System.Collections;
 using System.Collections.Generic;
