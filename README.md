@@ -34,7 +34,7 @@ A tutorial YouTube video can be found here: [https://www.youtube.com/watch?v=-Cw
 5. After the installation finished, click on the + sign in the upper left/right corner again
 6. Enter URL `https://github.com/FireDragonGameStudio/SimpleWebRTC.git?path=/Assets/SimpleWebRTC` and click on Install
 
-## Installation using Unity Package Manager with preinstalled Meta Voice SDK package installed
+## Installation using Unity Package Manager with preinstalled Meta Voice SDK package
 1. Create a new Unity project
 2. The Meta Voice SDK already has the NativeWebSocket package integrated, so there is no need to install it manually.
 3. Add the scripting define symbol **USE_META_NATIVEWEBSOCKET** manually in the Player Settings/Other Settings/Scripting Define Symbols. This tells SimpleWebRTC to use the NativeWebSocket package provided by Meta.
