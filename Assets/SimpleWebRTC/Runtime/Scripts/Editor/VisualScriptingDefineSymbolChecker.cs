@@ -9,7 +9,7 @@ namespace SimpleWebRTC {
     [InitializeOnLoad]
     public static class VisualScriptingDefineSymbolChecker {
         static VisualScriptingDefineSymbolChecker() {
-            EditorApplication.delayCall += UpdateVisualScriptingDefine;
+            UpdateVisualScriptingDefine();
         }
 
         [MenuItem("Tools/Update VisualScripting Define Symbol")]

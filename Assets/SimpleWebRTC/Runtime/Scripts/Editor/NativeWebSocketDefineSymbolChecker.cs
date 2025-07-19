@@ -10,7 +10,7 @@ namespace SimpleWebRTC {
     [InitializeOnLoad]
     public static class NativeWebSocketDefineSymbolChecker {
         static NativeWebSocketDefineSymbolChecker() {
-            EditorApplication.delayCall += UpdateNativeWebSocketDefine;
+            UpdateNativeWebSocketDefine();
         }
 
         [MenuItem("Tools/Update NativeWebSocket Define Symbol")]
