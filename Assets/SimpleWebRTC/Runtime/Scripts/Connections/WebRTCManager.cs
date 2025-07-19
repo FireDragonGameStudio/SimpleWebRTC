@@ -72,7 +72,7 @@ namespace SimpleWebRTC {
                 };
 
 #if USE_META_NATIVEWEBSOCKET
-                ws.OnMessage += HandleMetaWebSocketMessage;
+                ws.OnMessage += HandleMessage;
 #else
                 ws.OnMessage += HandleMessage;
 #endif
@@ -492,9 +492,11 @@ namespace SimpleWebRTC {
             connectionGameObject.StartCoroutine(CreateOffer());
         }
 
+#if !USE_META_NATIVEWEBSOCKET && (!UNITY_WEBGL || UNITY_EDITOR)
         public void DispatchMessageQueue() {
             ws?.DispatchMessageQueue();
         }
+#endif
 
         public void SendViaDataChannel(string message) {
             foreach (var senderDataChannel in senderDataChannels) {
