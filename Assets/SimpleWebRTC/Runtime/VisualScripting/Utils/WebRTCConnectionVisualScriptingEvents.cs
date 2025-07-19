@@ -1,4 +1,8 @@
+#if USE_META_NATIVEWEBSOCKET
+using Meta.Net.NativeWebSocket;
+#elif USE_NATIVEWEBSOCKET
 using NativeWebSocket;
+#endif
 using UnityEngine;
 
 namespace SimpleWebRTC {
