@@ -132,7 +132,7 @@ namespace SimpleWebRTC {
 
         private void Update() {
 
-#if !UNITY_WEBGL || UNITY_EDITOR
+#if !USE_META_NATIVEWEBSOCKET && (!UNITY_WEBGL || UNITY_EDITOR)
             webRTCManager.DispatchMessageQueue();
 #endif
 

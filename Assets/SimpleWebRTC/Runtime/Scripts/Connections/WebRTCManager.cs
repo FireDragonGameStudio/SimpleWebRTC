@@ -70,7 +70,12 @@ namespace SimpleWebRTC {
                     OnWebSocketConnection?.Invoke(WebSocketState.Open);
                     SendWebSocketMessage(SignalingMessageType.NEWPEER, localPeerId, "ALL", $"New peer {localPeerId}");
                 };
+
+#if USE_META_NATIVEWEBSOCKET
+                ws.OnMessage += HandleMetaWebSocketMessage;
+#else
                 ws.OnMessage += HandleMessage;
+#endif
                 ws.OnError += (e) => SimpleWebRTCLogger.LogError("Error! " + e);
                 ws.OnClose += (e) => {
                     SimpleWebRTCLogger.Log("WebSocket connection closed!");
@@ -185,6 +190,12 @@ namespace SimpleWebRTC {
                 }
             };
         }
+
+#if USE_META_NATIVEWEBSOCKET
+        private void HandleMessage(byte[] bytes, int offset, int length) {
+            HandleMessage(bytes);
+        }
+#endif
 
         private void HandleMessage(byte[] bytes) {
             var data = Encoding.UTF8.GetString(bytes);
