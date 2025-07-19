@@ -18,10 +18,10 @@ namespace SimpleWebRTC {
 
             var targets = new[]
             {
-            NamedBuildTarget.Standalone,
-            NamedBuildTarget.Android,
-            NamedBuildTarget.iOS,
-        };
+                NamedBuildTarget.Standalone,
+                NamedBuildTarget.Android,
+                NamedBuildTarget.iOS,
+            };
 
             foreach (var target in targets) {
                 try {

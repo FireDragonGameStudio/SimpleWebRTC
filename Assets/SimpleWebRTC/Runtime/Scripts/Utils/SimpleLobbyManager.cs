@@ -1,6 +1,6 @@
 #if USE_META_NATIVEWEBSOCKET
 using Meta.Net.NativeWebSocket;
-#elif USE_NATIVEWEBSOCKET
+#else
 using NativeWebSocket;
 #endif
 using TMPro;
