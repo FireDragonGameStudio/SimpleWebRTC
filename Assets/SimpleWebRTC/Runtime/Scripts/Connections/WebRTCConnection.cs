@@ -44,8 +44,7 @@ namespace SimpleWebRTC {
         [Header("Immersive Sender")]
         [SerializeField] private bool RenderStereo = false;
         [SerializeField] private float StereoSeparation = 0.064f;
-        [SerializeField] private int OneEyeRenderWidth = 1024;
-        [SerializeField] private int OneEyeRenderHeight = 1024;
+        [SerializeField] private int OneEyeRenderSide = 1024;
         [SerializeField] private RenderTextureDepth RTDepth = RenderTextureDepth.Depth24;
         [SerializeField] private bool OneFacePerFrame = false;
         [Header("Immersive Receiver")]
@@ -126,20 +125,20 @@ namespace SimpleWebRTC {
             // setup immersive if selected
             if (UseImmersiveSetup) {
                 if (IsVideoAudioSender) {
-                    cubemapLeftEye = new RenderTexture(OneEyeRenderWidth, OneEyeRenderHeight, (int)RTDepth, RenderTextureFormat.BGRA32);
+                    cubemapLeftEye = new RenderTexture(OneEyeRenderSide, OneEyeRenderSide, (int)RTDepth, RenderTextureFormat.BGRA32);
                     cubemapLeftEye.dimension = TextureDimension.Cube;
                     cubemapLeftEye.hideFlags = HideFlags.HideAndDontSave;
                     cubemapLeftEye.Create();
 
                     if (RenderStereo) {
-                        cubemapRightEye = new RenderTexture(OneEyeRenderWidth, OneEyeRenderHeight, (int)RTDepth, RenderTextureFormat.BGRA32);
+                        cubemapRightEye = new RenderTexture(OneEyeRenderSide, OneEyeRenderSide, (int)RTDepth, RenderTextureFormat.BGRA32);
                         cubemapRightEye.dimension = TextureDimension.Cube;
                         cubemapRightEye.hideFlags = HideFlags.HideAndDontSave;
                         cubemapRightEye.Create();
                         //equirect height should be twice the height of cubemap if we render in stereo
-                        videoEquirect = new RenderTexture(OneEyeRenderWidth, OneEyeRenderHeight * 2, (int)RTDepth, RenderTextureFormat.BGRA32);
+                        videoEquirect = new RenderTexture(OneEyeRenderSide, OneEyeRenderSide * 2, (int)RTDepth, RenderTextureFormat.BGRA32);
                     } else {
-                        videoEquirect = new RenderTexture(OneEyeRenderWidth, OneEyeRenderHeight, (int)RTDepth, RenderTextureFormat.BGRA32);
+                        videoEquirect = new RenderTexture(OneEyeRenderSide, OneEyeRenderSide, (int)RTDepth, RenderTextureFormat.BGRA32);
                     }
                     videoEquirect.hideFlags = HideFlags.HideAndDontSave;
                     videoEquirect.Create();
