@@ -5,9 +5,12 @@ using NativeWebSocket;
 #endif
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Unity.WebRTC;
 using UnityEngine;
 using UnityEngine.UI;
@@ -43,6 +46,10 @@ namespace SimpleWebRTC {
         private readonly string stunServerAddress;
         private readonly WebRTCConnection connectionGameObject;
 
+        private readonly ConcurrentQueue<string> sendQueue = new();
+        private readonly CancellationTokenSource cts = new();
+        private Task sendTask;
+
         public WebRTCManager(string localPeerId, string stunServerAddress, WebRTCConnection connectionObject) {
             this.localPeerId = localPeerId;
             this.stunServerAddress = stunServerAddress;
@@ -64,11 +71,14 @@ namespace SimpleWebRTC {
                 ws.OnOpen += () => {
                     SimpleWebRTCLogger.Log("WebSocket connection opened!");
 
+                    // using send queue to avoid disconnect on fast paced sending
+                    sendTask = Task.Run(() => SendLoop(cts.Token));
+
                     IsWebSocketConnected = true;
                     IsWebSocketConnectionInProgress = false;
 
                     OnWebSocketConnection?.Invoke(WebSocketState.Open);
-                    SendWebSocketMessage(SignalingMessageType.NEWPEER, localPeerId, "ALL", $"New peer {localPeerId}");
+                    EnqueueWebSocketMessage(SignalingMessageType.NEWPEER, localPeerId, "ALL", $"New peer {localPeerId}");
                 };
 
 #if !USE_NATIVEWEBSOCKET
@@ -78,6 +88,9 @@ namespace SimpleWebRTC {
 #endif
                 ws.OnError += (e) => SimpleWebRTCLogger.LogError("Error! " + e);
                 ws.OnClose += (e) => {
+
+                    cts.Cancel();
+
                     SimpleWebRTCLogger.Log("WebSocket connection closed!");
                     IsWebSocketConnected = false;
                     IsWebSocketConnectionInProgress = false;
@@ -117,7 +130,7 @@ namespace SimpleWebRTC {
                     sdpMLineIndex = candidate.SdpMLineIndex ?? 0,
                     candidate = candidate.Candidate
                 };
-                SendWebSocketMessage(SignalingMessageType.CANDIDATE, localPeerId, peerId, candidateInit.ConvertToJSON());
+                EnqueueWebSocketMessage(SignalingMessageType.CANDIDATE, localPeerId, peerId, candidateInit.ConvertToJSON());
             };
 
             peerConnections[peerId].OnIceConnectionChange = state => {
@@ -129,7 +142,7 @@ namespace SimpleWebRTC {
                     OnWebRTCConnection?.Invoke();
 
                     // send completed to other peer of connection too
-                    SendWebSocketMessage(SignalingMessageType.COMPLETE, localPeerId, peerId, $"Peerconnection between {localPeerId} and {peerId} completed.");
+                    EnqueueWebSocketMessage(SignalingMessageType.COMPLETE, localPeerId, peerId, $"Peerconnection between {localPeerId} and {peerId} completed.");
                 }
             };
 
@@ -154,7 +167,7 @@ namespace SimpleWebRTC {
                 SimpleWebRTCLogger.LogDataChannel($"ReceiverDataChannel connection for {peerId} established on {localPeerId}.");
 
                 // peerconnection is now rdy to receive, tell sender side about it and trigger datachannel event
-                SendWebSocketMessage(SignalingMessageType.DATA, localPeerId, peerId, $"ReceiverDataChannel on {localPeerId} for {peerId} established.");
+                EnqueueWebSocketMessage(SignalingMessageType.DATA, localPeerId, peerId, $"ReceiverDataChannel on {localPeerId} for {peerId} established.");
             };
             SimpleWebRTCLogger.LogDataChannel($"ReceiverDataChannel for {peerId} created on {localPeerId}.");
 
@@ -185,7 +198,7 @@ namespace SimpleWebRTC {
             // not needed, because negotiation is done manually
             // rly?
             peerConnections[peerId].OnNegotiationNeeded = () => {
-                if (peerConnections[peerId].SignalingState != RTCSignalingState.Stable) {
+                if (peerConnections.ContainsKey(peerId) && peerConnections[peerId].SignalingState != RTCSignalingState.Stable) {
                     connectionGameObject.StartCoroutine(CreateOffer());
                 }
             };
@@ -215,7 +228,7 @@ namespace SimpleWebRTC {
                     SimpleWebRTCLogger.Log($"NEWPEER: Created new peerconnection {signalingMessage.SenderPeerId} on peer {localPeerId}");
 
                     // send ACK to all clients to reach convergence
-                    SendWebSocketMessage(SignalingMessageType.NEWPEERACK, localPeerId, "ALL", "New peer ACK", peerConnections.Count, isLocalPeerVideoAudioSender);
+                    EnqueueWebSocketMessage(SignalingMessageType.NEWPEERACK, localPeerId, "ALL", "New peer ACK", peerConnections.Count, isLocalPeerVideoAudioSender);
                     break;
                 case SignalingMessageType.NEWPEERACK:
                     if (!peerConnections.ContainsKey(signalingMessage.SenderPeerId)) {
@@ -335,7 +348,7 @@ namespace SimpleWebRTC {
                         type = peerConnection.Value.LocalDescription.type.ToString().ToLower(),
                         sdp = peerConnection.Value.LocalDescription.sdp
                     };
-                    SendWebSocketMessage(SignalingMessageType.OFFER, localPeerId, peerConnection.Key, offerSessionDesc.ConvertToJSON());
+                    EnqueueWebSocketMessage(SignalingMessageType.OFFER, localPeerId, peerConnection.Key, offerSessionDesc.ConvertToJSON());
                 } else {
                     Debug.LogError($"{localPeerId} - Failed create offer for {peerConnection.Key}. {offer.Error.message}");
                 }
@@ -385,7 +398,7 @@ namespace SimpleWebRTC {
                 type = answerDesc.type.ToString().ToLower(),
                 sdp = answerDesc.sdp
             };
-            SendWebSocketMessage(SignalingMessageType.ANSWER, localPeerId, senderPeerId, answerSessionDesc.ConvertToJSON());
+            EnqueueWebSocketMessage(SignalingMessageType.ANSWER, localPeerId, senderPeerId, answerSessionDesc.ConvertToJSON());
         }
 
         private void HandleAnswer(string senderPeerId, string answerJson) {
@@ -442,7 +455,7 @@ namespace SimpleWebRTC {
             }
 
             // remove peer connections for localPeer on other peers
-            SendWebSocketMessage(SignalingMessageType.DISPOSE, localPeerId, "ALL", $"Remove peerConnection for {localPeerId}.");
+            EnqueueWebSocketMessage(SignalingMessageType.DISPOSE, localPeerId, "ALL", $"Remove peerConnection for {localPeerId}.");
 
             peerConnections.Clear();
 
@@ -537,12 +550,35 @@ namespace SimpleWebRTC {
             ws?.SendText(message);
         }
 
-        public void SendWebSocketMessage(SignalingMessageType messageType, string senderPeerId, string receiverPeerId, string message) {
-            SendWebSocketMessage(messageType, senderPeerId, receiverPeerId, message, peerConnections.Count, isLocalPeerVideoAudioSender);
+        //public void SendWebSocketMessage(SignalingMessageType messageType, string senderPeerId, string receiverPeerId, string message) {
+        //    SendWebSocketMessage(messageType, senderPeerId, receiverPeerId, message, peerConnections.Count, isLocalPeerVideoAudioSender);
+        //}
+
+        //public void SendWebSocketMessage(SignalingMessageType messageType, string senderPeerId, string receiverPeerId, string message, int connectionCount, bool isVideoAudioSender) {
+        //    ws?.SendText($"{Enum.GetName(typeof(SignalingMessageType), messageType)}|{senderPeerId}|{receiverPeerId}|{message}|{connectionCount}|{isVideoAudioSender}");
+        //}
+
+        public void EnqueueWebSocketMessage(SignalingMessageType messageType, string senderPeerId, string receiverPeerId, string message) {
+            EnqueueWebSocketMessage(messageType, senderPeerId, receiverPeerId, message, peerConnections.Count, isLocalPeerVideoAudioSender);
         }
 
-        public void SendWebSocketMessage(SignalingMessageType messageType, string senderPeerId, string receiverPeerId, string message, int connectionCount, bool isVideoAudioSender) {
-            ws?.SendText($"{Enum.GetName(typeof(SignalingMessageType), messageType)}|{senderPeerId}|{receiverPeerId}|{message}|{connectionCount}|{isVideoAudioSender}");
+        public void EnqueueWebSocketMessage(SignalingMessageType messageType, string senderPeerId, string receiverPeerId, string message, int connectionCount, bool isVideoAudioSender) {
+            string formattedMessage = $"{Enum.GetName(typeof(SignalingMessageType), messageType)}|{senderPeerId}|{receiverPeerId}|{message}|{connectionCount}|{isVideoAudioSender}";
+            sendQueue.Enqueue(formattedMessage);
+        }
+
+        private async Task SendLoop(CancellationToken token) {
+            while (!token.IsCancellationRequested) {
+                if (sendQueue.TryDequeue(out var msg)) {
+                    try {
+                        ws?.SendText(msg);
+                    } catch (Exception ex) {
+                        Debug.LogError($"[WebSocketSender] Send failed: {ex.Message}");
+                    }
+                } else {
+                    await Task.Delay(10, token); // Avoid busy waiting
+                }
+            }
         }
     }
 }
