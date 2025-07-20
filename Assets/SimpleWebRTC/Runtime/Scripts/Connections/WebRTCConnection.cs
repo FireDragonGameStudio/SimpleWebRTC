@@ -236,16 +236,17 @@ namespace SimpleWebRTC {
                 if (RenderStereo) {
                     // render left and right eye for IPD StereoSeparation
                     StreamingCamera.stereoSeparation = StereoSeparation;
-                    StreamingCamera.RenderToCubemap(cubemapLeftEye, faceMask, Camera.MonoOrStereoscopicEye.Left);
+
+                    // render both eyes for stereo view
                     StreamingCamera.RenderToCubemap(cubemapRightEye, faceMask, Camera.MonoOrStereoscopicEye.Right);
+                    StreamingCamera.RenderToCubemap(cubemapLeftEye, faceMask, Camera.MonoOrStereoscopicEye.Left);
 
                     // convert into equirect rendertexture for streaming
                     cubemapLeftEye.ConvertToEquirect(videoEquirect, Camera.MonoOrStereoscopicEye.Left);
                     cubemapRightEye.ConvertToEquirect(videoEquirect, Camera.MonoOrStereoscopicEye.Right);
+
                 } else {
-                    // render left eye
-                    StreamingCamera.RenderToCubemap(cubemapLeftEye, faceMask, Camera.MonoOrStereoscopicEye.Mono);
-                    // convert into equirect rendertexture for streaming
+                    StreamingCamera.RenderToCubemap(cubemapLeftEye, faceMask, Camera.MonoOrStereoscopicEye.Left);
                     cubemapLeftEye.ConvertToEquirect(videoEquirect, Camera.MonoOrStereoscopicEye.Mono);
                 }
             }
