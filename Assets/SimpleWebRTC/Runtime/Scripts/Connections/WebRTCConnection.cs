@@ -98,8 +98,13 @@ namespace SimpleWebRTC {
 
         private List<GameObject> tempDestroyGameObjectRefs = new List<GameObject>();
 
-        //private string senderPeerId;
-        //private string signalingMessageJson;
+        private bool createOffer;
+        private bool createAnswer;
+        private string answerSenderPeerId, answerJson;
+
+        private bool startWebRTCUpdate;
+        private bool stopWebRTCUpdate;
+        private bool stopAllCoroutines;
 
         private void Awake() {
             SimpleWebRTCLogger.EnableLogging = ShowLogs;
@@ -155,6 +160,15 @@ namespace SimpleWebRTC {
             CreateVideoReceiver();
             CreateAudioReceiver();
             DestroyCachedGameObjects();
+            StartWebRTCUpdate();
+            StopWebRTCUpdate();
+            CreateOffer();
+            CreateAnswer();
+
+            if (stopAllCoroutines) {
+                stopAllCoroutines = false;
+                StopAllCoroutines();
+            }
 
             ConnectClient();
 
@@ -509,24 +523,54 @@ namespace SimpleWebRTC {
             }
         }
 
-        public void StartCoroutineManually(SignalingMessageType signalingMessageType = SignalingMessageType.OTHER, string senderPeerId = "", string signalingMessageJson = "") {
-            if (signalingMessageType == SignalingMessageType.ANSWER) {
-                StartCoroutine(webRTCManager.CreateAnswer(senderPeerId, signalingMessageJson));
-            } else if (signalingMessageType == SignalingMessageType.OFFER) {
+        public void CreateAnswerCoroutine(string senderPeerId, string answerMessageJson) {
+            answerSenderPeerId = senderPeerId;
+            answerJson = answerMessageJson;
+            createAnswer = true;
+        }
+
+        private void CreateAnswer() {
+            if (createAnswer) {
+                createAnswer = false;
+                StartCoroutine(webRTCManager.CreateAnswer(answerSenderPeerId, answerJson));
+            }
+        }
+
+        public void CreateOfferCoroutine() {
+            createOffer = true;
+        }
+
+        private void CreateOffer() {
+            if (createOffer) {
+                createOffer = false;
                 StartCoroutine(webRTCManager.CreateOffer());
-            } else {
+            }
+        }
+
+        private void StartWebRTCUpdate() {
+            if (startWebRTCUpdate) {
+                startWebRTCUpdate = false;
                 StartCoroutine(WebRTC.Update());
             }
         }
 
-        public void StopCoroutineManually(SignalingMessageType signalingMessageType = SignalingMessageType.OTHER) {
-            if (signalingMessageType == SignalingMessageType.OTHER) {
+        private void StopWebRTCUpdate() {
+            if (stopWebRTCUpdate) {
+                stopWebRTCUpdate = false;
                 StopCoroutine(WebRTC.Update());
             }
         }
 
+        public void StartWebRTUpdateCoroutine() {
+            startWebRTCUpdate = true;
+        }
+
+        public void StopWebRTCUpdateCoroutine() {
+            stopWebRTCUpdate = true;
+        }
+
         public void StopAllCoroutinesManually() {
-            StopAllCoroutines();
+            stopAllCoroutines = true;
         }
     }
 }
