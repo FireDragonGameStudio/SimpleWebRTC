@@ -287,14 +287,14 @@ namespace SimpleWebRTC {
                             videoTrackSenders.Remove(signalingMessage.SenderPeerId);
                         }
                         if (VideoReceivers.ContainsKey(signalingMessage.SenderPeerId)) {
-                            connectionGameObject.DestroyVideoReceiverGameObject(signalingMessage.SenderPeerId);
+                            connectionGameObject.DestroyVideoReceiverGameObject(signalingMessage.SenderPeerId, true);
                         }
 
                         if (audioTrackSenders.ContainsKey(signalingMessage.SenderPeerId)) {
                             audioTrackSenders.Remove(signalingMessage.SenderPeerId);
                         }
                         if (AudioReceivers.ContainsKey(signalingMessage.SenderPeerId)) {
-                            connectionGameObject.DestroyAudioReceiverGameObject(signalingMessage.SenderPeerId);
+                            connectionGameObject.DestroyAudioReceiverGameObject(signalingMessage.SenderPeerId, true);
                         }
 
                         SimpleWebRTCLogger.Log($"DISPOSE: Peerconnection for {signalingMessage.SenderPeerId} removed on peer {localPeerId}");
@@ -474,14 +474,14 @@ namespace SimpleWebRTC {
             receiverDataChannels.Clear();
 
             videoTrackSenders.Clear();
-            foreach (var videoReceiver in VideoReceivers) {
-                connectionGameObject.DestroyVideoReceiverGameObject(videoReceiver.Key);
+            foreach (var videoReceiverKey in VideoReceivers.Keys) {
+                connectionGameObject.DestroyVideoReceiverGameObject(videoReceiverKey);
             }
             VideoReceivers.Clear();
 
             audioTrackSenders.Clear();
-            foreach (var audioReceiver in AudioReceivers) {
-                connectionGameObject.DestroyAudioReceiverGameObject(audioReceiver.Key);
+            foreach (var audioReceiverKey in AudioReceivers.Keys) {
+                connectionGameObject.DestroyAudioReceiverGameObject(audioReceiverKey);
             }
             AudioReceivers.Clear();
         }

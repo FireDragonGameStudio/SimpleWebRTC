@@ -503,14 +503,18 @@ namespace SimpleWebRTC {
             }
         }
 
-        public void DestroyVideoReceiverGameObject(string senderPeerId) {
+        public void DestroyVideoReceiverGameObject(string senderPeerId, bool removeFromReceivers = false) {
             tempDestroyGameObjectRefs.Add(webRTCManager.VideoReceivers[senderPeerId].gameObject);
-            webRTCManager.VideoReceivers.Remove(senderPeerId);
+            if (removeFromReceivers) {
+                webRTCManager.VideoReceivers.Remove(senderPeerId);
+            }
         }
 
-        public void DestroyAudioReceiverGameObject(string senderPeerId) {
+        public void DestroyAudioReceiverGameObject(string senderPeerId, bool removeFromReceivers = false) {
             tempDestroyGameObjectRefs.Add(webRTCManager.AudioReceivers[senderPeerId].gameObject);
-            webRTCManager.AudioReceivers.Remove(senderPeerId);
+            if (removeFromReceivers) {
+                webRTCManager.AudioReceivers.Remove(senderPeerId);
+            }
         }
 
         private void DestroyCachedGameObjects() {
