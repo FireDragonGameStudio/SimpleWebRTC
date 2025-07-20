@@ -474,14 +474,14 @@ namespace SimpleWebRTC {
             receiverDataChannels.Clear();
 
             videoTrackSenders.Clear();
-            foreach (var videoReceiverKey in VideoReceivers.Keys) {
-                connectionGameObject.DestroyVideoReceiverGameObject(videoReceiverKey);
+            foreach (var videoReceiver in VideoReceivers) {
+                connectionGameObject.DestroyVideoReceiverGameObject(videoReceiver.Key);
             }
             VideoReceivers.Clear();
 
             audioTrackSenders.Clear();
-            foreach (var audioReceiverKey in AudioReceivers.Keys) {
-                connectionGameObject.DestroyAudioReceiverGameObject(audioReceiverKey);
+            foreach (var audioReceiver in AudioReceivers) {
+                connectionGameObject.DestroyAudioReceiverGameObject(audioReceiver.Key);
             }
             AudioReceivers.Clear();
         }
