@@ -4249,7 +4249,7 @@ MonoBehaviour:
   ShowLogs: 1
   ShowDataChannelLogs: 1
   UseImmersiveSetup: 1
-  RenderStereo: 1
+  RenderStereo: 0
   StereoSeparation: 0.064
   OneEyeRenderWidth: 2048
   OneEyeRenderHeight: 2048
