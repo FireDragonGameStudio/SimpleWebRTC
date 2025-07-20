@@ -206,12 +206,18 @@ namespace SimpleWebRTC {
 
 #if !USE_NATIVEWEBSOCKET
         private void HandleMessage(byte[] bytes, int offset, int length) {
-            HandleMessage(bytes);
+            HandleMessageInternal(bytes, offset, length);
+        }
+#else 
+        private void HandleMessage(byte[] bytes) {
+            HandleMessageInternal(bytes);
         }
 #endif
 
-        private void HandleMessage(byte[] bytes) {
-            var data = Encoding.UTF8.GetString(bytes);
+        private void HandleMessageInternal(byte[] bytes, int offset = 0, int length = 0) {
+            if (length == 0) length = bytes.Length - offset; // fallback if length is not specified
+            var data = Encoding.UTF8.GetString(bytes, offset, length);
+
             SimpleWebRTCLogger.Log($"Received WebSocket message: {data}");
 
             var signalingMessage = new SignalingMessage(data);
