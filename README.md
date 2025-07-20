@@ -7,6 +7,7 @@ SimpleWebRTC is a Unity-based WebRTC wrapper that facilitates peer-to-peer audio
 - WebRTC peer-to-peer connection management
 - WebSocket-based signaling
 - Video and audio streaming
+- Immersive video streaming (360° monoscopic or stereo over-under)
 - Data channel communication
 - Logging and debugging tools
 - Usage with Photon Fusion 2
@@ -36,11 +37,10 @@ A tutorial YouTube video can be found here: [https://www.youtube.com/watch?v=-Cw
 
 ## Installation using Unity Package Manager with preinstalled Meta Voice SDK package
 1. Create a new Unity project
-2. The Meta Voice SDK already has the NativeWebSocket package integrated, so there is no need to install it manually.
-3. Add the scripting define symbol **USE_META_NATIVEWEBSOCKET** manually in the Player Settings/Other Settings/Scripting Define Symbols. This tells SimpleWebRTC to use the NativeWebSocket package provided by Meta.
-4. Open the Package Manager, click on the + sign in the upper left/right corner
-5. Select "Add package from git URL"
-6. Enter URL `https://github.com/FireDragonGameStudio/SimpleWebRTC.git?path=/Assets/SimpleWebRTC` and click on Install
+2. The Meta Voice SDK already has the NativeWebSocket package integrated, so there is no need to install it manually. SimpleWebRTC will automatically try to use the NativeWebSocket package provided by Meta.
+3. Open the Package Manager, click on the + sign in the upper left/right corner
+4. Select "Add package from git URL"
+5. Enter URL `https://github.com/FireDragonGameStudio/SimpleWebRTC.git?path=/Assets/SimpleWebRTC` and click on Install
 
 ## Manual Installation
 1. Clone the repository:
@@ -125,13 +125,15 @@ The `WebRTCConnection` component includes several configurable parameters:
 Modify these values in the Unity Inspector or directly in the script.
 
 ## Example
-Following sample scenes are included in the pacakge:
+Following sample scenes are included in the package (available at Samples tab in package manager):
 * *WebSocket-TestConnection*: For testing the wecksocket connection separately.
 * *WebRTC-SingleClient-STUNConnection*: Testing STUN connection for a single client. Works standalone and can be deployed to clients. Make sure to set the `LocalPeerId` for each client individually.
 * *WebRTC-SingleClient-wLobby-STUNConnection*: A simple Lobby example for handling multiple STUN WebRTC clients. `SimpleLobbyManager.cs` shows an example, how to use **SimpleWebRTC** via C#.
 * *WebRTC-MultipleClients-STUNConnection*: Shows how multiple clients can be connected via peer-to-peer connections and share data, video and audio transmissions.
 * *WebRTC-SingleClient-STUNConnection-PhotonFusion*: Testing STUN connection for a single client using Photon Fusion 2 as signaling server. Works standalone and can be deployed to clients. Make sure to set the `LocalPeerId` for each client individually.
 * *WebRTC-SingleClient-STUNConnection-VisualScripting*: Using Unity Visual Scripting with SimpleWebRTC. Works with all SimpleWebRTC features and can be deployed to clients.
+* *WebRTC-SingleClient-STUNConnection-ImmersiveSpectator-Sender*: A simple example for a possible video sender, which can be every 3D application.
+* *WebRTC-SingleClient-STUNConnection-ImmersiveSpectator-Receiver*: The receiver sample for the video sender. This will most likely targeted at an XR device.
 
 ## Example code
 ```csharp

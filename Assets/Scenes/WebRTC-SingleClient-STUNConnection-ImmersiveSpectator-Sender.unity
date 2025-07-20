@@ -4251,8 +4251,8 @@ MonoBehaviour:
   UseImmersiveSetup: 1
   RenderStereo: 1
   StereoSeparation: 0.064
-  OneEyeRenderWidth: 512
-  OneEyeRenderHeight: 512
+  OneEyeRenderWidth: 1024
+  OneEyeRenderHeight: 1024
   RTDepth: 16
   OneFacePerFrame: 1
   receivingRenderTexture: {fileID: 0}
