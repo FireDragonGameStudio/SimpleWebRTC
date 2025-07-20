@@ -1,4 +1,4 @@
-#if USE_META_NATIVEWEBSOCKET
+#if !USE_NATIVEWEBSOCKET
 using Meta.Net.NativeWebSocket;
 #else
 using NativeWebSocket;
@@ -34,7 +34,7 @@ namespace SimpleWebRTC {
                 Debug.Log("Connection closed!");
             };
 
-#if USE_META_NATIVEWEBSOCKET
+#if !USE_NATIVEWEBSOCKET
             webSocket.OnMessage += (data, offset, length) => {
                 Debug.Log("OnMessage!");
                 Debug.Log(data);
@@ -62,7 +62,7 @@ namespace SimpleWebRTC {
         }
 
         void Update() {
-#if !USE_META_NATIVEWEBSOCKET && (!UNITY_WEBGL || UNITY_EDITOR)
+#if USE_NATIVEWEBSOCKET && (!UNITY_WEBGL || UNITY_EDITOR)
             webSocket.DispatchMessageQueue();
 #endif
         }

@@ -828,7 +828,7 @@ PlayerSettings:
   webEnableSubmoduleStrippingCompatibility: 0
   scriptingDefineSymbols:
     Android: VISUAL_SCRIPTING_INSTALLED;USE_NATIVEWEBSOCKET
-    Standalone: VISUAL_SCRIPTING_INSTALLED;USE_NATIVEWEBSOCKET
+    Standalone: VISUAL_SCRIPTING_INSTALLED
     iPhone: VISUAL_SCRIPTING_INSTALLED;USE_NATIVEWEBSOCKET
   additionalCompilerArguments: {}
   platformArchitecture: {}

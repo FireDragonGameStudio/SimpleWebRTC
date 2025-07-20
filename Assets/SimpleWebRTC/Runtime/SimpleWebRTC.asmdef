@@ -20,6 +20,12 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.endel.nativewebsocket",
+            "expression": "1.1.4",
+            "define": "USE_NATIVEWEBSOCKET"
+        }
+    ],
     "noEngineReferences": false
 }

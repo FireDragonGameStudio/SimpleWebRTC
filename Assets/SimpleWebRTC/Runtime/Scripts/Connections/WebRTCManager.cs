@@ -1,4 +1,4 @@
-#if USE_META_NATIVEWEBSOCKET
+#if !USE_NATIVEWEBSOCKET
 using Meta.Net.NativeWebSocket;
 #else
 using NativeWebSocket;
@@ -71,7 +71,7 @@ namespace SimpleWebRTC {
                     SendWebSocketMessage(SignalingMessageType.NEWPEER, localPeerId, "ALL", $"New peer {localPeerId}");
                 };
 
-#if USE_META_NATIVEWEBSOCKET
+#if !USE_NATIVEWEBSOCKET
                 ws.OnMessage += HandleMessage;
 #else
                 ws.OnMessage += HandleMessage;
@@ -191,7 +191,7 @@ namespace SimpleWebRTC {
             };
         }
 
-#if USE_META_NATIVEWEBSOCKET
+#if !USE_NATIVEWEBSOCKET
         private void HandleMessage(byte[] bytes, int offset, int length) {
             HandleMessage(bytes);
         }
@@ -492,7 +492,7 @@ namespace SimpleWebRTC {
             connectionGameObject.StartCoroutine(CreateOffer());
         }
 
-#if !USE_META_NATIVEWEBSOCKET && (!UNITY_WEBGL || UNITY_EDITOR)
+#if USE_NATIVEWEBSOCKET && (!UNITY_WEBGL || UNITY_EDITOR)
         public void DispatchMessageQueue() {
             ws?.DispatchMessageQueue();
         }

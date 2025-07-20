@@ -1,4 +1,4 @@
-#if USE_META_NATIVEWEBSOCKET
+#if !USE_NATIVEWEBSOCKET
 using Meta.Net.NativeWebSocket;
 #else
 using NativeWebSocket;
@@ -132,7 +132,7 @@ namespace SimpleWebRTC {
 
         private void Update() {
 
-#if !USE_META_NATIVEWEBSOCKET && (!UNITY_WEBGL || UNITY_EDITOR)
+#if USE_NATIVEWEBSOCKET && (!UNITY_WEBGL || UNITY_EDITOR)
             webRTCManager.DispatchMessageQueue();
 #endif
 

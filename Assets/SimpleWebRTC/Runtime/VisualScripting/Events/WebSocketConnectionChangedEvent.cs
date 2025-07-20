@@ -1,5 +1,5 @@
 #if VISUAL_SCRIPTING_INSTALLED
-#if USE_META_NATIVEWEBSOCKET
+#if !USE_NATIVEWEBSOCKET
 using Meta.Net.NativeWebSocket;
 #else
 using NativeWebSocket;
