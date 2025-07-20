@@ -4249,10 +4249,10 @@ MonoBehaviour:
   ShowLogs: 1
   ShowDataChannelLogs: 1
   UseImmersiveSetup: 1
-  RenderStereo: 0
+  RenderStereo: 1
   StereoSeparation: 0.064
-  OneEyeRenderWidth: 2048
-  OneEyeRenderHeight: 2048
+  OneEyeRenderWidth: 1024
+  OneEyeRenderHeight: 1024
   RTDepth: 16
   OneFacePerFrame: 1
   receivingRenderTexture: {fileID: 0}
