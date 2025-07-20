@@ -26,6 +26,9 @@ namespace SimpleWebRTC {
         public bool IsWebSocketConnectionInProgress { get; private set; }
         public Texture ImmersiveVideoTexture { get; private set; }
 
+        public Dictionary<string, RawImage> VideoReceivers = new Dictionary<string, RawImage>();
+        public Dictionary<string, AudioSource> AudioReceivers = new Dictionary<string, AudioSource>();
+
         private WebSocket ws;
         private bool isLocalPeerVideoAudioSender;
         private bool isLocalPeerVideoAudioReceiver;
@@ -35,9 +38,6 @@ namespace SimpleWebRTC {
         private readonly Dictionary<string, RTCDataChannel> receiverDataChannels = new Dictionary<string, RTCDataChannel>();
         private readonly Dictionary<string, RTCRtpSender> videoTrackSenders = new Dictionary<string, RTCRtpSender>();
         private readonly Dictionary<string, RTCRtpSender> audioTrackSenders = new Dictionary<string, RTCRtpSender>();
-
-        private readonly Dictionary<string, RawImage> videoReceivers = new Dictionary<string, RawImage>();
-        private readonly Dictionary<string, AudioSource> audioReceivers = new Dictionary<string, AudioSource>();
 
         private readonly string localPeerId;
         private readonly string stunServerAddress;
@@ -165,7 +165,7 @@ namespace SimpleWebRTC {
                     if (connectionGameObject.IsImmersiveSetupActive) {
                         video.OnVideoReceived += tex => ImmersiveVideoTexture = tex;
                     } else {
-                        video.OnVideoReceived += tex => videoReceivers[peerId].texture = tex;
+                        video.OnVideoReceived += tex => VideoReceivers[peerId].texture = tex;
                     }
 
                     SimpleWebRTCLogger.Log("Receiving video stream.");
@@ -173,7 +173,7 @@ namespace SimpleWebRTC {
                 if (e.Track is AudioStreamTrack audio) {
                     OnAudioStreamEstablished?.Invoke();
 
-                    var audioReceiver = audioReceivers[peerId];
+                    var audioReceiver = AudioReceivers[peerId];
                     audioReceiver.SetTrack(audio);
                     audioReceiver.loop = true;
                     audioReceiver.Play();
@@ -264,17 +264,15 @@ namespace SimpleWebRTC {
                         if (videoTrackSenders.ContainsKey(signalingMessage.SenderPeerId)) {
                             videoTrackSenders.Remove(signalingMessage.SenderPeerId);
                         }
-                        if (videoReceivers.ContainsKey(signalingMessage.SenderPeerId)) {
-                            GameObject.Destroy(videoReceivers[signalingMessage.SenderPeerId].gameObject);
-                            videoReceivers.Remove(signalingMessage.SenderPeerId);
+                        if (VideoReceivers.ContainsKey(signalingMessage.SenderPeerId)) {
+                            connectionGameObject.DestroyVideoReceiverGameObject(signalingMessage.SenderPeerId);
                         }
 
                         if (audioTrackSenders.ContainsKey(signalingMessage.SenderPeerId)) {
                             audioTrackSenders.Remove(signalingMessage.SenderPeerId);
                         }
-                        if (audioReceivers.ContainsKey(signalingMessage.SenderPeerId)) {
-                            GameObject.Destroy(audioReceivers[signalingMessage.SenderPeerId].gameObject);
-                            audioReceivers.Remove(signalingMessage.SenderPeerId);
+                        if (AudioReceivers.ContainsKey(signalingMessage.SenderPeerId)) {
+                            connectionGameObject.DestroyAudioReceiverGameObject(signalingMessage.SenderPeerId);
                         }
 
                         SimpleWebRTCLogger.Log($"DISPOSE: Peerconnection for {signalingMessage.SenderPeerId} removed on peer {localPeerId}");
@@ -302,22 +300,11 @@ namespace SimpleWebRTC {
         private void CreateNewPeerVideoAudioReceivingResources(string senderPeerId) {
             if (!connectionGameObject.IsImmersiveSetupActive) {
                 // create new video receiver gameobject
-                var receivingRawImage = new GameObject().AddComponent<RawImage>();
-                receivingRawImage.name = $"{senderPeerId}-Receiving-RawImage";
-                receivingRawImage.rectTransform.SetParent(connectionGameObject.ReceivingRawImagesParent, false);
-                receivingRawImage.rectTransform.localScale = Vector3.one;
-                receivingRawImage.rectTransform.anchorMin = Vector2.zero;
-                receivingRawImage.rectTransform.anchorMax = Vector2.one;
-                receivingRawImage.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-                receivingRawImage.rectTransform.sizeDelta = Vector2.zero;
-                videoReceivers[senderPeerId] = receivingRawImage;
+                connectionGameObject.CreateVideoReceiverGameObject(senderPeerId);
             }
 
             // create new audio receiver gameobject
-            var receivingAudioSource = new GameObject().AddComponent<AudioSource>();
-            receivingAudioSource.name = $"{senderPeerId}-Receiving-AudioSource";
-            receivingAudioSource.transform.SetParent(connectionGameObject.ReceivingAudioSourceParent);
-            audioReceivers[senderPeerId] = receivingAudioSource;
+            connectionGameObject.CreateAudioReceiverGameObject(senderPeerId);
 
             // refresh layout group for proper display - not needed i guess
             //var parentGroupLayout = connectionGameObject.ReceivingRawImagesParent.GetComponent<LayoutGroup>();
@@ -463,20 +450,16 @@ namespace SimpleWebRTC {
             receiverDataChannels.Clear();
 
             videoTrackSenders.Clear();
-            foreach (var videoReceiver in videoReceivers) {
-                if (videoReceiver.Value != null) {
-                    GameObject.Destroy(videoReceiver.Value.gameObject);
-                }
+            foreach (var videoReceiverKey in VideoReceivers.Keys) {
+                connectionGameObject.DestroyVideoReceiverGameObject(videoReceiverKey);
             }
-            videoReceivers.Clear();
+            VideoReceivers.Clear();
 
             audioTrackSenders.Clear();
-            foreach (var audioReceiver in audioReceivers) {
-                if (audioReceiver.Value != null) {
-                    GameObject.Destroy(audioReceiver.Value.gameObject);
-                }
+            foreach (var audioReceiverKey in AudioReceivers.Keys) {
+                connectionGameObject.DestroyAudioReceiverGameObject(audioReceiverKey);
             }
-            audioReceivers.Clear();
+            AudioReceivers.Clear();
         }
 
         public async void CloseWebSocket() {

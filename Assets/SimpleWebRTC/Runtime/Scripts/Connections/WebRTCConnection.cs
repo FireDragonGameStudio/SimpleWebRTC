@@ -4,6 +4,7 @@ using Meta.Net.NativeWebSocket;
 using NativeWebSocket;
 #endif
 using System.Collections;
+using System.Collections.Generic;
 using Unity.WebRTC;
 using UnityEngine;
 using UnityEngine.Events;
@@ -69,13 +70,13 @@ namespace SimpleWebRTC {
         [SerializeField] private Vector2Int VideoResolution = new Vector2Int(1280, 720);
         [SerializeField] private Camera StreamingCamera;
         public RawImage OptionalPreviewRawImage;
-        public RectTransform ReceivingRawImagesParent;
+        [SerializeField] private RectTransform ReceivingRawImagesParent;
         public UnityEvent VideoTransmissionReceived;
 
         [Header("Audio Transmission")]
         [SerializeField] private bool StartStopAudioTransmission = false;
         [SerializeField] private AudioSource StreamingAudioSource;
-        public Transform ReceivingAudioSourceParent;
+        [SerializeField] private Transform ReceivingAudioSourceParent;
         public UnityEvent AudioTransmissionReceived;
 
         private WebRTCManager webRTCManager;
@@ -88,6 +89,14 @@ namespace SimpleWebRTC {
 
         private int faceToRender;
         private int faceMask = 63;
+
+        // handle creation and destruction parts on monobehaviour
+        private bool createVideoReceiver;
+        private string videoReceiverSenderPeerId;
+        private bool createAudioReceiver;
+        private string audioReceiverSenderPeerId;
+
+        private List<GameObject> tempDestroyGameObjectRefs = new List<GameObject>();
 
         private void Awake() {
             SimpleWebRTCLogger.EnableLogging = ShowLogs;
@@ -139,6 +148,10 @@ namespace SimpleWebRTC {
             if (SimpleWebRTCLogger.EnableLogging != ShowLogs) {
                 SimpleWebRTCLogger.EnableLogging = ShowLogs;
             }
+
+            CreateVideoReceiver();
+            CreateAudioReceiver();
+            DestroyCachedGameObjects();
 
             ConnectClient();
 
@@ -434,6 +447,63 @@ namespace SimpleWebRTC {
 
             StartStopAudioTransmission = false;
             IsAudioTransmissionActive = false;
+        }
+
+        public void CreateVideoReceiverGameObject(string senderPeerId) {
+            videoReceiverSenderPeerId = senderPeerId;
+            createVideoReceiver = true;
+        }
+
+        private void CreateVideoReceiver() {
+            if (createVideoReceiver) {
+                createVideoReceiver = false;
+
+                // create new video receiver gameobject
+                var receivingRawImage = new GameObject().AddComponent<RawImage>();
+                receivingRawImage.name = $"{videoReceiverSenderPeerId}-Receiving-RawImage";
+                receivingRawImage.rectTransform.SetParent(ReceivingRawImagesParent, false);
+                receivingRawImage.rectTransform.localScale = Vector3.one;
+                receivingRawImage.rectTransform.anchorMin = Vector2.zero;
+                receivingRawImage.rectTransform.anchorMax = Vector2.one;
+                receivingRawImage.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+                receivingRawImage.rectTransform.sizeDelta = Vector2.zero;
+                webRTCManager.VideoReceivers[videoReceiverSenderPeerId] = receivingRawImage;
+            }
+        }
+
+        public void CreateAudioReceiverGameObject(string senderPeerId) {
+            audioReceiverSenderPeerId = senderPeerId;
+            createAudioReceiver = true;
+        }
+
+        private void CreateAudioReceiver() {
+            if (createAudioReceiver) {
+                createAudioReceiver = false;
+                var receivingAudioSource = new GameObject().AddComponent<AudioSource>();
+                receivingAudioSource.name = $"{audioReceiverSenderPeerId}-Receiving-AudioSource";
+                receivingAudioSource.transform.SetParent(ReceivingAudioSourceParent);
+                webRTCManager.AudioReceivers[audioReceiverSenderPeerId] = receivingAudioSource;
+            }
+        }
+
+        public void DestroyVideoReceiverGameObject(string senderPeerId) {
+            tempDestroyGameObjectRefs.Add(webRTCManager.VideoReceivers[senderPeerId].gameObject);
+            webRTCManager.VideoReceivers.Remove(senderPeerId);
+        }
+
+        public void DestroyAudioReceiverGameObject(string senderPeerId) {
+            tempDestroyGameObjectRefs.Add(webRTCManager.AudioReceivers[senderPeerId].gameObject);
+            webRTCManager.AudioReceivers.Remove(senderPeerId);
+        }
+
+        private void DestroyCachedGameObjects() {
+            if (tempDestroyGameObjectRefs.Count > 0) {
+                foreach (var cachedGameObject in tempDestroyGameObjectRefs) {
+                    if (cachedGameObject != null) {
+                        Destroy(cachedGameObject);
+                    }
+                }
+            }
         }
     }
 }
