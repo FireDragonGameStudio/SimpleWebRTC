@@ -98,6 +98,9 @@ namespace SimpleWebRTC {
 
         private List<GameObject> tempDestroyGameObjectRefs = new List<GameObject>();
 
+        //private string senderPeerId;
+        //private string signalingMessageJson;
+
         private void Awake() {
             SimpleWebRTCLogger.EnableLogging = ShowLogs;
             SimpleWebRTCLogger.EnableDataChannelLogging = ShowDataChannelLogs;
@@ -504,6 +507,26 @@ namespace SimpleWebRTC {
                     }
                 }
             }
+        }
+
+        public void StartCoroutineManually(SignalingMessageType signalingMessageType = SignalingMessageType.OTHER, string senderPeerId = "", string signalingMessageJson = "") {
+            if (signalingMessageType == SignalingMessageType.ANSWER) {
+                StartCoroutine(webRTCManager.CreateAnswer(senderPeerId, signalingMessageJson));
+            } else if (signalingMessageType == SignalingMessageType.OFFER) {
+                StartCoroutine(webRTCManager.CreateOffer());
+            } else {
+                StartCoroutine(WebRTC.Update());
+            }
+        }
+
+        public void StopCoroutineManually(SignalingMessageType signalingMessageType = SignalingMessageType.OTHER) {
+            if (signalingMessageType == SignalingMessageType.OTHER) {
+                StopCoroutine(WebRTC.Update());
+            }
+        }
+
+        public void StopAllCoroutinesManually() {
+            StopAllCoroutines();
         }
     }
 }

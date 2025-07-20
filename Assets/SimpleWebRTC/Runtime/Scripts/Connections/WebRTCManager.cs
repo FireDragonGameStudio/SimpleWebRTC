@@ -99,8 +99,10 @@ namespace SimpleWebRTC {
             }
 
             // important for video transmission, to restart webrtc update coroutine
-            connectionGameObject.StopCoroutine(WebRTC.Update());
-            connectionGameObject.StartCoroutine(WebRTC.Update());
+            //connectionGameObject.StopCoroutine(WebRTC.Update());
+            connectionGameObject.StopCoroutineManually();
+            //connectionGameObject.StartCoroutine(WebRTC.Update());
+            connectionGameObject.StartCoroutineManually();
 
             await ws.Connect();
         }
@@ -199,7 +201,8 @@ namespace SimpleWebRTC {
             // rly?
             peerConnections[peerId].OnNegotiationNeeded = () => {
                 if (peerConnections.ContainsKey(peerId) && peerConnections[peerId].SignalingState != RTCSignalingState.Stable) {
-                    connectionGameObject.StartCoroutine(CreateOffer());
+                    //connectionGameObject.StartCoroutine(CreateOffer());
+                    connectionGameObject.StartCoroutineManually(SignalingMessageType.OFFER);
                 }
             };
         }
@@ -330,7 +333,7 @@ namespace SimpleWebRTC {
             //LayoutRebuilder.ForceRebuildLayoutImmediate(parentGroupLayout.GetComponent<RectTransform>());
         }
 
-        private IEnumerator CreateOffer() {
+        public IEnumerator CreateOffer() {
             foreach (var peerConnection in peerConnections) {
 
                 // enforce unified codec profiles
@@ -363,10 +366,11 @@ namespace SimpleWebRTC {
 
         private void HandleOffer(string senderPeerId, string offerJson) {
             SimpleWebRTCLogger.Log($"{localPeerId} got OFFER from {senderPeerId} : {offerJson}");
-            connectionGameObject.StartCoroutine(CreateAnswer(senderPeerId, offerJson));
+            //connectionGameObject.StartCoroutine(CreateAnswer(senderPeerId, offerJson));
+            connectionGameObject.StartCoroutineManually(SignalingMessageType.ANSWER, senderPeerId, offerJson);
         }
 
-        private IEnumerator CreateAnswer(string senderPeerId, string offerJson) {
+        public IEnumerator CreateAnswer(string senderPeerId, string offerJson) {
 
             var receivedOfferSessionDesc = SessionDescription.FromJSON(offerJson);
 
@@ -440,7 +444,8 @@ namespace SimpleWebRTC {
         }
 
         public void CloseWebRTC() {
-            connectionGameObject.StopAllCoroutines();
+            //connectionGameObject.StopAllCoroutines();
+            connectionGameObject.StopAllCoroutinesManually();
 
             foreach (var senderDataChannel in senderDataChannels) {
                 senderDataChannel.Value.Close();
@@ -491,7 +496,8 @@ namespace SimpleWebRTC {
         }
 
         public void InstantiateWebRTC() {
-            connectionGameObject.StartCoroutine(CreateOffer());
+            //connectionGameObject.StartCoroutine(CreateOffer());
+            connectionGameObject.StartCoroutineManually(SignalingMessageType.OFFER);
         }
 
 #if USE_NATIVEWEBSOCKET && (!UNITY_WEBGL || UNITY_EDITOR)
@@ -520,7 +526,8 @@ namespace SimpleWebRTC {
             foreach (var peerConnection in peerConnections) {
                 videoTrackSenders.Add(peerConnection.Key, peerConnection.Value.AddTrack(videoStreamTrack));
             }
-            connectionGameObject.StartCoroutine(CreateOffer());
+            //connectionGameObject.StartCoroutine(CreateOffer());
+            connectionGameObject.StartCoroutineManually(SignalingMessageType.OFFER);
         }
 
         public void RemoveVideoTrack() {
@@ -540,7 +547,8 @@ namespace SimpleWebRTC {
             foreach (var peerConnection in peerConnections) {
                 audioTrackSenders.Add(peerConnection.Key, peerConnection.Value.AddTrack(audioStreamTrack));
             }
-            connectionGameObject.StartCoroutine(CreateOffer());
+            //connectionGameObject.StartCoroutine(CreateOffer());
+            connectionGameObject.StartCoroutineManually(SignalingMessageType.OFFER);
         }
 
         public void RemoveAudioTrack() {
