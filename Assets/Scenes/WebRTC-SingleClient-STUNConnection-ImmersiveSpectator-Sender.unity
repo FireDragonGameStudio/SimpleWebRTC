@@ -4249,9 +4249,9 @@ MonoBehaviour:
   ShowLogs: 1
   ShowDataChannelLogs: 1
   UseImmersiveSetup: 1
-  RenderStereo: 1
+  RenderStereo: 0
   StereoSeparation: 0.064
-  OneEyeRenderSide: 1024
+  OneEyeRenderSide: 2048
   RTDepth: 16
   OneFacePerFrame: 1
   receivingRenderTexture: {fileID: 0}
