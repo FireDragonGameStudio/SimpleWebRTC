@@ -27,6 +27,8 @@ namespace SimpleWebRTC {
         public Camera VideoStreamingCamera => StreamingCamera;
         public bool IsSender => IsVideoAudioSender;
         public bool IsReceiver => IsVideoAudioReceiver;
+        public bool ExperimentalSupportFor6DOF => experimentalSupportFor6DOF;
+        public Transform ExperimentalSpectatorCam6DOF => experimentalSpectatorCam6DOF;
 
         [Header("Connection Setup")]
         [SerializeField] private string WebSocketServerAddress = "wss://unity-webrtc-signaling.glitch.me";
@@ -41,6 +43,8 @@ namespace SimpleWebRTC {
 
         [Header("Immersive Setup")]
         [SerializeField] private bool UseImmersiveSetup = false;
+        [SerializeField] private bool experimentalSupportFor6DOF = false;
+        [SerializeField] private Transform experimentalSpectatorCam6DOF;
         [Header("Immersive Sender")]
         [SerializeField] private bool RenderStereo = false;
         [SerializeField] private float StereoSeparation = 0.064f;

@@ -3266,6 +3266,8 @@ MonoBehaviour:
   - {fileID: 899997393}
   - {fileID: 1269449386}
   - {fileID: 1385173107}
+  enableSendingPosition: 0
+  sendingIntervalInSeconds: 0.1
 --- !u!114 &1988037981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4249,6 +4251,8 @@ MonoBehaviour:
   ShowLogs: 1
   ShowDataChannelLogs: 1
   UseImmersiveSetup: 1
+  experimentalSupportFor6DOF: 1
+  experimentalSpectatorCam6DOF: {fileID: 0}
   RenderStereo: 0
   StereoSeparation: 0.064
   OneEyeRenderSide: 2048
