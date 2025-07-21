@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: a02236bb7cf20bb40b879d3947d85109, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 93a544ab9f32b5046a5bd5b5eecabb49, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -885,7 +885,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2846,13 +2846,14 @@ MonoBehaviour:
   ShowLogs: 1
   ShowDataChannelLogs: 1
   UseImmersiveSetup: 1
+  experimentalSupportFor6DOF: 1
+  experimentalSpectatorCam6DOF: {fileID: 330585546}
   RenderStereo: 0
   StereoSeparation: 0.064
-  OneEyeRenderWidth: 512
-  OneEyeRenderHeight: 512
+  OneEyeRenderSide: 1024
   RTDepth: 16
   OneFacePerFrame: 0
-  receivingRenderTexture: {fileID: 8400000, guid: a1131e7a31b548544b7f62a6eec674bc, type: 2}
+  receivingRenderTexture: {fileID: 8400000, guid: 8b603ea1c4cec0344814c312420394d4, type: 2}
   WebSocketConnectionActive: 0
   SendWebSocketTestMessage: 0
   WebSocketConnectionChanged:
@@ -3994,6 +3995,8 @@ MonoBehaviour:
   manualPositionSwitch: 0
   webRTCPositionSwitch: 0
   cameraParentObjects: []
+  enableSendingPosition: 1
+  sendingIntervalInSeconds: 0.1
 --- !u!114 &1988037981
 MonoBehaviour:
   m_ObjectHideFlags: 0
