@@ -1,4 +1,8 @@
+#if !USE_NATIVEWEBSOCKET
+using Meta.Net.NativeWebSocket;
+#else
 using NativeWebSocket;
+#endif
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,6 +34,16 @@ namespace SimpleWebRTC {
                 Debug.Log("Connection closed!");
             };
 
+#if !USE_NATIVEWEBSOCKET
+            webSocket.OnMessage += (data, offset, length) => {
+                Debug.Log("OnMessage!");
+                Debug.Log(data);
+
+                // getting the message as a string
+                // var message = System.Text.Encoding.UTF8.GetString(data);
+                // Debug.Log("OnMessage! " + message);
+            };
+#else
             webSocket.OnMessage += (bytes) => {
                 Debug.Log("OnMessage!");
                 Debug.Log(bytes);
@@ -38,6 +52,7 @@ namespace SimpleWebRTC {
                 // var message = System.Text.Encoding.UTF8.GetString(bytes);
                 // Debug.Log("OnMessage! " + message);
             };
+#endif
 
             // Keep sending messages at every 1s
             InvokeRepeating(nameof(SendWebSocketMessage), 0.0f, 1f);
@@ -47,7 +62,7 @@ namespace SimpleWebRTC {
         }
 
         void Update() {
-#if !UNITY_WEBGL || UNITY_EDITOR
+#if USE_NATIVEWEBSOCKET && (!UNITY_WEBGL || UNITY_EDITOR)
             webSocket.DispatchMessageQueue();
 #endif
         }

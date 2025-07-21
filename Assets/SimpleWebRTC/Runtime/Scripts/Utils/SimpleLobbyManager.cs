@@ -1,4 +1,8 @@
+#if !USE_NATIVEWEBSOCKET
+using Meta.Net.NativeWebSocket;
+#else
 using NativeWebSocket;
+#endif
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

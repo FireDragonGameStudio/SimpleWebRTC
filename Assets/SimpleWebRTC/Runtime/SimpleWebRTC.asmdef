@@ -20,6 +20,17 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.endel.nativewebsocket",
+            "expression": "1.1.4",
+            "define": "USE_NATIVEWEBSOCKET"
+        },
+        {
+            "name": "com.unity.visualscripting",
+            "expression": "1.9.7",
+            "define": "VISUAL_SCRIPTING_INSTALLED"
+        }
+    ],
     "noEngineReferences": false
 }
