@@ -148,6 +148,10 @@ connection.SendDataChannelMessage("Hello Peer!"); // Send a message over the dat
 ## License
 This project is licensed under the MIT License.
 
+## Sponsoring
+[![Patreon](https://c10.patreonusercontent.com/4/patreon-media/p/campaign/12182703/65cb1f97817242dba7b058c038313e33/eyJ3Ijo2MjB9/3.png?token-hash=sLq_pjOg_7amI9JuF57gDqP-ej2x5G8ul3HxeorE86o%3D)](https://www.patreon.com/c/WaveLabs)
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J31EWWJB)
+
 ## Contributions
 Contributions are welcome! Feel free to submit pull requests or report issues.
 
