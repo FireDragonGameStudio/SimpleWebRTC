@@ -831,7 +831,7 @@ PlayerSettings:
   webEnableSubmoduleStrippingCompatibility: 0
   scriptingDefineSymbols:
     Android: 
-    Standalone: 
+    Standalone: UNITY_ASTOOLS_EXPERIMENTAL
     iPhone: 
   additionalCompilerArguments: {}
   platformArchitecture: {}
