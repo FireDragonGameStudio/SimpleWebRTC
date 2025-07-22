@@ -2846,7 +2846,7 @@ MonoBehaviour:
   ShowLogs: 1
   ShowDataChannelLogs: 1
   UseImmersiveSetup: 1
-  experimentalSupportFor6DOF: 1
+  experimentalSupportFor6DOF: 0
   experimentalSpectatorCam6DOF: {fileID: 330585546}
   RenderStereo: 0
   StereoSeparation: 0.064
@@ -3992,10 +3992,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   webRTCConnection: {fileID: 1200952470}
   cameraSwitchKeyword: switch
-  manualPositionSwitch: 0
-  webRTCPositionSwitch: 0
   cameraParentObjects: []
-  enableSendingPosition: 1
+  webRTCStartStopVideoStream: 0
+  webRTCPositionSwitch: 0
+  syncCameraPosition: 0
   sendingIntervalInSeconds: 0.1
 --- !u!114 &1988037981
 MonoBehaviour:
