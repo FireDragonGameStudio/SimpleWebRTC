@@ -3258,15 +3258,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   webRTCConnection: {fileID: 8671471656396631584}
   cameraSwitchKeyword: switch
-  manualPositionSwitch: 0
-  webRTCPositionSwitch: 0
   cameraParentObjects:
   - {fileID: 1144258514}
   - {fileID: 618052858}
   - {fileID: 899997393}
   - {fileID: 1269449386}
   - {fileID: 1385173107}
-  enableSendingPosition: 0
+  webRTCStartStopVideoStream: 0
+  webRTCPositionSwitch: 0
+  syncCameraPosition: 0
   sendingIntervalInSeconds: 0.1
 --- !u!114 &1988037981
 MonoBehaviour:
