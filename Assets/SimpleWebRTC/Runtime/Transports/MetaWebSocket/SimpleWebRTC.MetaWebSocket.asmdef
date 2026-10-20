@@ -1,0 +1,30 @@
+{
+    "name": "SimpleWebRTC.MetaWebSocket",
+    "rootNamespace": "SimpleWebRTC",
+    "references": [
+        "GUID:83e396c66e601f847b1e748b6254fca0"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "SIMPLEWEBRTC_WEBRTC",
+        "SIMPLEWEBRTC_META_VOICE"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.fdgs.webrtc",
+            "expression": "3.2.0",
+            "define": "SIMPLEWEBRTC_WEBRTC"
+        },
+        {
+            "name": "com.meta.xr.sdk.voice",
+            "expression": "",
+            "define": "SIMPLEWEBRTC_META_VOICE"
+        }
+    ],
+    "noEngineReferences": false
+}

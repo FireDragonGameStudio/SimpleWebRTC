@@ -18,7 +18,8 @@ namespace SimpleWebRTC {
         }
 
         private ControlOutput SetupConnection(Flow flow) {
-            SimpleWebRTCSceneVariables.ClientConnection.ConnectWebRTC();
+            // peers connect automatically after joining, kept for existing graphs
+            SimpleWebRTCSceneVariables.ClientConnection.PeerManager?.Connect();
 
             return OutputTrigger;
         }

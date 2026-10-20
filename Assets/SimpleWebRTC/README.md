@@ -1,149 +1,166 @@
 ![simple-webrtc-logo](https://github.com/user-attachments/assets/4a243ff7-8260-4277-8d7a-844f67ffdcff)
 
 # SimpleWebRTC
-SimpleWebRTC is a Unity-based WebRTC wrapper that facilitates peer-to-peer audio, video, and data communication over WebRTC using Unitys WebRTC package [https://docs.unity3d.com/Packages/com.unity.webrtc@3.0/manual/index.html](https://docs.unity3d.com/Packages/com.unity.webrtc@3.0/manual/index.html). It leverages NativeWebSocket [https://github.com/endel/NativeWebSocket](https://github.com/endel/NativeWebSocket) for signaling and supports both video and audio streaming.
+SimpleWebRTC is a component-based Unity wrapper for peer-to-peer audio, video, 360° video and data communication over WebRTC. It builds on [WebRTC (FDGS)](https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs), the community-maintained fork of Unity's WebRTC package.
+
+Version 2.0 splits the former all-in-one `WebRTCConnection` into small components. Add only what you need, swap the signaling backend, or write your own video sources, sinks and transports without touching the WebRTC core.
 
 ## Features
-- WebRTC peer-to-peer connection management
-- WebSocket-based signaling
-- Video and audio streaming
-- Immersive video streaming (360° monoscopic or stereo over-under)
-- Data channel communication
-- Logging and debugging tools
-- Usage with Photon Fusion 2
-- Usage with [SimpleWebRTC Web Client](https://github.com/FireDragonGameStudio/SimpleWebRTC-Web)
-- Support for [Unity Visual Scripting](https://docs.unity3d.com/Packages/com.unity.visualscripting@latest)
+- Full-mesh peer-to-peer connections with automatic ("perfect") negotiation. Peers can join late and start or stop streams at any time.
+- Pluggable signaling: WebSocket ([NativeWebSocket](https://github.com/endel/NativeWebSocket) or the Meta Voice SDK version), Photon Fusion 2, in-process loopback, or your own transport.
+- Rooms, so several apps can share one signaling server.
+- Data channels (text and binary, reliable or unreliable, several channels per connection).
+- Video from cameras, textures, webcams or as 360° video (mono or stereo over-under).
+- Received video shown in RawImages, on renderers or in RenderTextures.
+- Audio from AudioSources or the microphone, played back per peer.
+- STUN and TURN servers, preferred video codec, bitrate and framerate limits.
+- Unity Visual Scripting nodes and events.
+- Migration tool for SimpleWebRTC 1.x scenes.
 
-## Tutorial video
-A tutorial YouTube video can be found here: [https://www.youtube.com/watch?v=-CwJTgt_Z3M](https://www.youtube.com/watch?v=-CwJTgt_Z3M)
+## Requirements
+- Unity 6000.0 or newer
+- [WebRTC (FDGS)](https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs) `com.fdgs.webrtc` 3.2.0 or newer
+- For WebSocket signaling, one of:
+  - [NativeWebSocket](https://github.com/endel/NativeWebSocket) 2.x (`https://github.com/endel/NativeWebSocket.git#upm-2`)
+  - the Meta Voice SDK (`com.meta.xr.sdk.voice`), which already contains a NativeWebSocket version
+- Optional: Photon Fusion 2, Unity Visual Scripting
 
-## Simple Installation
-1. Make sure, that the required dependencies are installed (`TextMeshPro`, `Unity WebRTC`, `NativeWebSocket`).
-2. Go to the Unity AssetStore page: [https://assetstore.unity.com/packages/tools/network/simplewebrtc-309727](https://assetstore.unity.com/packages/tools/network/simplewebrtc-309727)
-4. Install the package via Unity AssetStore.
+UPM packages cannot depend on git packages, so install WebRTC (FDGS) and NativeWebSocket yourself. Without WebRTC (FDGS), SimpleWebRTC is not compiled and offers to install it. Tools > SimpleWebRTC > Check Dependencies shows what is available.
 
-## Installation using the releases page
-1. Got to the releases page and download the latest release.
-2. Make sure, that the required dependencies are installed (`TextMeshPro`, `Unity WebRTC`, `NativeWebSocket`).
-3. Import the package into your Unity project.
+## Installation
+### Unity Package Manager
+1. Open the Package Manager, click on the + sign and select "Add package from git URL".
+2. Add `https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs.git#v3.2.0`
+3. Add `https://github.com/endel/NativeWebSocket.git#upm-2` (skip this if the Meta Voice SDK is installed)
+4. Add `https://github.com/FireDragonGameStudio/SimpleWebRTC.git?path=/Assets/SimpleWebRTC`
 
-## Installation using Unity Package Manager
-1. Create a new Unity project
-2. Open the Package Manager, click on the + sign in the upper left/right corner
-3. Select "Add package from git URL"
-4. Enter URL: `https://github.com/endel/NativeWebSocket.git#upm` and click in Install
-5. After the installation finished, click on the + sign in the upper left/right corner again
-6. Enter URL `https://github.com/FireDragonGameStudio/SimpleWebRTC.git?path=/Assets/SimpleWebRTC` and click on Install
+### Unity Asset Store
+Install [SimpleWebRTC](https://assetstore.unity.com/packages/tools/network/simplewebrtc-309727) from the Asset Store and add the dependencies above.
 
-## Installation using Unity Package Manager with preinstalled Meta Voice SDK package
-1. Create a new Unity project
-2. The Meta Voice SDK already has the NativeWebSocket package integrated, so there is no need to install it manually. SimpleWebRTC will automatically try to use the NativeWebSocket package provided by Meta.
-3. Open the Package Manager, click on the + sign in the upper left/right corner
-4. Select "Add package from git URL"
-5. Enter URL `https://github.com/FireDragonGameStudio/SimpleWebRTC.git?path=/Assets/SimpleWebRTC` and click on Install
+### Signaling server
+SimpleWebRTC only needs a WebSocket server that relays every message to all other connected clients. A ready-to-use Node.js server is in `Server~` (also in `Runtime/SignalServerCode.txt`):
+```sh
+cd Server~
+npm install
+npm start   # ws://localhost:3000, set PORT to change it
+```
+Host it anywhere that supports WebSockets, then use `wss://your-host` as the server URL.
 
-## Manual Installation
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/firedragongamestudio/simplewebrtc.git
-   ```
-2. Open the Unity project in the Unity Editor.
-3. Ensure that the required dependencies (such as `TextMeshPro`, `Unity WebRTC` and `NativeWebSocket`) are installed.
+## Architecture
+```
+WebRTCPeerManager ── one PeerSession (RTCPeerConnection) per remote peer
+ ├─ SignalingTransport   WebSocketSignaling | MetaWebSocketSignaling | PhotonFusionSignaling | LoopbackSignaling | your own
+ ├─ DataChannel          any number, each with its own channel id
+ ├─ VideoSender ── VideoSource      CameraVideoSource | TextureVideoSource | WebCamVideoSource | CubemapVideoSource | your own
+ ├─ VideoReceiver ── VideoSink      RawImageVideoSink | RendererVideoSink | RenderTextureVideoSink | your own
+ ├─ AudioSender                     AudioSource or microphone
+ └─ AudioReceiver                   one AudioSource per peer
+```
+All feature components find the `WebRTCPeerManager` on their GameObject or a parent. Put them on one GameObject, or on children for a cleaner hierarchy.
 
-## Usage
-### WebRTCConnection Component
-The `WebRTCConnection` component manages the WebRTC connection and can be attached to a GameObject in Unity.
+### Quick start
+1. Create a GameObject and add `WebRTCPeerManager` and `WebSocketSignaling`. Assign the signaling component to the manager and set the server URL.
+2. Add a `DataChannel`.
+3. To send video, add a `CameraVideoSource` (assign a camera) and a `VideoSender` (assign the source).
+4. To receive video, add a `RawImageVideoSink` (assign a RawImage or a parent for spawned images) and a `VideoReceiver` (add the sink to its list).
+5. For audio, add an `AudioSender` (assign an AudioSource) and an `AudioReceiver`.
+6. Call `Connect()` on the manager, or enable Connect On Start. In Play mode the inspector shows buttons for Connect, Start Streaming, Send Test Message and so on.
 
-![image](https://github.com/user-attachments/assets/e13c49e9-c9dc-4a5c-9200-94efd4800b1c)
-
-### Photon Fusion 2 Integration
-1. Install Photon Fusion 2 from Unity AssetStore -> [Photon Fusion 2](https://assetstore.unity.com/packages/tools/network/photon-fusion-267958)
-2. Import the Photon Fusion sample scene via Unity Package Manager.
-3. Use the `_Generic` scripts and `PhotonSignalServer` to setup the WebRTC connection.
-4. A tutorial/explanation YouTube video can be found here: [https://www.youtube.com/watch?v=z1F_cqfdU6o](https://www.youtube.com/watch?v=z1F_cqfdU6o)
-
-### WebRTC Web Client
-1. Make sure your WebSocket signaling server is reachable, up and running.
-2. Checkout the [SimpleWebRTC Web Client](https://github.com/FireDragonGameStudio/SimpleWebRTC-Web)
-3. Run `npm install` in the web client directory, to get everything ready
-4. Start the web client either locally (`npm run dev` or `npx vite`) or deploy it to a webspace
-5. (Optional) Start your Unity application and make sure the WebRTC logic is up and running.
-6. Connect all clients to your WebSocket signaling server and wait until the signaling procedure is completed.
-7. Stream your video, audio and/or data to every connected client.
-
-### Support for Unity Visual Scripting
-
-1. Make sure [Unity Visual Scripting](https://docs.unity3d.com/Packages/com.unity.visualscripting@latest) package is imported.
-2. Import SimpleWebRTC Visual Scripting samples, via Unity Package Manager.
-3. Regenerate Nodes under Edit/Project Settings/Visual Scripting.
-4. Mind to add the WebRTCConnectionVisualScriptingEvents component to your WebRTCConnection GameObject.
-5. Add your WebRTCConnection GameObject to the scene variables of your graph - look at the sample scene for an example.
-
-### Public Properties
-| Property | Type | Description |
-|----------|------|-------------|
-| `IsWebSocketConnected` | `bool` | Indicates whether the WebSocket connection is active. |
-| `ConnectionToWebSocketInProgress` | `bool` | Indicates whether a connection attempt is in progress. |
-| `IsWebRTCActive` | `bool` | Shows if a WebRTC session is active. |
-| `IsVideoTransmissionActive` | `bool` | Indicates whether video transmission is active. |
-| `IsAudioTransmissionActive` | `bool` | Indicates whether audio transmission is active. |
-
-### Public Methods
-| Method | Description |
-|--------|-------------|
-| `void Connect()` | Initiates a WebSocket connection and establishes WebRTC connections as soon as other peers are connected. |
-| `void Disconnect()` | Closes the WebSocket connection and disconnects the WebRTC connections with other peers. |
-| `void SendDataChannelMessage(string message)` | Sends a message via the data channel. |
-| `void SendDataChannelMessageToPeer(string targetPeerId, string message)` | Sends a data channel message to a specific peer. |
-| `void StartVideoTransmission()` | Starts video transmission. |
-| `void StopVideoTransmission()` | Stops video transmission. |
-| `void StartAudioTransmission()` | Starts audio transmission. |
-| `void StopAudioTransmission()` | Stops audio transmission. |
-| `void SetUniquePlayerName(string playerName)` | Sets a unique identifier for the peer. |
-
-### Events
-| Event | Description |
-|-------|-------------|
-| `WebSocketConnectionChanged` | Triggered when the WebSocket connection state changes. |
-| `WebRTCConnected` | Invoked when a WebRTC connection is successfully established. |
-| `DataChannelConnected` | Raised when the data channel connection is established. |
-| `DataChannelMessageReceived` | Fired when a message is received via the data channel. |
-| `VideoTransmissionReceived` | Triggered when a video stream is received. |
-| `AudioTransmissionReceived` | Triggered when an audio stream is received. |
-
-### Configuration
-The `WebRTCConnection` component includes several configurable parameters:
 ```csharp
-[SerializeField] private string WebSocketServerAddress = "wss://unity-webrtc-signaling.glitch.me";
-[SerializeField] private string StunServerAddress = "stun:stun.l.google.com:19302";
-[SerializeField] private string LocalPeerId = "PeerId"; // must be unique for each peer
-[SerializeField] private bool UseHTTPHeader = true; // used for e.g. Glitch.com, because headers are needed
-[SerializeField] private bool ShowLogs = true; // mostly for debugging purposes, can be disabled
-[SerializeField] private bool ShowDataChannelLogs = true; // mostly for debugging purposes, can be disabled
+public class MyClient : MonoBehaviour {
+    [SerializeField] private WebRTCPeerManager peerManager;
+    [SerializeField] private DataChannel chat;
+    [SerializeField] private VideoSender video;
+
+    private void Start() {
+        peerManager.PeerConnected.AddListener(peerId => Debug.Log($"{peerId} connected"));
+        chat.PeerMessageReceived += (peerId, message) => Debug.Log($"{peerId}: {message}");
+        peerManager.Connect();
+    }
+
+    public void SayHello() => chat.Send("Hello everyone!");
+    public void SayHelloTo(string peerId) => chat.SendTo(peerId, "Hello you!");
+    public void ToggleVideo() => video.ToggleStreaming();
+}
 ```
 
-Modify these values in the Unity Inspector or directly in the script.
+### Components
+| Component | Purpose | Main API |
+|-----------|---------|----------|
+| `WebRTCPeerManager` | Joins a room over the signaling transport and manages one peer connection per remote peer. | `Connect()`, `Disconnect()`, `SetLocalPeerId()`, `SetRoom()`, `SetSignaling()`, `Sessions`, `LocalPeerId`; events `SignalingStateChanged`, `PeerJoined`, `PeerConnected`, `PeerLeft`, `SessionCreated`, `SessionClosed` |
+| `WebSocketSignaling` / `MetaWebSocketSignaling` | Signaling over a WebSocket relay server (NativeWebSocket or Meta Voice SDK). | `ServerUrl` |
+| `PhotonFusionSignaling` + `PhotonSignalingRelay` | Signaling through a running Photon Fusion 2 session. | |
+| `LoopbackSignaling` | In-process signaling for peers in the same app, e.g. tests. | `Channel` |
+| `DataChannel` | Pre-negotiated data channel to every peer. All peers need the same channel id. | `Send()`, `SendTo()` (string or byte[]); events `ChannelOpened`, `ChannelClosed`, `MessageReceived`, `PeerMessageReceived`, `BytesReceived` |
+| `VideoSender` | Streams a `VideoSource` to all peers, including peers that join later. | `StartStreaming()`, `StopStreaming()`, `ToggleStreaming()`; bitrate and framerate limits |
+| `VideoReceiver` | Forwards remote videos to its `VideoSink`s. | events `VideoStarted`, `VideoStopped`, `VideoUpdated`, `VideoRemoved` |
+| `AudioSender` | Streams an AudioSource or the microphone. | `StartStreaming()`, `StopStreaming()` |
+| `AudioReceiver` | Plays every peer's audio through its own AudioSource (optional prefab for spatial audio or mixer groups). | `TryGetAudioSource()`; events `AudioStarted`, `AudioStopped` |
 
-## Example
-Following sample scenes are included in the package (available at Samples tab in package manager):
-* *WebSocket-TestConnection*: For testing the wecksocket connection separately.
-* *WebRTC-SingleClient-STUNConnection*: Testing STUN connection for a single client. Works standalone and can be deployed to clients. Make sure to set the `LocalPeerId` for each client individually.
-* *WebRTC-SingleClient-wLobby-STUNConnection*: A simple Lobby example for handling multiple STUN WebRTC clients. `SimpleLobbyManager.cs` shows an example, how to use **SimpleWebRTC** via C#.
-* *WebRTC-MultipleClients-STUNConnection*: Shows how multiple clients can be connected via peer-to-peer connections and share data, video and audio transmissions.
-* *WebRTC-SingleClient-STUNConnection-PhotonFusion*: Testing STUN connection for a single client using Photon Fusion 2 as signaling server. Works standalone and can be deployed to clients. Make sure to set the `LocalPeerId` for each client individually.
-* *WebRTC-SingleClient-STUNConnection-VisualScripting*: Using Unity Visual Scripting with SimpleWebRTC. Works with all SimpleWebRTC features and can be deployed to clients.
-* *WebRTC-SingleClient-STUNConnection-ImmersiveSpectator-Sender*: A simple example for a possible video sender, which can be every 3D application.
-* *WebRTC-SingleClient-STUNConnection-ImmersiveSpectator-Receiver*: The receiver sample for the video sender. This will most likely targeted at an XR device.
+### Extending SimpleWebRTC
+- **Signaling backend:** derive from `SignalingTransport` and implement `Connect`, `Disconnect` and `Send`. Report state changes with `SetState` and incoming messages with `ReceiveMessage`; both are safe to call from any thread. See the Custom Signaling Transport sample.
+- **Video source:** derive from `VideoSource` and create a `VideoStreamTrack` in `CreateTrack`.
+- **Video display:** derive from `VideoSink` and implement `SetVideo` / `RemoveVideo`.
+- **Anything per peer:** derive from `PeerSessionComponent` and use `OnSessionCreated` / `OnSessionClosed` to add tracks, transceivers or data channels to every `PeerSession`.
 
-## Example code
-```csharp
-WebRTCConnection connection = gameObject.GetComponent<WebRTCConnection>();
-connection.Connect(); // Establish WebSocket connection
+### Signaling protocol
+Messages are JSON objects, for example `{"v":2,"type":"offer","room":"default","from":"Peer-1a2b","to":"Peer-3c4d","payload":"..."}`. The types are `join`, `welcome`, `leave`, `offer`, `answer` and `candidate`. `to` is `*` for broadcasts. The server never needs to read the messages.
 
-// after a WebRTC peer-to-peer connection is established
-connection.StartVideoTransmission(); // Begin video streaming
-connection.SendDataChannelMessage("Hello Peer!"); // Send a message over the data channel
-```
+### Photon Fusion 2
+1. Install Photon Fusion 2 and import the Photon Fusion sample.
+2. Add the `SimpleWebRTC.PhotonFusion` assembly to NetworkProjectConfig > Assemblies To Weave.
+3. Put a `PhotonSignalingRelay` on a NetworkObject and a `PhotonFusionSignaling` next to your `WebRTCPeerManager`, and reference them from each other.
+4. Start the Fusion session, then call `Connect()` on the manager. Signaling connects as soon as the relay is spawned.
+
+### Visual Scripting
+1. Install [Unity Visual Scripting](https://docs.unity3d.com/Packages/com.unity.visualscripting@latest) and import the Visual Scripting sample.
+2. Regenerate the nodes under Edit > Project Settings > Visual Scripting.
+3. Add `WebRTCConnectionVisualScriptingEvents` to the client GameObject, which has the `WebRTCPeerManager`.
+4. Add that GameObject as scene variable `ClientConnection`, see the sample scene.
+
+## Migrating from SimpleWebRTC 1.x
+2.0 is a breaking release, and the signaling protocol changed, so 1.x and 2.x clients cannot talk to each other.
+1. Update the dependencies: replace `com.unity.webrtc` with `com.fdgs.webrtc`, and use NativeWebSocket 2.x.
+2. Open each scene that uses `WebRTCConnection` or `WebRTCConnection_Generic` and run Tools > SimpleWebRTC > Migrate Open Scenes (or use the button in the old component's inspector). The tool:
+   - creates the new components with your settings (server URL, STUN server, peer id, immersive setup, cameras, audio sources, receiving parents),
+   - moves the UnityEvent listeners to the matching new events,
+   - re-targets UnityEvent calls (e.g. buttons) from the old component to the new ones,
+   - assigns empty references of other scripts when the scene has a single client.
+3. Photon scenes need Photon Fusion 2 installed before migrating.
+4. If the old component is on a prefab instance, the new components are added as overrides. Use Overrides > Apply All to update the prefab.
+5. Update your scripts using this mapping:
+
+| 1.x (`WebRTCConnection`) | 2.x |
+|--------------------------|-----|
+| `Connect()` / `ConnectWebRTC()` | `WebRTCPeerManager.Connect()`, WebRTC connects automatically |
+| `Disconnect()` | `WebRTCPeerManager.Disconnect()` |
+| `SetUniquePlayerName()` | `WebRTCPeerManager.SetLocalPeerId()` |
+| `SendDataChannelMessage()` / `SendDataChannelMessageToPeer()` | `DataChannel.Send()` / `DataChannel.SendTo()` |
+| `Start/StopVideoTransmission()` | `VideoSender.StartStreaming()` / `StopStreaming()` |
+| `Start/StopAudioTransmission()` | `AudioSender.StartStreaming()` / `StopStreaming()` |
+| `WebSocketConnectionChanged` | `WebRTCPeerManager.SignalingStateChanged` |
+| `WebRTCConnected` | `WebRTCPeerManager.PeerConnected` |
+| `DataChannelConnected` / `DataChannelMessageReceived` | `DataChannel.ChannelOpened` / `MessageReceived` |
+| `VideoTransmissionReceived` / `AudioTransmissionReceived` | `VideoReceiver.VideoStarted` / `AudioReceiver.AudioStarted` |
+| `UseImmersiveSetup` (sender / receiver) | `CubemapVideoSource` / `RenderTextureVideoSink` |
+| inspector toggles (`StartStopVideoTransmission`, ...) | Play mode buttons in the inspector |
+
+## Samples
+Import the samples from the Samples tab of the package in the Package Manager. The WebSocket samples use `ws://localhost:3000`; start the server from `Server~` or change the URL on the signaling component.
+* *WebSocket-TestConnection*: tests a signaling connection without WebRTC.
+* *WebRTC-SingleClient-STUNConnection*: one client with buttons for connecting, chat, video and audio. Build it and run several instances.
+* *WebRTC-SingleClient-wLobby-STUNConnection*: a simple lobby. `SimpleLobbyManager.cs` shows how to use SimpleWebRTC from C#.
+* *WebRTC-MultipleClients-STUNConnection*: three clients in one scene, connected as a full mesh with data, video and audio.
+* *WebRTC-Loopback-NoServer*: two peers in one scene exchanging video and chat messages through `LoopbackSignaling`, no server needed.
+* *Custom Signaling Transport*: a commented template for your own signaling backend.
+* *WebRTC-SingleClient-STUNConnection-PhotonFusion*: signaling over Photon Fusion 2.
+* *WebRTC-SingleClient-STUNConnection-VisualScripting*: SimpleWebRTC with Unity Visual Scripting.
+* *WebRTC-SingleClient-STUNConnection-ImmersiveSpectator-Sender/-Receiver*: a 360° video sender and its receiver (e.g. an XR device). The receiver can switch the sender's camera position over the data channel.
+
+## Tutorial videos
+These videos show SimpleWebRTC 1.x. The concepts are the same, but the components changed in 2.0.
+- [SimpleWebRTC tutorial](https://www.youtube.com/watch?v=-CwJTgt_Z3M)
+- [Photon Fusion 2 integration](https://www.youtube.com/watch?v=z1F_cqfdU6o)
 
 ## License
 This project is licensed under the MIT License.
@@ -154,4 +171,3 @@ This project is licensed under the MIT License.
 
 ## Contributions
 Contributions are welcome! Feel free to submit pull requests or report issues.
-

@@ -18,7 +18,7 @@ namespace SimpleWebRTC {
         }
 
         private ControlOutput SetupConnection(Flow flow) {
-            SimpleWebRTCSceneVariables.ClientConnection.Disconnect();
+            SimpleWebRTCSceneVariables.ClientConnection.PeerManager?.Disconnect();
 
             return OutputTrigger;
         }

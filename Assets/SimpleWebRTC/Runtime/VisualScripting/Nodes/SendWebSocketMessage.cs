@@ -23,7 +23,7 @@ namespace SimpleWebRTC {
         }
 
         private ControlOutput SendMessageViaWebSocket(Flow flow) {
-            SimpleWebRTCSceneVariables.ClientConnection.WebSocketTestMessage(flow.GetValue<string>(message));
+            SimpleWebRTCSceneVariables.ClientConnection.PeerManager?.Signaling?.Send(flow.GetValue<string>(message));
 
             return OutputTrigger;
         }

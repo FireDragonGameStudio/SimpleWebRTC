@@ -1,0 +1,31 @@
+{
+    "name": "SimpleWebRTC.NativeWebSocket",
+    "rootNamespace": "SimpleWebRTC",
+    "references": [
+        "GUID:83e396c66e601f847b1e748b6254fca0",
+        "GUID:cd0da57754a90f0e1a0430815739a7cc"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "SIMPLEWEBRTC_WEBRTC",
+        "SIMPLEWEBRTC_NATIVEWEBSOCKET"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.fdgs.webrtc",
+            "expression": "3.2.0",
+            "define": "SIMPLEWEBRTC_WEBRTC"
+        },
+        {
+            "name": "com.endel.nativewebsocket",
+            "expression": "2.0.0",
+            "define": "SIMPLEWEBRTC_NATIVEWEBSOCKET"
+        }
+    ],
+    "noEngineReferences": false
+}

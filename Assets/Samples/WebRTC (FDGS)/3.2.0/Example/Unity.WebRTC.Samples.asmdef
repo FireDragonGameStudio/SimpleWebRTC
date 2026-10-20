@@ -1,0 +1,22 @@
+{
+    "name": "Unity.WebRTC.Samples",
+    "references": [
+        "Unity.WebRTC",
+        "Unity.InputSystem"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.inputsystem",
+            "expression": "1.0.0",
+            "define": "WEBRTC_SAMPLES_INPUT_SYSTEM"
+        }
+    ]
+}

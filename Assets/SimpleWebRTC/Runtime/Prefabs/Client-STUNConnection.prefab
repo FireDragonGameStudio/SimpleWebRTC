@@ -42,7 +42,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 01db26cb734ae6343a2efe66c9b47048, type: 3}
+  m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 01db26cb734ae6343a2efe66c9b47048, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -188,6 +188,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -336,6 +337,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -347,7 +349,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -472,6 +474,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -483,7 +486,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -587,7 +590,15 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1967618399876531960}
-  - component: {fileID: 2360244695844763642}
+  - component: {fileID: 2363263013754684402}
+  - component: {fileID: 5489690598648953067}
+  - component: {fileID: 8397213073277324540}
+  - component: {fileID: 687648681778706415}
+  - component: {fileID: 2031783491438126788}
+  - component: {fileID: 4814389545109037682}
+  - component: {fileID: 1795256448440244197}
+  - component: {fileID: 3008124210482459135}
+  - component: {fileID: 6263453595588315483}
   m_Layer: 0
   m_Name: Client-STUNConnection
   m_TagString: Untagged
@@ -614,7 +625,7 @@ Transform:
   - {fileID: 4564953767366167469}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2360244695844763642
+--- !u!114 &2363263013754684402
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -623,40 +634,173 @@ MonoBehaviour:
   m_GameObject: {fileID: 5412547114386104584}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7588ce98b751e28419e83a73016454e5, type: 3}
+  m_Script: {fileID: 11500000, guid: e52f6df2838b85a4e845fa3488d6e289, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  WebSocketServerAddress: wss://unity-webrtc-signaling.glitch.me
-  StunServerAddress: stun:stun.l.google.com:19302
-  LocalPeerId: Red-PeerId
-  UseHTTPHeader: 1
-  IsVideoAudioSender: 1
-  IsVideoAudioReceiver: 1
-  RandomUniquePeerId: 1
-  ShowLogs: 1
-  ShowDataChannelLogs: 1
-  WebSocketConnectionActive: 0
-  SendWebSocketTestMessage: 0
-  WebSocketConnectionChanged:
+  m_EditorClassIdentifier: SimpleWebRTC.NativeWebSocket::SimpleWebRTC.WebSocketSignaling
+  StateChangedEvent:
     m_PersistentCalls:
       m_Calls: []
-  WebRTCConnectionActive: 0
-  WebRTCConnected:
+  serverUrl: ws://localhost:3000
+  sendUserAgentHeader: 1
+--- !u!114 &5489690598648953067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5412547114386104584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22044b1e37f6e614380b188631d6cee5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SimpleWebRTC::SimpleWebRTC.WebRTCPeerManager
+  signaling: {fileID: 2363263013754684402}
+  room: default
+  connectOnStart: 0
+  localPeerId: Peer
+  appendRandomSuffix: 1
+  iceServers:
+  - urls:
+    - stun:stun.l.google.com:19302
+    username: 
+    credential: 
+  preferredVideoCodec: 1
+  showLogs: 1
+  showDataChannelLogs: 1
+  SignalingStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  SendDataChannelTestMessage: 0
-  DataChannelConnected:
+  PeerJoined:
     m_PersistentCalls:
       m_Calls: []
-  DataChannelMessageReceived:
+  PeerConnected:
     m_PersistentCalls:
       m_Calls: []
-  StartStopVideoTransmission: 0
-  VideoResolution: {x: 1280, y: 720}
-  StreamingCamera: {fileID: 4742940825921038815}
-  OptionalPreviewRawImage: {fileID: 1690458483688564422}
-  ReceivingRawImagesParent: {fileID: 2177560443773698946}
-  VideoTransmissionReceived:
+  PeerLeft:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &8397213073277324540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5412547114386104584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02f311e1b5ce1ac4480dd879a20d4542, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SimpleWebRTC::SimpleWebRTC.DataChannel
+  peerManager: {fileID: 5489690598648953067}
+  label: data
+  channelId: 0
+  ordered: 1
+  maxRetransmits: -1
+  ChannelOpened:
+    m_PersistentCalls:
+      m_Calls: []
+  ChannelClosed:
+    m_PersistentCalls:
+      m_Calls: []
+  MessageReceived:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &687648681778706415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5412547114386104584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fed5f31516b48a345a28bc0c2decaa64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SimpleWebRTC::SimpleWebRTC.CameraVideoSource
+  sourceCamera: {fileID: 4742940825921038815}
+  resolution: {x: 1280, y: 720}
+  depth: 24
+  activateCameraWhileStreaming: 1
+--- !u!114 &2031783491438126788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5412547114386104584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dd02a85286970a48ae11279643cf22d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SimpleWebRTC::SimpleWebRTC.VideoSender
+  peerManager: {fileID: 5489690598648953067}
+  source: {fileID: 687648681778706415}
+  streamOnEnable: 0
+  previewImage: {fileID: 1690458483688564422}
+  maxBitrateKbps: 0
+  maxFramerate: 0
+  StreamingStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  StreamingStopped:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &4814389545109037682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5412547114386104584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219ae60673856eb478b105ae534e573f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SimpleWebRTC::SimpleWebRTC.AudioSender
+  peerManager: {fileID: 5489690598648953067}
+  audioSource: {fileID: 4512434662705316609}
+  useMicrophone: 0
+  microphoneDevice: 
+  playLocally: 1
+  activateSourceWhileStreaming: 1
+  streamOnEnable: 0
+  StreamingStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  StreamingStopped:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1795256448440244197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5412547114386104584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bed56221c4876a9418a509a2b5b49e4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SimpleWebRTC::SimpleWebRTC.RawImageVideoSink
+  targetImage: {fileID: 0}
+  spawnParent: {fileID: 2177560443773698946}
+  imagePrefab: {fileID: 0}
+--- !u!114 &3008124210482459135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5412547114386104584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3ad81603e180d4d861ff2f4c20e980, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SimpleWebRTC::SimpleWebRTC.VideoReceiver
+  peerManager: {fileID: 5489690598648953067}
+  sinks:
+  - {fileID: 1795256448440244197}
+  VideoStarted:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1525162339353631628}
@@ -671,10 +815,25 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-  StartStopAudioTransmission: 0
-  StreamingAudioSource: {fileID: 4512434662705316609}
-  ReceivingAudioSourceParent: {fileID: 4564953767366167469}
-  AudioTransmissionReceived:
+  VideoStopped:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &6263453595588315483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5412547114386104584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60aa8ad390cf3674ab9de179cb5ac737, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SimpleWebRTC::SimpleWebRTC.AudioReceiver
+  peerManager: {fileID: 5489690598648953067}
+  spawnParent: {fileID: 4564953767366167469}
+  audioSourcePrefab: {fileID: 0}
+  AudioStarted:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8437815431063484664}
@@ -689,6 +848,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+  AudioStopped:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &6546058039667620365
 GameObject:
   m_ObjectHideFlags: 0
@@ -869,7 +1031,6 @@ MonoBehaviour:
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
-  m_Version: 2
   m_TaaSettings:
     m_Quality: 3
     m_FrameInfluence: 0.1
@@ -877,6 +1038,7 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1 &8437815431063484664
 GameObject:
   m_ObjectHideFlags: 0

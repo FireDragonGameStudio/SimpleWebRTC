@@ -1,0 +1,16 @@
+{
+  "name": "simplewebrtc-signaling-server",
+  "version": "2.0.0",
+  "description": "Minimal WebSocket relay used as signaling server for SimpleWebRTC.",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

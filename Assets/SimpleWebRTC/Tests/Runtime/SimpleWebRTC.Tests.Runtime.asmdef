@@ -1,0 +1,30 @@
+{
+    "name": "SimpleWebRTC.Tests.Runtime",
+    "rootNamespace": "SimpleWebRTC.Tests",
+    "references": [
+        "GUID:83e396c66e601f847b1e748b6254fca0",
+        "GUID:f12aafacab75a87499e7e45c873ffab8",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS",
+        "SIMPLEWEBRTC_WEBRTC"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.fdgs.webrtc",
+            "expression": "3.2.0",
+            "define": "SIMPLEWEBRTC_WEBRTC"
+        }
+    ],
+    "noEngineReferences": false
+}

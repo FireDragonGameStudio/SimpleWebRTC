@@ -1,0 +1,32 @@
+{
+    "name": "SimpleWebRTC.VisualScripting",
+    "rootNamespace": "SimpleWebRTC",
+    "references": [
+        "GUID:83e396c66e601f847b1e748b6254fca0",
+        "GUID:21b0c8d1703a94250bfac916590cea4f",
+        "GUID:ea715009a4efd4c6cbc85be3ae097dd3"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "SIMPLEWEBRTC_WEBRTC",
+        "VISUAL_SCRIPTING_INSTALLED"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.fdgs.webrtc",
+            "expression": "3.2.0",
+            "define": "SIMPLEWEBRTC_WEBRTC"
+        },
+        {
+            "name": "com.unity.visualscripting",
+            "expression": "1.9.0",
+            "define": "VISUAL_SCRIPTING_INSTALLED"
+        }
+    ],
+    "noEngineReferences": false
+}
