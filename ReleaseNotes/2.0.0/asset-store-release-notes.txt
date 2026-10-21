@@ -1,0 +1,19 @@
+SimpleWebRTC 2.0.0 - complete rework (breaking release)
+
+IMPORTANT: 2.0 is not compatible with 1.x. Remove the old version before importing, update all clients at the same time, and convert your scenes with Tools > SimpleWebRTC > Migrate Open Scenes. Requires Unity 6000.0+ and WebRTC (FDGS) 3.2.0+ instead of com.unity.webrtc (installable with one click from the included dependency check).
+
+New
+- Component-based setup: WebRTCPeerManager, DataChannel, VideoSender/VideoReceiver, AudioSender/AudioReceiver and WebRTCStatsMonitor. Add only what you need.
+- Pluggable signaling: WebSocket (NativeWebSocket 2.x or Meta Voice SDK), Photon Fusion 2, in-process loopback, LAN/UDP example, or your own backend.
+- Perfect negotiation: start and stop streams at any time; late joiners get running streams.
+- Rooms, TURN server support, preferred video codec, bitrate and framerate limits.
+- Video from cameras, textures, webcams and 360° cubemaps (mono/stereo); multiple data channels (reliable/unreliable, text/binary); microphone support.
+- Connection statistics (latency, bitrate, FPS, codec, packet loss, direct or TURN) with an optional overlay.
+- New samples: Loopback (no server needed) and Custom Signaling Transport (UDP, LAN). Every sample has a README.
+- Migration tool for 1.x scenes, Node.js signaling server, "How WebRTC works" guide.
+- Compatible browser client: SimpleWebRTC-Web (https://github.com/FireDragonGameStudio/SimpleWebRTC-Web).
+
+Fixed
+- Reconnecting after a disconnect, peers joining after streams started, frozen video after a sender stopped, stuck first negotiation between peers with different media setups, and several stability issues.
+
+Full release notes: https://github.com/FireDragonGameStudio/SimpleWebRTC/releases

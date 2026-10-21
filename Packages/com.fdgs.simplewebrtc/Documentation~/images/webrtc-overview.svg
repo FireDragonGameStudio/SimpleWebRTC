@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520" role="img" aria-labelledby="title desc">
+  <title id="title">WebRTC overview</title>
+  <desc id="desc">Two peers exchange offer, answer and ICE candidates through a signaling channel, ask a STUN server for their public address, and then send audio, video and data directly to each other, or through a TURN relay if no direct path exists.</desc>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { fill: #f6f8fa; stroke: #d1d9e0; stroke-width: 1.5; }
+    .peer { fill: #ddf4ff; stroke: #0969da; stroke-width: 2; }
+    .server { fill: #fbefff; stroke: #8250df; stroke-width: 1.5; }
+    .turn { fill: #fff1e5; stroke: #bc4c00; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    .t { fill: #1f2328; font: 600 17px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .s { fill: #59636e; font: 14px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .code { fill: #59636e; font: 13px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .sig { stroke: #8250df; stroke-width: 2; fill: none; stroke-dasharray: 7 5; }
+    .media { stroke: #1a7f37; stroke-width: 6; fill: none; }
+    .stun { stroke: #59636e; stroke-width: 1.5; fill: none; stroke-dasharray: 3 4; }
+    .relay { stroke: #bc4c00; stroke-width: 2; fill: none; stroke-dasharray: 6 4; }
+    .lsig { fill: #8250df; font: 600 14px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .lmedia { fill: #1a7f37; font: 600 15px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .lrelay { fill: #bc4c00; font: 600 14px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .ah-sig { fill: #8250df; } .ah-media { fill: #1a7f37; } .ah-stun { fill: #59636e; } .ah-relay { fill: #bc4c00; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .box { fill: #151b23; stroke: #3d444d; }
+      .peer { fill: #0c2d6b; stroke: #4493f8; }
+      .server { fill: #2a1a4a; stroke: #ab7df8; }
+      .turn { fill: #3d1d00; stroke: #db6d28; }
+      .t { fill: #e6edf3; } .s, .code { fill: #9198a1; }
+      .sig { stroke: #ab7df8; } .media { stroke: #3fb950; } .stun { stroke: #9198a1; } .relay { stroke: #db6d28; }
+      .lsig { fill: #ab7df8; } .lmedia { fill: #3fb950; } .lrelay { fill: #db6d28; }
+      .ah-sig { fill: #ab7df8; } .ah-media { fill: #3fb950; } .ah-stun { fill: #9198a1; } .ah-relay { fill: #db6d28; }
+    }
+  </style>
+  <defs>
+    <marker id="a-sig" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-sig" d="M0 0 L10 5 L0 10 z"/></marker>
+    <marker id="a-media" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path class="ah-media" d="M0 0 L10 5 L0 10 z"/></marker>
+    <marker id="a-stun" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah-stun" d="M0 0 L10 5 L0 10 z"/></marker>
+    <marker id="a-relay" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah-relay" d="M0 0 L10 5 L0 10 z"/></marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="960" height="520" rx="12"/>
+
+  <!-- signaling server -->
+  <rect class="server" x="330" y="24" width="300" height="92" rx="10"/>
+  <text class="t" x="480" y="56" text-anchor="middle">Signaling channel</text>
+  <text class="s" x="480" y="78" text-anchor="middle">WebSocket server, Photon, LAN broadcast,</text>
+  <text class="s" x="480" y="97" text-anchor="middle">in-process loopback, ... (your choice)</text>
+
+  <!-- peers -->
+  <rect class="peer" x="40" y="200" width="230" height="140" rx="12"/>
+  <text class="t" x="155" y="232" text-anchor="middle">Peer A (Alice)</text>
+  <text class="s" x="155" y="256" text-anchor="middle">Unity app with</text>
+  <text class="code" x="155" y="278" text-anchor="middle">WebRTCPeerManager</text>
+  <text class="s" x="155" y="304" text-anchor="middle">camera, mic, data</text>
+
+  <rect class="peer" x="690" y="200" width="230" height="140" rx="12"/>
+  <text class="t" x="805" y="232" text-anchor="middle">Peer B (Bob)</text>
+  <text class="s" x="805" y="256" text-anchor="middle">another app, device</text>
+  <text class="s" x="805" y="276" text-anchor="middle">or browser</text>
+  <text class="s" x="805" y="304" text-anchor="middle">camera, mic, data</text>
+
+  <!-- signaling arrows -->
+  <path class="sig" d="M 200 198 C 230 120, 280 90, 326 78" marker-start="url(#a-sig)" marker-end="url(#a-sig)"/>
+  <path class="sig" d="M 760 198 C 730 120, 680 90, 634 78" marker-start="url(#a-sig)" marker-end="url(#a-sig)"/>
+  <text class="lsig" x="150" y="140" text-anchor="middle">1. offer / answer</text>
+  <text class="lsig" x="150" y="158" text-anchor="middle">+ ICE candidates</text>
+  <text class="lsig" x="810" y="140" text-anchor="middle">1. offer / answer</text>
+  <text class="lsig" x="810" y="158" text-anchor="middle">+ ICE candidates</text>
+
+  <!-- direct media -->
+  <path class="media" d="M 278 270 L 682 270" marker-start="url(#a-media)" marker-end="url(#a-media)"/>
+  <text class="lmedia" x="480" y="252" text-anchor="middle">3. audio · video · data, peer-to-peer</text>
+  <text class="s" x="480" y="296" text-anchor="middle">encrypted (DTLS / SRTP), no server in between</text>
+
+  <!-- STUN -->
+  <rect class="box" x="40" y="404" width="230" height="82" rx="10"/>
+  <text class="t" x="155" y="434" text-anchor="middle">STUN server</text>
+  <text class="s" x="155" y="456" text-anchor="middle">"What is my public</text>
+  <text class="s" x="155" y="474" text-anchor="middle">IP address and port?"</text>
+  <path class="stun" d="M 155 344 L 155 400" marker-start="url(#a-stun)" marker-end="url(#a-stun)"/>
+  <text class="s" x="165" y="378">2.</text>
+  <rect class="box" x="690" y="404" width="230" height="82" rx="10"/>
+  <text class="t" x="805" y="434" text-anchor="middle">STUN server</text>
+  <text class="s" x="805" y="456" text-anchor="middle">same question for</text>
+  <text class="s" x="805" y="474" text-anchor="middle">the other peer</text>
+  <path class="stun" d="M 805 344 L 805 400" marker-start="url(#a-stun)" marker-end="url(#a-stun)"/>
+  <text class="s" x="815" y="378">2.</text>
+
+  <!-- TURN -->
+  <rect class="turn" x="365" y="380" width="230" height="106" rx="10"/>
+  <text class="t" x="480" y="410" text-anchor="middle">TURN relay (fallback)</text>
+  <text class="s" x="480" y="432" text-anchor="middle">only if no direct path works,</text>
+  <text class="s" x="480" y="450" text-anchor="middle">e.g. strict firewalls:</text>
+  <text class="s" x="480" y="468" text-anchor="middle">media is relayed instead</text>
+  <path class="relay" d="M 250 344 C 280 400, 320 430, 361 432" marker-end="url(#a-relay)"/>
+  <path class="relay" d="M 710 344 C 680 400, 640 430, 599 432" marker-end="url(#a-relay)"/>
+</svg>

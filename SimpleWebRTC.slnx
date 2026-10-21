@@ -1,10 +1,11 @@
 ﻿<Solution>
-  <Project Path="SimpleWebRTC.csproj" />
   <Project Path="SimpleWebRTC.VisualScripting.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
-  <Project Path="SimpleWebRTC.Tests.Runtime.csproj" />
-  <Project Path="SimpleWebRTC.Editor.Setup.csproj" />
+  <Project Path="SimpleWebRTC.Samples.CustomSignaling.csproj" />
+  <Project Path="SimpleWebRTC.csproj" />
   <Project Path="SimpleWebRTC.Tests.Editor.csproj" />
+  <Project Path="SimpleWebRTC.Tests.Runtime.csproj" />
+  <Project Path="SimpleWebRTC.Samples.Loopback.csproj" />
   <Project Path="SimpleWebRTC.Editor.csproj" />
   <Project Path="SimpleWebRTC.NativeWebSocket.csproj" />
+  <Project Path="SimpleWebRTC.Editor.Setup.csproj" />
 </Solution>

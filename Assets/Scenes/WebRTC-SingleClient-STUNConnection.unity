@@ -2795,6 +2795,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Client-STUNConnection
       objectReference: {fileID: 0}
+    - target: {fileID: 5489690598648953067, guid: 2884c322692e8cb4fa7aeed7d35cb11a, type: 3}
+      propertyPath: preferredVideoCodec
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

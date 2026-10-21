@@ -1,0 +1,1 @@
+Peer-to-peer video, audio and data for Unity with WebRTC: component-based, pluggable signaling (WebSocket, Photon, LAN or your own), 360° video and connection stats.

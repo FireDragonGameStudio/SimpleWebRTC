@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" width="960" height="700" role="img" aria-labelledby="title desc">
+  <title id="title">How two SimpleWebRTC peers connect</title>
+  <desc id="desc">Sequence of signaling messages between Alice and Bob: join, welcome, offer, answer and ICE candidates are relayed by the signaling channel. Then ICE connectivity checks run directly between the peers and audio, video and data flow peer-to-peer.</desc>
+  <style>
+    .bg { fill: #ffffff; }
+    .head { fill: #ddf4ff; stroke: #0969da; stroke-width: 2; }
+    .headsig { fill: #fbefff; stroke: #8250df; stroke-width: 2; }
+    .life { stroke: #d1d9e0; stroke-width: 2; stroke-dasharray: 4 6; }
+    .note { fill: #f6f8fa; stroke: #d1d9e0; stroke-width: 1.2; }
+    .phase { fill: #59636e; paint-order: stroke; stroke: #ffffff; stroke-width: 8px; stroke-linejoin: round; font: 700 12px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; letter-spacing: 0.08em; }
+    .t { fill: #1f2328; font: 600 17px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .m { fill: #1f2328; font: 600 15px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .s { fill: #59636e; font: 13.5px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .code { fill: #59636e; font: 13px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .sig { stroke: #8250df; stroke-width: 2; fill: none; }
+    .dot { fill: #8250df; }
+    .check { stroke: #1a7f37; stroke-width: 2; fill: none; stroke-dasharray: 3 5; }
+    .media { stroke: #1a7f37; stroke-width: 6; fill: none; }
+    .green { fill: #1a7f37; font: 600 15px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .ah-sig { fill: #8250df; } .ah-media { fill: #1a7f37; }
+    .sep { stroke: #d1d9e0; stroke-width: 1; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .head { fill: #0c2d6b; stroke: #4493f8; }
+      .headsig { fill: #2a1a4a; stroke: #ab7df8; }
+      .life, .sep { stroke: #3d444d; }
+      .note { fill: #151b23; stroke: #3d444d; }
+      .t, .m { fill: #e6edf3; } .s, .code, .phase { fill: #9198a1; } .phase { stroke: #0d1117; }
+      .sig { stroke: #ab7df8; } .dot, .ah-sig { fill: #ab7df8; }
+      .check, .media { stroke: #3fb950; } .green, .ah-media { fill: #3fb950; }
+    }
+  </style>
+  <defs>
+    <marker id="a-sig" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-sig" d="M0 0 L10 5 L0 10 z"/></marker>
+    <marker id="a-check" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-media" d="M0 0 L10 5 L0 10 z"/></marker>
+    <marker id="a-media" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path class="ah-media" d="M0 0 L10 5 L0 10 z"/></marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="960" height="700" rx="12"/>
+
+  <!-- heads -->
+  <rect class="head" x="40" y="20" width="200" height="56" rx="10"/>
+  <text class="t" x="140" y="45" text-anchor="middle">Alice</text>
+  <text class="code" x="140" y="65" text-anchor="middle">WebRTCPeerManager</text>
+  <rect class="headsig" x="380" y="20" width="200" height="56" rx="10"/>
+  <text class="t" x="480" y="45" text-anchor="middle">Signaling</text>
+  <text class="code" x="480" y="65" text-anchor="middle">SignalingTransport</text>
+  <rect class="head" x="720" y="20" width="200" height="56" rx="10"/>
+  <text class="t" x="820" y="45" text-anchor="middle">Bob</text>
+  <text class="code" x="820" y="65" text-anchor="middle">WebRTCPeerManager</text>
+
+  <!-- lifelines -->
+  <line class="life" x1="140" y1="76" x2="140" y2="680"/>
+  <line class="life" x1="480" y1="76" x2="480" y2="680"/>
+  <line class="life" x1="820" y1="76" x2="820" y2="680"/>
+
+  <!-- phase 1: find each other -->
+  <text class="phase" x="20" y="104">FIND EACH OTHER</text>
+  <path class="sig" d="M 140 128 L 816 128" marker-end="url(#a-sig)"/>
+  <circle class="dot" cx="480" cy="128" r="4"/>
+  <text class="m" x="310" y="120" text-anchor="middle">join</text>
+  <text class="s" x="650" y="120" text-anchor="middle">"I'm in room default" (broadcast)</text>
+  <path class="sig" d="M 820 170 L 144 170" marker-end="url(#a-sig)"/>
+  <circle class="dot" cx="480" cy="170" r="4"/>
+  <text class="m" x="650" y="162" text-anchor="middle">welcome</text>
+  <text class="s" x="310" y="162" text-anchor="middle">"I'm here too"</text>
+  <rect class="note" x="40" y="186" width="200" height="40" rx="6"/>
+  <text class="s" x="140" y="211" text-anchor="middle">creates PeerSession(Bob)</text>
+  <rect class="note" x="720" y="186" width="200" height="40" rx="6"/>
+  <text class="s" x="820" y="211" text-anchor="middle">creates PeerSession(Alice)</text>
+
+  <line class="sep" x1="20" y1="244" x2="940" y2="244"/>
+  <!-- phase 2: negotiate -->
+  <text class="phase" x="20" y="266">AGREE ON WHAT TO SEND (SDP OFFER / ANSWER)</text>
+  <path class="sig" d="M 820 296 L 144 296" marker-end="url(#a-sig)"/>
+  <circle class="dot" cx="480" cy="296" r="4"/>
+  <text class="m" x="650" y="288" text-anchor="middle">offer</text>
+  <text class="s" x="310" y="288" text-anchor="middle">"I send VP8 video + a data channel"</text>
+  <path class="sig" d="M 140 338 L 816 338" marker-end="url(#a-sig)"/>
+  <circle class="dot" cx="480" cy="338" r="4"/>
+  <text class="m" x="310" y="330" text-anchor="middle">answer</text>
+  <text class="s" x="650" y="330" text-anchor="middle">"OK, and I send VP8 video too"</text>
+
+  <line class="sep" x1="20" y1="362" x2="940" y2="362"/>
+  <!-- phase 3: network -->
+  <text class="phase" x="20" y="384">FIND A NETWORK PATH (ICE)</text>
+  <path class="sig" d="M 140 414 L 816 414" marker-end="url(#a-sig)"/>
+  <circle class="dot" cx="480" cy="414" r="4"/>
+  <text class="m" x="310" y="406" text-anchor="middle">candidate</text>
+  <text class="s" x="650" y="406" text-anchor="middle">"reach me at 192.168.1.20:54321"</text>
+  <path class="sig" d="M 820 452 L 144 452" marker-end="url(#a-sig)"/>
+  <circle class="dot" cx="480" cy="452" r="4"/>
+  <text class="m" x="650" y="444" text-anchor="middle">candidate</text>
+  <text class="s" x="310" y="444" text-anchor="middle">"or at 203.0.113.7:61000 (via STUN)"</text>
+  <path class="check" d="M 144 500 L 816 500" marker-start="url(#a-check)" marker-end="url(#a-check)"/>
+  <text class="green" x="480" y="490" text-anchor="middle">connectivity checks, directly between the peers</text>
+  <text class="s" x="480" y="522" text-anchor="middle">the best working candidate pair wins</text>
+
+  <line class="sep" x1="20" y1="546" x2="940" y2="546"/>
+  <!-- phase 4: connected -->
+  <text class="phase" x="20" y="568">CONNECTED</text>
+  <path class="media" d="M 148 610 L 812 610" marker-start="url(#a-media)" marker-end="url(#a-media)"/>
+  <text class="green" x="480" y="596" text-anchor="middle">audio · video · data channels, peer-to-peer and encrypted</text>
+  <text class="s" x="480" y="638" text-anchor="middle">signaling is only needed again to change the session (e.g. start a new stream)</text>
+  <text class="s" x="480" y="658" text-anchor="middle">or when a new peer joins</text>
+</svg>

@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" width="960" height="560" role="img" aria-labelledby="title desc">
+  <title id="title">Components of the Loopback sample</title>
+  <desc id="desc">Alice-Client and Bob-Client each have LoopbackSignaling, WebRTCPeerManager, DataChannel, a camera video source with VideoSender, a VideoReceiver with RawImageVideoSink and a chat script. Signaling goes through the in-process loopback channel; the peer connection carries chat messages and each side's camera video to the other side.</desc>
+  <style>
+    .bg { fill: #ffffff; }
+    .client { fill: #f6f8fa; stroke: #d1d9e0; stroke-width: 1.5; }
+    .comp { fill: #ffffff; stroke: #d1d9e0; stroke-width: 1.2; }
+    .csig { fill: #fbefff; stroke: #8250df; stroke-width: 1.5; }
+    .cpm { fill: #ddf4ff; stroke: #0969da; stroke-width: 1.5; }
+    .t { fill: #1f2328; font: 600 17px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .c { fill: #1f2328; font: 600 14px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .s { fill: #59636e; font: 13px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .ls { fill: #8250df; font: 600 13.5px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .lm { fill: #1a7f37; font: 600 13.5px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .lp { fill: #0969da; font: 600 13.5px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .sig { stroke: #8250df; stroke-width: 2; fill: none; stroke-dasharray: 7 5; }
+    .media { stroke: #1a7f37; stroke-width: 3; fill: none; }
+    .pc { stroke: #0969da; stroke-width: 10; stroke-opacity: 0.25; fill: none; }
+    .halo { paint-order: stroke; stroke: #ffffff; stroke-width: 6px; stroke-linejoin: round; }
+    .ah-sig { fill: #8250df; } .ah-media { fill: #1a7f37; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .client { fill: #151b23; stroke: #3d444d; }
+      .comp { fill: #0d1117; stroke: #3d444d; }
+      .csig { fill: #2a1a4a; stroke: #ab7df8; }
+      .cpm { fill: #0c2d6b; stroke: #4493f8; }
+      .t, .c { fill: #e6edf3; } .s { fill: #9198a1; }
+      .ls { fill: #ab7df8; } .lm { fill: #3fb950; } .lp { fill: #4493f8; }
+      .sig { stroke: #ab7df8; } .media { stroke: #3fb950; } .pc { stroke: #4493f8; stroke-opacity: 0.35; }
+      .halo { stroke: #0d1117; }
+      .ah-sig { fill: #ab7df8; } .ah-media { fill: #3fb950; }
+    }
+  </style>
+  <defs>
+    <marker id="a-sig" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="ah-sig" d="M0 0 L10 5 L0 10 z"/></marker>
+    <marker id="a-media" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="ah-media" d="M0 0 L10 5 L0 10 z"/></marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="960" height="560" rx="12"/>
+
+  <!-- clients -->
+  <rect class="client" x="24" y="20" width="310" height="520" rx="12"/>
+  <text class="t" x="179" y="50" text-anchor="middle">Alice-Client</text>
+  <rect class="client" x="626" y="20" width="310" height="520" rx="12"/>
+  <text class="t" x="781" y="50" text-anchor="middle">Bob-Client</text>
+
+  <!-- peer connection band (behind) -->
+  <path class="pc" d="M 322 155 L 638 155"/>
+  <text class="lp halo" x="480" y="140" text-anchor="middle">PeerSession = RTCPeerConnection</text>
+
+  <!-- rows: Alice -->
+  <rect class="csig" x="44" y="72" width="270" height="50" rx="8"/>
+  <text class="c" x="179" y="94" text-anchor="middle">LoopbackSignaling</text>
+  <text class="s" x="179" y="112" text-anchor="middle">channel "default"</text>
+  <rect class="cpm" x="44" y="132" width="270" height="50" rx="8"/>
+  <text class="c" x="179" y="154" text-anchor="middle">WebRTCPeerManager</text>
+  <text class="s" x="179" y="172" text-anchor="middle">peer id "Alice-…", connect on start</text>
+  <rect class="comp" x="44" y="198" width="270" height="50" rx="8"/>
+  <text class="c" x="179" y="220" text-anchor="middle">DataChannel</text>
+  <text class="s" x="179" y="238" text-anchor="middle">label "data", id 0</text>
+  <rect class="comp" x="44" y="264" width="270" height="50" rx="8"/>
+  <text class="c" x="179" y="286" text-anchor="middle">CameraVideoSource</text>
+  <text class="s" x="179" y="304" text-anchor="middle">Alice-StreamingCamera → VideoSender</text>
+  <rect class="comp" x="44" y="330" width="270" height="50" rx="8"/>
+  <text class="c" x="179" y="352" text-anchor="middle">VideoReceiver</text>
+  <text class="s" x="179" y="370" text-anchor="middle">→ RawImageVideoSink (left panel)</text>
+  <rect class="comp" x="44" y="396" width="270" height="50" rx="8"/>
+  <text class="c" x="179" y="418" text-anchor="middle">LoopbackSampleChat</text>
+  <text class="s" x="179" y="436" text-anchor="middle">sends "Hello #n" every 2 s</text>
+  <rect class="comp" x="44" y="462" width="270" height="50" rx="8"/>
+  <text class="c" x="179" y="484" text-anchor="middle">WebRTCStatsMonitor</text>
+  <text class="s" x="179" y="502" text-anchor="middle">overlay top left</text>
+
+  <!-- rows: Bob -->
+  <rect class="csig" x="646" y="72" width="270" height="50" rx="8"/>
+  <text class="c" x="781" y="94" text-anchor="middle">LoopbackSignaling</text>
+  <text class="s" x="781" y="112" text-anchor="middle">channel "default"</text>
+  <rect class="cpm" x="646" y="132" width="270" height="50" rx="8"/>
+  <text class="c" x="781" y="154" text-anchor="middle">WebRTCPeerManager</text>
+  <text class="s" x="781" y="172" text-anchor="middle">peer id "Bob-…", connect on start</text>
+  <rect class="comp" x="646" y="198" width="270" height="50" rx="8"/>
+  <text class="c" x="781" y="220" text-anchor="middle">DataChannel</text>
+  <text class="s" x="781" y="238" text-anchor="middle">label "data", id 0</text>
+  <rect class="comp" x="646" y="264" width="270" height="50" rx="8"/>
+  <text class="c" x="781" y="286" text-anchor="middle">CameraVideoSource</text>
+  <text class="s" x="781" y="304" text-anchor="middle">Bob-StreamingCamera → VideoSender</text>
+  <rect class="comp" x="646" y="330" width="270" height="50" rx="8"/>
+  <text class="c" x="781" y="352" text-anchor="middle">VideoReceiver</text>
+  <text class="s" x="781" y="370" text-anchor="middle">→ RawImageVideoSink (right panel)</text>
+  <rect class="comp" x="646" y="396" width="270" height="50" rx="8"/>
+  <text class="c" x="781" y="418" text-anchor="middle">LoopbackSampleChat</text>
+  <text class="s" x="781" y="436" text-anchor="middle">sends "Hello #n" every 2 s</text>
+
+  <!-- signaling -->
+  <path class="sig" d="M 318 97 L 642 97" marker-start="url(#a-sig)" marker-end="url(#a-sig)"/>
+  <text class="ls halo" x="480" y="88" text-anchor="middle">signaling, in-process (no server)</text>
+
+  <!-- data channel -->
+  <path class="media" d="M 318 223 L 642 223" marker-start="url(#a-media)" marker-end="url(#a-media)"/>
+  <text class="lm halo" x="480" y="214" text-anchor="middle">chat messages</text>
+
+  <!-- video, crossing -->
+  <path class="media" d="M 318 289 C 480 289, 480 355, 642 355" marker-end="url(#a-media)"/>
+  <path class="media" d="M 642 289 C 480 289, 480 355, 318 355" marker-end="url(#a-media)"/>
+  <text class="lm halo" x="480" y="282" text-anchor="middle">VP8 video, both directions</text>
+
+  <!-- explanation -->
+  <text class="s" x="480" y="420" text-anchor="middle">In a real app every client runs</text>
+  <text class="s" x="480" y="438" text-anchor="middle">on its own device, and signaling</text>
+  <text class="s" x="480" y="456" text-anchor="middle">uses a WebSocket server, Photon,</text>
+  <text class="s" x="480" y="474" text-anchor="middle">LAN broadcast or your own backend.</text>
+  <text class="s" x="480" y="500" text-anchor="middle">Everything else stays the same.</text>
+</svg>

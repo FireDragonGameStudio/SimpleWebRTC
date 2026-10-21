@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 610" width="960" height="610" role="img" aria-labelledby="title desc">
+  <title id="title">ICE candidate types</title>
+  <desc id="desc">Three ways two peers can reach each other: host candidates in the same local network, server-reflexive candidates through routers using an address learned from a STUN server, and relay candidates through a TURN server when nothing else works.</desc>
+  <style>
+    .bg { fill: #ffffff; }
+    .peer { fill: #ddf4ff; stroke: #0969da; stroke-width: 2; }
+    .net { fill: #f6f8fa; stroke: #d1d9e0; stroke-width: 1.5; }
+    .stun { fill: #f6f8fa; stroke: #59636e; stroke-width: 1.5; }
+    .turn { fill: #fff1e5; stroke: #bc4c00; stroke-width: 2; }
+    .badge-host { fill: #dafbe1; stroke: #1a7f37; stroke-width: 1.5; }
+    .badge-srflx { fill: #ddf4ff; stroke: #0969da; stroke-width: 1.5; }
+    .badge-relay { fill: #fff1e5; stroke: #bc4c00; stroke-width: 1.5; }
+    .t { fill: #1f2328; font: 600 16px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .b { fill: #1f2328; font: 700 14px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .s { fill: #59636e; font: 13.5px -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .path { stroke: #1a7f37; stroke-width: 4; fill: none; }
+    .ask { stroke: #59636e; stroke-width: 1.5; fill: none; stroke-dasharray: 3 4; }
+    .relay { stroke: #bc4c00; stroke-width: 4; fill: none; }
+    .sep { stroke: #d1d9e0; stroke-width: 1; }
+    .ah-path { fill: #1a7f37; } .ah-ask { fill: #59636e; } .ah-relay { fill: #bc4c00; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .peer { fill: #0c2d6b; stroke: #4493f8; }
+      .net, .stun { fill: #151b23; stroke: #3d444d; }
+      .turn { fill: #3d1d00; stroke: #db6d28; }
+      .badge-host { fill: #0f2f1a; stroke: #3fb950; }
+      .badge-srflx { fill: #0c2d6b; stroke: #4493f8; }
+      .badge-relay { fill: #3d1d00; stroke: #db6d28; }
+      .t, .b { fill: #e6edf3; } .s { fill: #9198a1; }
+      .path { stroke: #3fb950; } .ask { stroke: #9198a1; } .relay { stroke: #db6d28; } .sep { stroke: #3d444d; }
+      .ah-path { fill: #3fb950; } .ah-ask { fill: #9198a1; } .ah-relay { fill: #db6d28; }
+    }
+  </style>
+  <defs>
+    <marker id="a-path" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path class="ah-path" d="M0 0 L10 5 L0 10 z"/></marker>
+    <marker id="a-ask" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah-ask" d="M0 0 L10 5 L0 10 z"/></marker>
+    <marker id="a-relay" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path class="ah-relay" d="M0 0 L10 5 L0 10 z"/></marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="960" height="610" rx="12"/>
+
+  <!-- row 1: host -->
+  <rect class="badge-host" x="24" y="40" width="96" height="30" rx="15"/>
+  <text class="b" x="72" y="60" text-anchor="middle">host</text>
+  <text class="s" x="24" y="96">same local network</text>
+  <rect class="net" x="170" y="22" width="620" height="120" rx="12"/>
+  <text class="s" x="186" y="44">home / office network</text>
+  <rect class="peer" x="200" y="58" width="150" height="60" rx="10"/>
+  <text class="t" x="275" y="84" text-anchor="middle">Peer A</text>
+  <text class="s" x="275" y="104" text-anchor="middle">192.168.1.20</text>
+  <rect class="peer" x="610" y="58" width="150" height="60" rx="10"/>
+  <text class="t" x="685" y="84" text-anchor="middle">Peer B</text>
+  <text class="s" x="685" y="104" text-anchor="middle">192.168.1.35</text>
+  <path class="path" d="M 356 88 L 604 88" marker-start="url(#a-path)" marker-end="url(#a-path)"/>
+  <text class="s" x="480" y="78" text-anchor="middle">direct, using the local IPs</text>
+  <text class="s" x="810" y="70">fastest, no server</text>
+  <text class="s" x="810" y="90">e.g. Loopback and</text>
+  <text class="s" x="810" y="110">UDP LAN samples</text>
+
+  <line class="sep" x1="20" y1="166" x2="940" y2="166"/>
+
+  <!-- row 2: srflx -->
+  <rect class="badge-srflx" x="24" y="214" width="96" height="30" rx="15"/>
+  <text class="b" x="72" y="234" text-anchor="middle">srflx</text>
+  <text class="s" x="24" y="270">different networks,</text>
+  <text class="s" x="24" y="288">address via STUN</text>
+  <rect class="stun" x="400" y="182" width="160" height="50" rx="10"/>
+  <text class="t" x="480" y="203" text-anchor="middle">STUN server</text>
+  <text class="s" x="480" y="222" text-anchor="middle">"you are 203.0.113.7"</text>
+  <path class="path" d="M 286 300 L 674 300" marker-start="url(#a-path)" marker-end="url(#a-path)"/>
+  <rect class="peer" x="170" y="262" width="110" height="56" rx="10"/>
+  <text class="t" x="225" y="295" text-anchor="middle">Peer A</text>
+  <rect class="net" x="300" y="262" width="110" height="56" rx="10"/>
+  <text class="t" x="355" y="286" text-anchor="middle">Router</text>
+  <text class="s" x="355" y="304" text-anchor="middle">NAT</text>
+  <rect class="net" x="550" y="262" width="110" height="56" rx="10"/>
+  <text class="t" x="605" y="286" text-anchor="middle">Router</text>
+  <text class="s" x="605" y="304" text-anchor="middle">NAT</text>
+  <rect class="peer" x="680" y="262" width="110" height="56" rx="10"/>
+  <text class="t" x="735" y="295" text-anchor="middle">Peer B</text>
+  <path class="ask" d="M 250 258 C 280 220, 340 207, 396 207" marker-end="url(#a-ask)"/>
+  <path class="ask" d="M 710 258 C 680 220, 620 207, 564 207" marker-end="url(#a-ask)"/>
+  <text class="s" x="480" y="292" text-anchor="middle">internet</text>
+  <text class="s" x="480" y="340" text-anchor="middle">direct through both routers, using the public addresses</text>
+  <text class="s" x="810" y="270">works for most</text>
+  <text class="s" x="810" y="290">home and mobile</text>
+  <text class="s" x="810" y="310">networks</text>
+
+  <line class="sep" x1="20" y1="366" x2="940" y2="366"/>
+
+  <!-- row 3: relay -->
+  <rect class="badge-relay" x="24" y="420" width="96" height="30" rx="15"/>
+  <text class="b" x="72" y="440" text-anchor="middle">relay</text>
+  <text class="s" x="24" y="476">nothing direct works,</text>
+  <text class="s" x="24" y="494">traffic via TURN</text>
+  <rect class="peer" x="170" y="440" width="110" height="56" rx="10"/>
+  <text class="t" x="225" y="473" text-anchor="middle">Peer A</text>
+  <rect class="net" x="300" y="440" width="110" height="56" rx="10"/>
+  <text class="t" x="355" y="464" text-anchor="middle">Firewall</text>
+  <text class="s" x="355" y="482" text-anchor="middle">strict NAT</text>
+  <rect class="turn" x="410" y="520" width="140" height="62" rx="10"/>
+  <text class="t" x="480" y="546" text-anchor="middle">TURN server</text>
+  <text class="s" x="480" y="566" text-anchor="middle">relays all media</text>
+  <rect class="net" x="550" y="440" width="110" height="56" rx="10"/>
+  <text class="t" x="605" y="464" text-anchor="middle">Firewall</text>
+  <text class="s" x="605" y="482" text-anchor="middle">strict NAT</text>
+  <rect class="peer" x="680" y="440" width="110" height="56" rx="10"/>
+  <text class="t" x="735" y="473" text-anchor="middle">Peer B</text>
+  <path class="relay" d="M 286 468 L 296 468"/>
+  <path class="relay" d="M 414 470 C 440 470, 450 490, 462 514" marker-start="url(#a-relay)" marker-end="url(#a-relay)"/>
+  <path class="relay" d="M 546 470 C 520 470, 510 490, 498 514" marker-start="url(#a-relay)" marker-end="url(#a-relay)"/>
+  <path class="relay" d="M 664 468 L 674 468"/>
+  <text class="s" x="480" y="430" text-anchor="middle">direct path blocked</text>
+  <text class="s" x="810" y="450">always works, but</text>
+  <text class="s" x="810" y="470">slower, and the TURN</text>
+  <text class="s" x="810" y="490">server carries all traffic</text>
+</svg>
