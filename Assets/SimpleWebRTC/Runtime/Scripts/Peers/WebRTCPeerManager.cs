@@ -50,13 +50,14 @@ namespace SimpleWebRTC {
         public event Action<PeerSession> SessionClosed;
 
         private readonly Dictionary<string, PeerSession> sessions = new Dictionary<string, PeerSession>();
-        private bool peerIdInitialized;
+        // generated at runtime from localPeerId, never written back into the serialized field
+        private string runtimePeerId;
         private bool joinRequested;
 
         public string LocalPeerId {
             get {
                 InitializePeerId();
-                return localPeerId;
+                return runtimePeerId;
             }
         }
         public string Room => room;
@@ -136,7 +137,7 @@ namespace SimpleWebRTC {
                 return;
             }
             localPeerId = peerId;
-            peerIdInitialized = false;
+            runtimePeerId = null;
             InitializePeerId();
         }
 
@@ -168,14 +169,13 @@ namespace SimpleWebRTC {
         }
 
         private void InitializePeerId() {
-            if (peerIdInitialized) {
+            if (runtimePeerId != null) {
                 return;
             }
-            peerIdInitialized = true;
             if (string.IsNullOrWhiteSpace(localPeerId)) {
-                localPeerId = PeerIdGenerator.Create();
-            } else if (appendRandomSuffix) {
-                localPeerId = PeerIdGenerator.Create(localPeerId);
+                runtimePeerId = PeerIdGenerator.Create();
+            } else {
+                runtimePeerId = appendRandomSuffix ? PeerIdGenerator.Create(localPeerId) : localPeerId;
             }
         }
 

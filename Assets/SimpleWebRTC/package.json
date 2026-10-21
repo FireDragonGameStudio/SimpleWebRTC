@@ -7,7 +7,25 @@
   "dependencies": {
     "com.unity.ugui": "2.0.0"
   },
-  "keywords": ["Audio", "Multiplayer", "WebRTC", "Video", "Networking", "Tool", "Video Streaming", "Audio Streaming", "Photon Unity Networking", "Photon Fusion", "Photon", "Webcam", "Websocket", "Web", "Visual Scripting", "360 Video", "Data Channel"],
+  "keywords": [
+    "Audio",
+    "Multiplayer",
+    "WebRTC",
+    "Video",
+    "Networking",
+    "Tool",
+    "Video Streaming",
+    "Audio Streaming",
+    "Photon Unity Networking",
+    "Photon Fusion",
+    "Photon",
+    "Webcam",
+    "Websocket",
+    "Web",
+    "Visual Scripting",
+    "360 Video",
+    "Data Channel"
+  ],
   "author": {
     "name": "FireDragonGameStudio",
     "email": "info@wave-labs.dev",
@@ -21,12 +39,12 @@
     },
     {
       "displayName": "Loopback Sample (no server)",
-      "description": "Two peers in one scene connected with LoopbackSignaling: video, audio and chat without any signaling server.",
+      "description": "Two peers in one scene connected with LoopbackSignaling: video, chat and connection stats without any signaling server.",
       "path": "Samples~/LoopbackSample"
     },
     {
-      "displayName": "Custom Signaling Transport",
-      "description": "A commented template showing how to plug your own signaling backend into SimpleWebRTC by deriving from SignalingTransport.",
+      "displayName": "Custom Signaling Transport (UDP, no server)",
+      "description": "How to plug your own signaling backend into SimpleWebRTC: UdpBroadcastSignaling finds peers in the local network via UDP broadcast, so the sample scene connects several instances (or devices in the same Wi-Fi) without any server. Also contains a minimal commented transport template.",
       "path": "Samples~/CustomSignalingSample"
     },
     {

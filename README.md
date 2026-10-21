@@ -14,6 +14,7 @@ Version 2.0 splits the former all-in-one `WebRTCConnection` into small component
 - Received video shown in RawImages, on renderers or in RenderTextures.
 - Audio from AudioSources or the microphone, played back per peer.
 - STUN and TURN servers, preferred video codec, bitrate and framerate limits.
+- Connection statistics per peer (round trip time, bitrates, FPS, resolution, codecs, packet loss, jitter, direct or TURN-relayed path), with an optional on-screen overlay.
 - Unity Visual Scripting nodes and events.
 - Migration tool for SimpleWebRTC 1.x scenes.
 
@@ -54,7 +55,8 @@ WebRTCPeerManager ── one PeerSession (RTCPeerConnection) per remote peer
  ├─ VideoSender ── VideoSource      CameraVideoSource | TextureVideoSource | WebCamVideoSource | CubemapVideoSource | your own
  ├─ VideoReceiver ── VideoSink      RawImageVideoSink | RendererVideoSink | RenderTextureVideoSink | your own
  ├─ AudioSender                     AudioSource or microphone
- └─ AudioReceiver                   one AudioSource per peer
+ ├─ AudioReceiver                   one AudioSource per peer
+ └─ WebRTCStatsMonitor              connection statistics per peer
 ```
 All feature components find the `WebRTCPeerManager` on their GameObject or a parent. Put them on one GameObject, or on children for a cleaner hierarchy.
 
@@ -96,12 +98,31 @@ public class MyClient : MonoBehaviour {
 | `VideoReceiver` | Forwards remote videos to its `VideoSink`s. | events `VideoStarted`, `VideoStopped`, `VideoUpdated`, `VideoRemoved` |
 | `AudioSender` | Streams an AudioSource or the microphone. | `StartStreaming()`, `StopStreaming()` |
 | `AudioReceiver` | Plays every peer's audio through its own AudioSource (optional prefab for spatial audio or mixer groups). | `TryGetAudioSource()`; events `AudioStarted`, `AudioStopped` |
+| `WebRTCStatsMonitor` | Polls connection statistics for every peer at a fixed interval. Optional on-screen overlay (IMGUI) for debugging. | `Stats`, `TryGetStats()`, `Summary`, `ShowOverlay`; events `StatsUpdated` (`PeerStats`), `StatsTextUpdated` (formatted text, e.g. for a TextMeshPro text) |
 
 ### Extending SimpleWebRTC
-- **Signaling backend:** derive from `SignalingTransport` and implement `Connect`, `Disconnect` and `Send`. Report state changes with `SetState` and incoming messages with `ReceiveMessage`; both are safe to call from any thread. See the Custom Signaling Transport sample.
+- **Signaling backend:** derive from `SignalingTransport` and implement `Connect`, `Disconnect` and `Send`. Report state changes with `SetState` and incoming messages with `ReceiveMessage`; both are safe to call from any thread. The Custom Signaling Transport sample shows a complete example (`UdpBroadcastSignaling`, LAN without server) and a minimal template.
 - **Video source:** derive from `VideoSource` and create a `VideoStreamTrack` in `CreateTrack`.
 - **Video display:** derive from `VideoSink` and implement `SetVideo` / `RemoveVideo`.
 - **Anything per peer:** derive from `PeerSessionComponent` and use `OnSessionCreated` / `OnSessionClosed` to add tracks, transceivers or data channels to every `PeerSession`.
+
+### Connection statistics
+Add a `WebRTCStatsMonitor` next to the `WebRTCPeerManager`. Every update interval (default 1 second) it reports for each peer:
+- the round trip time and the available outgoing bandwidth of the active network path,
+- whether the path is direct (host/srflx) or relayed through a TURN server, and the protocol,
+- total send and receive bitrate,
+- per audio and video stream: direction, codec and encoder/decoder (e.g. VP8 / libvpx, H264 / NvCodec), bitrate, resolution, frame rate, packet loss, jitter, jitter buffer delay, dropped frames, freezes, and why the encoder limits quality (bandwidth or CPU),
+- data channel messages and bitrate.
+
+```csharp
+monitor.StatsUpdated += stats => {
+    Debug.Log($"{stats.PeerId}: {stats.RoundTripTimeMs:0} ms, {stats.ReceiveBitrateKbps:0} kbps in");
+    foreach (var stream in stats.Streams.Where(s => s.IsVideo)) {
+        Debug.Log($"{stream.Direction} {stream.Codec} {stream.Width}x{stream.Height} @ {stream.FramesPerSecond:0} fps");
+    }
+};
+```
+Enable Show Overlay (or use the Toggle Overlay button in Play mode) for a quick on-screen view, or wire `StatsTextUpdated` to the `text` of a UI text.
 
 ### Signaling protocol
 Messages are JSON objects, for example `{"v":2,"type":"offer","room":"default","from":"Peer-1a2b","to":"Peer-3c4d","payload":"..."}`. The types are `join`, `welcome`, `leave`, `offer`, `answer` and `candidate`. `to` is `*` for broadcasts. The server never needs to read the messages.
@@ -151,8 +172,8 @@ Import the samples from the Samples tab of the package in the Package Manager. T
 * *WebRTC-SingleClient-STUNConnection*: one client with buttons for connecting, chat, video and audio. Build it and run several instances.
 * *WebRTC-SingleClient-wLobby-STUNConnection*: a simple lobby. `SimpleLobbyManager.cs` shows how to use SimpleWebRTC from C#.
 * *WebRTC-MultipleClients-STUNConnection*: three clients in one scene, connected as a full mesh with data, video and audio.
-* *WebRTC-Loopback-NoServer*: two peers in one scene exchanging video and chat messages through `LoopbackSignaling`, no server needed.
-* *Custom Signaling Transport*: a commented template for your own signaling backend.
+* *WebRTC-Loopback-NoServer*: two peers in one scene exchanging video and chat messages through `LoopbackSignaling`, no server needed. Shows the stats overlay of `WebRTCStatsMonitor`.
+* *WebRTC-CustomSignaling-UdpBroadcast*: a custom signaling transport that finds peers in the local network via UDP broadcast, with video, chat and stats. Start it several times or on several devices in the same network, no server needed. On Android/Quest, add the `CHANGE_WIFI_MULTICAST_STATE` permission to your manifest. The sample also contains `ExampleCustomSignaling.cs`, a minimal commented template.
 * *WebRTC-SingleClient-STUNConnection-PhotonFusion*: signaling over Photon Fusion 2.
 * *WebRTC-SingleClient-STUNConnection-VisualScripting*: SimpleWebRTC with Unity Visual Scripting.
 * *WebRTC-SingleClient-STUNConnection-ImmersiveSpectator-Sender/-Receiver*: a 360° video sender and its receiver (e.g. an XR device). The receiver can switch the sender's camera position over the data channel.

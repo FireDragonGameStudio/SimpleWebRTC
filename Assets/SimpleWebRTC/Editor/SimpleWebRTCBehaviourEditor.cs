@@ -70,6 +70,9 @@ namespace SimpleWebRTC.Editor {
                 case AudioSender sender:
                     info = $"Streaming: {sender.IsStreaming}";
                     break;
+                case WebRTCStatsMonitor monitor:
+                    info = string.IsNullOrEmpty(monitor.Summary) ? "Waiting for the first update..." : monitor.Summary;
+                    break;
             }
             if (info != null) {
                 EditorGUILayout.HelpBox(info, MessageType.None);

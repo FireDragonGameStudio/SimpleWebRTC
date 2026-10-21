@@ -599,6 +599,7 @@ GameObject:
   - component: {fileID: 1795256448440244197}
   - component: {fileID: 3008124210482459135}
   - component: {fileID: 6263453595588315483}
+  - component: {fileID: 6208310756776402895}
   m_Layer: 0
   m_Name: Client-STUNConnection
   m_TagString: Untagged
@@ -849,6 +850,27 @@ MonoBehaviour:
           m_BoolArgument: 1
         m_CallState: 2
   AudioStopped:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &6208310756776402895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5412547114386104584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7cb76b2ffe5a14458c3f9ab222793d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SimpleWebRTC::SimpleWebRTC.WebRTCStatsMonitor
+  peerManager: {fileID: 5489690598648953067}
+  updateIntervalSeconds: 1
+  showOverlay: 0
+  overlayCorner: 0
+  overlayFontSize: 14
+  logToConsole: 0
+  StatsTextUpdated:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &6546058039667620365
