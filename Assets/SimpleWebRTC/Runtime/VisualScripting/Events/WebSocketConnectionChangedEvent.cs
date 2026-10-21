@@ -1,15 +1,10 @@
 #if VISUAL_SCRIPTING_INSTALLED
-#if !USE_NATIVEWEBSOCKET
-using Meta.Net.NativeWebSocket;
-#else
-using NativeWebSocket;
-#endif
 using Unity.VisualScripting;
 
 namespace SimpleWebRTC {
-    [UnitTitle("OnWebSocketConnectionChangedEvent")]
+    [UnitTitle("OnSignalingStateChanged")]
     [UnitCategory("Events\\SimpleWebRTC")]
-    public class WebSocketConnectionChangedEvent : EventUnit<WebSocketState> {
+    public class WebSocketConnectionChangedEvent : EventUnit<SignalingState> {
 
         [DoNotSerialize]
         public ValueOutput result { get; private set; }
@@ -22,14 +17,14 @@ namespace SimpleWebRTC {
         protected override void Definition() {
             base.Definition();
 
-            result = ValueOutput<WebSocketState>(nameof(result));
+            result = ValueOutput<SignalingState>(nameof(result));
         }
 
-        protected override void AssignArguments(Flow flow, WebSocketState data) {
+        protected override void AssignArguments(Flow flow, SignalingState data) {
             flow.SetValue(result, data);
         }
 
-        public static void Trigger(WebSocketState eventData) {
+        public static void Trigger(SignalingState eventData) {
             EventBus.Trigger(SimpleWebRTCEventNames.WebSocketConnectionChanged, eventData);
         }
     }

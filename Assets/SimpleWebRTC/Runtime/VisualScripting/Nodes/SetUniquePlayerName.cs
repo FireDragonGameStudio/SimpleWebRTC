@@ -23,7 +23,7 @@ namespace SimpleWebRTC {
         }
 
         private ControlOutput SetUniquePlayerNameValue(Flow flow) {
-            SimpleWebRTCSceneVariables.ClientConnection.SetUniquePlayerName(flow.GetValue<string>(playerName));
+            SimpleWebRTCSceneVariables.ClientConnection.PeerManager?.SetLocalPeerId(flow.GetValue<string>(playerName));
 
             return OutputTrigger;
         }

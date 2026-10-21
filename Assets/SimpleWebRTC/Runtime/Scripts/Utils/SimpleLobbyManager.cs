@@ -1,13 +1,11 @@
-#if !USE_NATIVEWEBSOCKET
-using Meta.Net.NativeWebSocket;
-#else
-using NativeWebSocket;
-#endif
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace SimpleWebRTC {
+    /// <summary>
+    /// Sample: a minimal lobby with a chat over a data channel and buttons to start/stop video and audio.
+    /// </summary>
     public class SimpleLobbyManager : MonoBehaviour {
 
         [SerializeField] private Button joinLobbyButton;
@@ -22,26 +20,28 @@ namespace SimpleWebRTC {
         [Header("Player Data")]
         [SerializeField] private string playerName = "Player ";
 
-        [Header("WebRTC Connection")]
-        [SerializeField] private WebRTCConnection webRTCConnection;
+        [Header("WebRTC")]
+        [SerializeField] private WebRTCPeerManager peerManager;
+        [SerializeField] private DataChannel chatChannel;
+        [SerializeField] private VideoSender videoSender;
+        [SerializeField] private AudioSender audioSender;
 
         private void Awake() {
-            playerName = playerName + SystemInfo.deviceName;
-            webRTCConnection.SetUniquePlayerName(playerName);
+            playerName += SystemInfo.deviceName;
+            peerManager.SetLocalPeerId(playerName);
 
-            // register events for lobby
             joinLobbyButton.onClick.AddListener(OnJoinLobby);
             leaveLobbyButton.onClick.AddListener(OnLeaveLobby);
             sendChatMessageButton.onClick.AddListener(OnSendLobbyChatMessage);
-            startVideoButton.onClick.AddListener(OnStartVideo);
-            stopVideoButton.onClick.AddListener(OnStopVideo);
-            startAudioButton.onClick.AddListener(OnStartAudio);
-            stopAudioButton.onClick.AddListener(OnStopAudio);
+            startVideoButton.onClick.AddListener(videoSender.StartStreaming);
+            stopVideoButton.onClick.AddListener(videoSender.StopStreaming);
+            startAudioButton.onClick.AddListener(audioSender.StartStreaming);
+            stopAudioButton.onClick.AddListener(audioSender.StopStreaming);
 
-            // register events for connection
-            webRTCConnection.WebSocketConnectionChanged.AddListener(OnJoinedLobby);
-            webRTCConnection.WebRTCConnected.AddListener(OnLobbySetupComplete);
-            webRTCConnection.DataChannelConnected.AddListener(OnLobbyChatConnected);
+            peerManager.SignalingStateChanged.AddListener(OnSignalingStateChanged);
+            peerManager.PeerConnected.AddListener(OnPeerConnected);
+            chatChannel.ChannelOpened.AddListener(OnLobbyChatConnected);
+            chatChannel.MessageReceived.AddListener(ReceiveLobbyChatMessage);
 
             SetUIElements(false);
         }
@@ -55,68 +55,40 @@ namespace SimpleWebRTC {
             startAudioButton.onClick.RemoveAllListeners();
             stopAudioButton.onClick.RemoveAllListeners();
 
-            // de-register events for connection
-            webRTCConnection.WebSocketConnectionChanged.RemoveListener(OnJoinedLobby);
-            webRTCConnection.WebRTCConnected.RemoveListener(OnLobbySetupComplete);
-            webRTCConnection.DataChannelConnected.RemoveListener(OnLobbyChatConnected);
+            peerManager.SignalingStateChanged.RemoveListener(OnSignalingStateChanged);
+            peerManager.PeerConnected.RemoveListener(OnPeerConnected);
+            chatChannel.ChannelOpened.RemoveListener(OnLobbyChatConnected);
+            chatChannel.MessageReceived.RemoveListener(ReceiveLobbyChatMessage);
         }
 
         private void OnJoinLobby() {
             lobbyChatText.gameObject.SetActive(true);
             lobbyChatText.text = "Connecting...";
-
-            // start client connection
-            webRTCConnection.Connect();
+            peerManager.Connect();
         }
 
-        private void OnJoinedLobby(WebSocketState state) {
-            Debug.Log($"WebSocket connection state is: {state}");
-
-            if (state == WebSocketState.Open) {
-                joinLobbyButton.gameObject.SetActive(false);
-                leaveLobbyButton.gameObject.SetActive(true);
+        private void OnSignalingStateChanged(SignalingState state) {
+            if (state == SignalingState.Connected) {
+                lobbyChatText.text = $"{peerManager.LocalPeerId} (you) joined the lobby.";
                 SetUIElements(true);
             }
-            if (state == WebSocketState.Closed) {
-                lobbyChatText.text = $"{playerName} (you) disconnected from Lobby.";
+            if (state == SignalingState.Disconnected) {
+                lobbyChatText.text += $"\n{peerManager.LocalPeerId} (you) disconnected from the lobby.";
+                SetUIElements(false);
             }
         }
 
-        private void OnLobbySetupComplete() {
-            Debug.Log("WebRTC is now ready. You can start the game now!");
+        private void OnPeerConnected(string peerId) {
+            Debug.Log($"WebRTC connection to {peerId} is ready.");
         }
 
         private void OnLobbyChatConnected(string peerId) {
-            var message = $"{playerName} can now send messages.";
-            Debug.Log(message);
-            SendLobbyChatMessageToPlayer(peerId, message);
+            SendLobbyChatMessageToPlayer(peerId, $"{playerName} can now send messages.");
         }
 
         private void OnLeaveLobby() {
-            var message = $"{playerName} left the lobby.";
-            Debug.Log(message);
-            SendLobbyChatMessage(message);
-
-            // disconnect client
-            webRTCConnection.Disconnect();
-
-            SetUIElements(false);
-        }
-
-        private void OnStartVideo() {
-            webRTCConnection.StartVideoTransmission();
-        }
-
-        private void OnStopVideo() {
-            webRTCConnection.StopVideoTransmission();
-        }
-
-        private void OnStartAudio() {
-            webRTCConnection.StartAudioTransmission();
-        }
-
-        private void OnStopAudio() {
-            webRTCConnection.StopAudioTransmission();
+            SendLobbyChatMessage($"{playerName} left the lobby.");
+            peerManager.Disconnect();
         }
 
         private void OnSendLobbyChatMessage() {
@@ -125,12 +97,12 @@ namespace SimpleWebRTC {
 
         private void SendLobbyChatMessage(string message) {
             lobbyChatText.text += "\n" + message;
-            webRTCConnection.SendDataChannelMessage(message);
+            chatChannel.Send(message);
         }
 
         private void SendLobbyChatMessageToPlayer(string targetPeerId, string message) {
             lobbyChatText.text += "\n" + message;
-            webRTCConnection.SendDataChannelMessageToPeer(targetPeerId, message);
+            chatChannel.SendTo(targetPeerId, message);
         }
 
         public void ReceiveLobbyChatMessage(string message) {
@@ -145,7 +117,7 @@ namespace SimpleWebRTC {
             stopVideoButton.gameObject.SetActive(inLobby);
             startAudioButton.gameObject.SetActive(inLobby);
             stopAudioButton.gameObject.SetActive(inLobby);
-            lobbyChatText.gameObject.SetActive(inLobby);
+            lobbyChatText.gameObject.SetActive(true);
         }
     }
 }

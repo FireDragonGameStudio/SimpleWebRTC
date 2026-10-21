@@ -1,0 +1,32 @@
+{
+    "name": "SimpleWebRTC.Editor.Setup",
+    "rootNamespace": "SimpleWebRTC.Editor",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.fdgs.webrtc",
+            "expression": "3.2.0",
+            "define": "SIMPLEWEBRTC_WEBRTC"
+        },
+        {
+            "name": "com.endel.nativewebsocket",
+            "expression": "2.0.0",
+            "define": "SIMPLEWEBRTC_NATIVEWEBSOCKET"
+        },
+        {
+            "name": "com.meta.xr.sdk.voice",
+            "expression": "",
+            "define": "SIMPLEWEBRTC_META_VOICE"
+        }
+    ],
+    "noEngineReferences": false
+}

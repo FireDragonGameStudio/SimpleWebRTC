@@ -23,7 +23,7 @@ namespace SimpleWebRTC {
         }
 
         private ControlOutput SendMessageViaDataChannel(Flow flow) {
-            SimpleWebRTCSceneVariables.ClientConnection.SendDataChannelMessage(flow.GetValue<string>(message));
+            SimpleWebRTCSceneVariables.ClientConnection.DataChannel?.Send(flow.GetValue<string>(message));
 
             return OutputTrigger;
         }

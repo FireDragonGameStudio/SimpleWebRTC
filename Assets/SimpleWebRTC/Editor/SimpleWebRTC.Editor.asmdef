@@ -1,0 +1,28 @@
+{
+    "name": "SimpleWebRTC.Editor",
+    "rootNamespace": "SimpleWebRTC.Editor",
+    "references": [
+        "GUID:83e396c66e601f847b1e748b6254fca0",
+        "GUID:f12aafacab75a87499e7e45c873ffab8",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "SIMPLEWEBRTC_WEBRTC"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.fdgs.webrtc",
+            "expression": "3.2.0",
+            "define": "SIMPLEWEBRTC_WEBRTC"
+        }
+    ],
+    "noEngineReferences": false
+}

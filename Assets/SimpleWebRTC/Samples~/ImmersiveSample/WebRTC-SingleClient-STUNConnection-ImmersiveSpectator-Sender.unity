@@ -245,6 +245,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -381,6 +382,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -517,6 +519,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -687,7 +690,6 @@ MonoBehaviour:
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
-  m_Version: 2
   m_TaaSettings:
     m_Quality: 3
     m_FrameInfluence: 0.1
@@ -695,6 +697,7 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -721,14 +724,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410087039}
   m_Enabled: 1
-  serializedVersion: 11
+  serializedVersion: 13
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 2
     m_Resolution: -1
@@ -773,7 +776,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -805,17 +808,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Version: 3
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
-  m_LightLayerMask: 1
-  m_RenderingLayers: 1
   m_CustomShadowLayers: 0
-  m_ShadowLayerMask: 1
-  m_ShadowRenderingLayers: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1 &492189138
 GameObject:
   m_ObjectHideFlags: 0
@@ -899,9 +908,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8671471656396631584}
-        m_TargetAssemblyTypeName: WebRTCConnection, Assembly-CSharp
-        m_MethodName: StartAudioTransmission
+      - m_Target: {fileID: 4888768506777689891}
+        m_TargetAssemblyTypeName: SimpleWebRTC.AudioSender, SimpleWebRTC
+        m_MethodName: StartStreaming
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1179,6 +1188,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1317,6 +1327,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1396,6 +1407,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1417,9 +1430,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &618052857
 MeshFilter:
@@ -1527,8 +1542,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8671471656396631584}
-        m_TargetAssemblyTypeName: WebRTCConnection, Assembly-CSharp
+      - m_Target: {fileID: 4888768506777689895}
+        m_TargetAssemblyTypeName: SimpleWebRTC.WebRTCPeerManager, SimpleWebRTC
         m_MethodName: Connect
         m_Mode: 1
         m_Arguments:
@@ -1660,9 +1675,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8671471656396631584}
-        m_TargetAssemblyTypeName: WebRTCConnection, Assembly-CSharp
-        m_MethodName: SendDataChannelMessage
+      - m_Target: {fileID: 4888768506777689894}
+        m_TargetAssemblyTypeName: SimpleWebRTC.DataChannel, SimpleWebRTC
+        m_MethodName: Send
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1842,6 +1857,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1863,9 +1880,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &899997392
 MeshFilter:
@@ -1967,6 +1986,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -2046,6 +2066,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2067,9 +2089,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1144258517
 MeshFilter:
@@ -2196,6 +2220,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2217,9 +2243,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1269449385
 MeshFilter:
@@ -2327,9 +2355,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8671471656396631584}
-        m_TargetAssemblyTypeName: WebRTCConnection, Assembly-CSharp
-        m_MethodName: StopVideoTransmission
+      - m_Target: {fileID: 4888768506777689892}
+        m_TargetAssemblyTypeName: SimpleWebRTC.VideoSender, SimpleWebRTC
+        m_MethodName: StopStreaming
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2460,8 +2488,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8671471656396631584}
-        m_TargetAssemblyTypeName: WebRTCConnection, Assembly-CSharp
+      - m_Target: {fileID: 4888768506777689895}
+        m_TargetAssemblyTypeName: SimpleWebRTC.WebRTCPeerManager, SimpleWebRTC
         m_MethodName: Disconnect
         m_Mode: 1
         m_Arguments:
@@ -2549,6 +2577,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2570,9 +2600,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1385173106
 MeshFilter:
@@ -2753,9 +2785,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8671471656396631584}
-        m_TargetAssemblyTypeName: WebRTCConnection, Assembly-CSharp
-        m_MethodName: StopAudioTransmission
+      - m_Target: {fileID: 4888768506777689891}
+        m_TargetAssemblyTypeName: SimpleWebRTC.AudioSender, SimpleWebRTC
+        m_MethodName: StopStreaming
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2898,6 +2930,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -3034,6 +3067,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -3170,6 +3204,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -3256,7 +3291,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 992839d536698644f86a1494029226c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  webRTCConnection: {fileID: 8671471656396631584}
+  peerManager: {fileID: 4888768506777689895}
+  dataChannel: {fileID: 4888768506777689894}
+  videoSender: {fileID: 4888768506777689892}
+  streamingCamera: {fileID: 1820659322087583749}
+  connectOnStart: 1
   cameraSwitchKeyword: switch
   cameraParentObjects:
   - {fileID: 1144258514}
@@ -3264,9 +3303,10 @@ MonoBehaviour:
   - {fileID: 899997393}
   - {fileID: 1269449386}
   - {fileID: 1385173107}
-  webRTCStartStopVideoStream: 0
-  webRTCPositionSwitch: 0
+  sendCameraSwitch: 0
+  toggleVideoStream: 0
   syncCameraPosition: 0
+  spectatorCamera: {fileID: 0}
   sendingIntervalInSeconds: 0.1
 --- !u!114 &1988037981
 MonoBehaviour:
@@ -3364,9 +3404,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8671471656396631584}
-        m_TargetAssemblyTypeName: WebRTCConnection, Assembly-CSharp
-        m_MethodName: StartVideoTransmission
+      - m_Target: {fileID: 4888768506777689892}
+        m_TargetAssemblyTypeName: SimpleWebRTC.VideoSender, SimpleWebRTC
+        m_MethodName: StartStreaming
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3475,7 +3515,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4888768506777689890}
-  - component: {fileID: 8671471656396631584}
+  - component: {fileID: 4888768506777689896}
+  - component: {fileID: 4888768506777689895}
+  - component: {fileID: 4888768506777689894}
+  - component: {fileID: 4888768506777689893}
+  - component: {fileID: 4888768506777689892}
+  - component: {fileID: 4888768506777689891}
   m_Layer: 0
   m_Name: Client-STUNConnection-ImmersiveSender
   m_TagString: Untagged
@@ -3570,6 +3615,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -3732,6 +3778,166 @@ Transform:
   - {fileID: 7480477673215562359}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4888768506777689891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408286794947803346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219ae60673856eb478b105ae534e573f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SimpleWebRTC::SimpleWebRTC.AudioSender
+  peerManager: {fileID: 4888768506777689895}
+  audioSource: {fileID: 7352518807526955739}
+  useMicrophone: 0
+  microphoneDevice: 
+  playLocally: 1
+  activateSourceWhileStreaming: 1
+  streamOnEnable: 0
+  StreamingStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  StreamingStopped:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &4888768506777689892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408286794947803346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dd02a85286970a48ae11279643cf22d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SimpleWebRTC::SimpleWebRTC.VideoSender
+  peerManager: {fileID: 4888768506777689895}
+  source: {fileID: 4888768506777689893}
+  streamOnEnable: 0
+  previewImage: {fileID: 0}
+  maxBitrateKbps: 0
+  maxFramerate: 0
+  StreamingStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  StreamingStopped:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &4888768506777689893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408286794947803346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bfb08d201773414eaf4bdfb9fc00064, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SimpleWebRTC::SimpleWebRTC.CubemapVideoSource
+  sourceCamera: {fileID: 1820659322087583749}
+  renderStereo: 0
+  stereoSeparation: 0.064
+  eyeResolution: 2048
+  depth: 16
+  oneFacePerFrame: 1
+  activateCameraWhileStreaming: 1
+--- !u!114 &4888768506777689894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408286794947803346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02f311e1b5ce1ac4480dd879a20d4542, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SimpleWebRTC::SimpleWebRTC.DataChannel
+  peerManager: {fileID: 4888768506777689895}
+  label: data
+  channelId: 0
+  ordered: 1
+  maxRetransmits: -1
+  ChannelOpened:
+    m_PersistentCalls:
+      m_Calls: []
+  ChannelClosed:
+    m_PersistentCalls:
+      m_Calls: []
+  MessageReceived:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1988037980}
+        m_TargetAssemblyTypeName: SwitchToNextCameraPosition, SimpleWebRTC
+        m_MethodName: OnMessageReceived
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &4888768506777689895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408286794947803346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22044b1e37f6e614380b188631d6cee5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SimpleWebRTC::SimpleWebRTC.WebRTCPeerManager
+  signaling: {fileID: 4888768506777689896}
+  room: default
+  connectOnStart: 0
+  localPeerId: Red
+  appendRandomSuffix: 1
+  iceServers:
+  - urls:
+    - stun:stun.l.google.com:19302
+    username: 
+    credential: 
+  preferredVideoCodec: 1
+  showLogs: 1
+  showDataChannelLogs: 1
+  SignalingStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  PeerJoined:
+    m_PersistentCalls:
+      m_Calls: []
+  PeerConnected:
+    m_PersistentCalls:
+      m_Calls: []
+  PeerLeft:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &4888768506777689896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408286794947803346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e52f6df2838b85a4e845fa3488d6e289, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: SimpleWebRTC.NativeWebSocket::SimpleWebRTC.WebSocketSignaling
+  StateChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  serverUrl: ws://localhost:3000
+  sendUserAgentHeader: 1
 --- !u!224 &5093069952141941336
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3903,6 +4109,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -3914,7 +4121,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -4009,6 +4216,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -4020,7 +4228,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -4052,7 +4260,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 01db26cb734ae6343a2efe66c9b47048, type: 3}
+  m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 01db26cb734ae6343a2efe66c9b47048, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -4198,7 +4406,6 @@ MonoBehaviour:
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
-  m_Version: 2
   m_TaaSettings:
     m_Quality: 3
     m_FrameInfluence: 0.1
@@ -4206,6 +4413,7 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!114 &7969801254503798217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4229,102 +4437,6 @@ MonoBehaviour:
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
   m_PresetInfoIsWorld: 0
---- !u!114 &8671471656396631584
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1408286794947803346}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7588ce98b751e28419e83a73016454e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  WebSocketServerAddress: wss://unity-webrtc-signaling.glitch.me
-  StunServerAddress: stun:stun.l.google.com:19302
-  LocalPeerId: Red-PeerId
-  UseHTTPHeader: 1
-  IsVideoAudioSender: 1
-  IsVideoAudioReceiver: 0
-  RandomUniquePeerId: 1
-  ShowLogs: 1
-  ShowDataChannelLogs: 1
-  UseImmersiveSetup: 1
-  experimentalSupportFor6DOF: 1
-  experimentalSpectatorCam6DOF: {fileID: 0}
-  RenderStereo: 0
-  StereoSeparation: 0.064
-  OneEyeRenderSide: 2048
-  RTDepth: 16
-  OneFacePerFrame: 1
-  receivingRenderTexture: {fileID: 0}
-  WebSocketConnectionActive: 0
-  SendWebSocketTestMessage: 0
-  WebSocketConnectionChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  WebRTCConnectionActive: 0
-  WebRTCConnected:
-    m_PersistentCalls:
-      m_Calls: []
-  SendDataChannelTestMessage: 0
-  DataChannelConnected:
-    m_PersistentCalls:
-      m_Calls: []
-  DataChannelMessageReceived:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1988037980}
-        m_TargetAssemblyTypeName: SwitchToNextCameraPosition, SimpleWebRTC
-        m_MethodName: OnMessageReceived
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  StartStopVideoTransmission: 0
-  VideoResolution: {x: 1280, y: 720}
-  StreamingCamera: {fileID: 1820659322087583749}
-  OptionalPreviewRawImage: {fileID: 0}
-  ReceivingRawImagesParent: {fileID: 5093069952141941336}
-  VideoTransmissionReceived:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5601475859313197654}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  StartStopAudioTransmission: 0
-  StreamingAudioSource: {fileID: 7352518807526955739}
-  ReceivingAudioSourceParent: {fileID: 7480477673215562359}
-  AudioTransmissionReceived:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3282882103748403490}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
 --- !u!1 &8713540055755789509
 GameObject:
   m_ObjectHideFlags: 0

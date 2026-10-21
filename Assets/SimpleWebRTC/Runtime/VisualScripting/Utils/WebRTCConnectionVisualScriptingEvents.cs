@@ -1,60 +1,78 @@
-#if !USE_NATIVEWEBSOCKET
-using Meta.Net.NativeWebSocket;
-#else
-using NativeWebSocket;
-#endif
+#if VISUAL_SCRIPTING_INSTALLED
 using UnityEngine;
 
 namespace SimpleWebRTC {
+    /// <summary>
+    /// Forwards the events of a SimpleWebRTC client to the Visual Scripting event units.
+    /// Put it on the client GameObject (the one with the <see cref="WebRTCPeerManager"/>).
+    /// </summary>
     public class WebRTCConnectionVisualScriptingEvents : MonoBehaviour {
 
-        [SerializeField] private WebRTCConnection connection;
-#if VISUAL_SCRIPTING_INSTALLED
+        [SerializeField] private WebRTCPeerManager peerManager;
+        [SerializeField] private DataChannel dataChannel;
+        [SerializeField] private VideoReceiver videoReceiver;
+        [SerializeField] private AudioReceiver audioReceiver;
+
         private void Awake() {
-            if (!connection) {
-                connection = GetComponent<WebRTCConnection>();
+            if (peerManager == null) {
+                peerManager = GetComponentInChildren<WebRTCPeerManager>(true);
             }
-
-            connection.WebSocketConnectionChanged.AddListener(WebSocketConnectionChanged);
-            connection.WebRTCConnected.AddListener(WebRTCConnected);
-            connection.DataChannelConnected.AddListener(DataChannelConnected);
-            connection.DataChannelMessageReceived.AddListener(DataChannelMessageReceived);
-            connection.VideoTransmissionReceived.AddListener(VideoTransmissionReceived);
-            connection.AudioTransmissionReceived.AddListener(AudioTransmissionReceived);
+            if (dataChannel == null) {
+                dataChannel = GetComponentInChildren<DataChannel>(true);
+            }
+            if (videoReceiver == null) {
+                videoReceiver = GetComponentInChildren<VideoReceiver>(true);
+            }
+            if (audioReceiver == null) {
+                audioReceiver = GetComponentInChildren<AudioReceiver>(true);
+            }
         }
 
-        private void OnDestroy() {
-            connection.WebSocketConnectionChanged.RemoveListener(WebSocketConnectionChanged);
-            connection.WebRTCConnected.RemoveListener(WebRTCConnected);
-            connection.DataChannelConnected.RemoveListener(DataChannelConnected);
-            connection.DataChannelMessageReceived.RemoveListener(DataChannelMessageReceived);
-            connection.VideoTransmissionReceived.RemoveListener(VideoTransmissionReceived);
-            connection.AudioTransmissionReceived.RemoveListener(AudioTransmissionReceived);
+        private void OnEnable() {
+            if (peerManager != null) {
+                peerManager.SignalingStateChanged.AddListener(WebSocketConnectionChangedEvent.Trigger);
+                peerManager.PeerConnected.AddListener(OnPeerConnected);
+            }
+            if (dataChannel != null) {
+                dataChannel.ChannelOpened.AddListener(DataChannelConnectedEvent.Trigger);
+                dataChannel.MessageReceived.AddListener(DataChannelMessageReceivedEvent.Trigger);
+            }
+            if (videoReceiver != null) {
+                videoReceiver.VideoStarted.AddListener(OnVideoStarted);
+            }
+            if (audioReceiver != null) {
+                audioReceiver.AudioStarted.AddListener(OnAudioStarted);
+            }
         }
 
-        private void WebSocketConnectionChanged(WebSocketState state) {
-            WebSocketConnectionChangedEvent.Trigger(state);
+        private void OnDisable() {
+            if (peerManager != null) {
+                peerManager.SignalingStateChanged.RemoveListener(WebSocketConnectionChangedEvent.Trigger);
+                peerManager.PeerConnected.RemoveListener(OnPeerConnected);
+            }
+            if (dataChannel != null) {
+                dataChannel.ChannelOpened.RemoveListener(DataChannelConnectedEvent.Trigger);
+                dataChannel.MessageReceived.RemoveListener(DataChannelMessageReceivedEvent.Trigger);
+            }
+            if (videoReceiver != null) {
+                videoReceiver.VideoStarted.RemoveListener(OnVideoStarted);
+            }
+            if (audioReceiver != null) {
+                audioReceiver.AudioStarted.RemoveListener(OnAudioStarted);
+            }
         }
 
-        private void WebRTCConnected() {
+        private void OnPeerConnected(string peerId) {
             WebRTCConnectedEvent.Trigger();
         }
 
-        private void DataChannelConnected(string senderPeerId) {
-            DataChannelConnectedEvent.Trigger(senderPeerId);
-        }
-
-        private void DataChannelMessageReceived(string message) {
-            DataChannelMessageReceivedEvent.Trigger(message);
-        }
-
-        private void VideoTransmissionReceived() {
+        private void OnVideoStarted(string peerId) {
             VideoTransmissionReceivedEvent.Trigger();
         }
 
-        private void AudioTransmissionReceived() {
+        private void OnAudioStarted(string peerId) {
             AudioTransmissionReceivedEvent.Trigger();
         }
-#endif
     }
 }
+#endif

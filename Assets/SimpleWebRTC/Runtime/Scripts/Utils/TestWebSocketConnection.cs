@@ -1,84 +1,45 @@
-#if !USE_NATIVEWEBSOCKET
-using Meta.Net.NativeWebSocket;
-#else
-using NativeWebSocket;
-#endif
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace SimpleWebRTC {
+    /// <summary>
+    /// Sample: tests a signaling transport without WebRTC. Connects, sends a text message every second and
+    /// logs everything it receives. Run it on two clients against the same server.
+    /// </summary>
     public class TestWebSocketConnection : MonoBehaviour {
 
-        [SerializeField] private string webSocketServerAddress = "wss://unity-webrtc-signaling.glitch.me";
-        [SerializeField] private bool useHTTPHeader = true;
+        [SerializeField] private SignalingTransport transport;
+        [SerializeField] private float sendIntervalSeconds = 1f;
 
-        private WebSocket webSocket;
-
-        // Start is called before the first frame update
-        async void Start() {
-            //websocket = new WebSocket("wss://echo.websocket.org/");
-            webSocket ??= (useHTTPHeader
-                ? new WebSocket(webSocketServerAddress, new Dictionary<string, string>() { { "user-agent", "unity webrtc" } })
-                : new WebSocket(webSocketServerAddress));
-
-            webSocket.OnOpen += () => {
-                Debug.Log("Connection open!");
-            };
-
-            webSocket.OnError += (e) => {
-                Debug.Log("Error! " + e);
-            };
-
-            webSocket.OnClose += (e) => {
-                Debug.Log("Connection closed!");
-            };
-
-#if !USE_NATIVEWEBSOCKET
-            webSocket.OnMessage += (data, offset, length) => {
-                Debug.Log("OnMessage!");
-                Debug.Log(data);
-
-                // getting the message as a string
-                // var message = System.Text.Encoding.UTF8.GetString(data);
-                // Debug.Log("OnMessage! " + message);
-            };
-#else
-            webSocket.OnMessage += (bytes) => {
-                Debug.Log("OnMessage!");
-                Debug.Log(bytes);
-
-                // getting the message as a string
-                // var message = System.Text.Encoding.UTF8.GetString(bytes);
-                // Debug.Log("OnMessage! " + message);
-            };
-#endif
-
-            // Keep sending messages at every 1s
-            InvokeRepeating(nameof(SendWebSocketMessage), 0.0f, 1f);
-
-            // waiting for messages
-            await webSocket.Connect();
+        private void Start() {
+            if (transport == null) {
+                transport = GetComponent<SignalingTransport>();
+            }
+            transport.StateChanged += OnStateChanged;
+            transport.MessageReceived += OnMessageReceived;
+            transport.Connect();
+            InvokeRepeating(nameof(SendTestMessage), sendIntervalSeconds, sendIntervalSeconds);
         }
 
-        void Update() {
-#if USE_NATIVEWEBSOCKET && (!UNITY_WEBGL || UNITY_EDITOR)
-            webSocket.DispatchMessageQueue();
-#endif
-        }
-
-        async void SendWebSocketMessage() {
-            if (webSocket.State == WebSocketState.Open) {
-                // Sending bytes
-                await webSocket.Send(new byte[] { 10, 20, 30 });
-
-                // Sending plain text
-                await webSocket.SendText("plain text message" + DateTime.Now.ToShortTimeString());
+        private void OnDestroy() {
+            if (transport != null) {
+                transport.StateChanged -= OnStateChanged;
+                transport.MessageReceived -= OnMessageReceived;
             }
         }
 
-        private async void OnApplicationQuit() {
-            await webSocket.Close();
+        private void SendTestMessage() {
+            if (transport.IsConnected) {
+                transport.Send($"plain text message from {SystemInfo.deviceName} at {DateTime.Now.ToLongTimeString()}");
+            }
+        }
+
+        private void OnStateChanged(SignalingState state) {
+            Debug.Log($"Signaling state: {state}");
+        }
+
+        private void OnMessageReceived(string message) {
+            Debug.Log($"Received: {message}");
         }
     }
 }

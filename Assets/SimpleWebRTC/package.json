@@ -1,15 +1,31 @@
 {
   "name": "com.firedragongamestudio.simplewebrtc",
   "displayName": "SimpleWebRTC",
-  "version": "1.6.0",
-  "unity": "2022.3",
-  "unityRelease": "0f1",
-  "description": "Unity-based WebRTC wrapper that facilitates peer-to-peer audio, video, and data communication over WebRTC.",
+  "version": "2.0.0",
+  "unity": "6000.0",
+  "description": "Component-based Unity WebRTC wrapper for peer-to-peer audio, video, 360° video and data channels. Pluggable signaling: WebSocket (NativeWebSocket or Meta Voice SDK), Photon Fusion 2, in-process loopback or your own transport.\n\nRequires WebRTC (FDGS) com.fdgs.webrtc 3.2.0+: https://github.com/FireDragonGameStudio/com.unity.webrtc.fdgs.git#v3.2.0",
   "dependencies": {
-	"com.unity.webrtc": "3.0.0",
-    "com.unity.textmeshpro": "3.0.6"
+    "com.unity.ugui": "2.0.0"
   },
-  "keywords": ["Audio", "Multiplayer", "WebRTC", "Video", "Networking", "Tool", "Video Streaming", "Audio Streaming", "Photon Unity Networking", "Photon Fusion", "Photon", "Webcam", "Websocket", "Web", "Visual Scripting"],
+  "keywords": [
+    "Audio",
+    "Multiplayer",
+    "WebRTC",
+    "Video",
+    "Networking",
+    "Tool",
+    "Video Streaming",
+    "Audio Streaming",
+    "Photon Unity Networking",
+    "Photon Fusion",
+    "Photon",
+    "Webcam",
+    "Websocket",
+    "Web",
+    "Visual Scripting",
+    "360 Video",
+    "Data Channel"
+  ],
   "author": {
     "name": "FireDragonGameStudio",
     "email": "info@wave-labs.dev",
@@ -18,22 +34,32 @@
   "samples": [
     {
       "displayName": "Example Scenes",
-      "description": "WebRTC sample scenes to demonstrate functionality.",
+      "description": "WebSocket signaling samples: single client, client with lobby UI, three clients in one scene and a plain signaling connection test. Start the signaling server from Server~ (npm install && npm start) or set your own server URL.",
       "path": "Samples~/ExampleScenes"
     },
-	{
+    {
+      "displayName": "Loopback Sample (no server)",
+      "description": "Two peers in one scene connected with LoopbackSignaling: video, chat and connection stats without any signaling server.",
+      "path": "Samples~/LoopbackSample"
+    },
+    {
+      "displayName": "Custom Signaling Transport (UDP, no server)",
+      "description": "How to plug your own signaling backend into SimpleWebRTC: UdpBroadcastSignaling finds peers in the local network via UDP broadcast, so the sample scene connects several instances (or devices in the same Wi-Fi) without any server. Also contains a minimal commented transport template.",
+      "path": "Samples~/CustomSignalingSample"
+    },
+    {
       "displayName": "Photon Fusion 2 Sample Scene",
-      "description": "WebRTC sample scene to demonstrate functionality, while using Photon Fusion 2 for signaling. Make sure Photon Fusion 2 package is installed before importing this sample.",
+      "description": "Signaling over a Photon Fusion 2 session instead of a WebSocket server. Install Photon Fusion 2 before importing this sample and add the SimpleWebRTC.PhotonFusion assembly to NetworkProjectConfig > Assemblies To Weave.",
       "path": "Samples~/PhotonFusionSample"
     },
-	{
+    {
       "displayName": "Visual Scripting Sample",
-      "description": "VisualScripting nodes, events, utils, models and sample graph to use SimpleWebRTC with VisualScripting. Make sure Unity VisualScripting package is installed before importing this sample. Make sure to regenerate the VisualScripting nodes in project settings after import.",
+      "description": "Visual Scripting nodes, events and a sample graph. Install the Unity Visual Scripting package before importing this sample and regenerate the Visual Scripting nodes in the project settings afterwards.",
       "path": "Samples~/VisualScriptingSample"
     },
     {
       "displayName": "Immersive Video Sample",
-      "description": "Sample scene to show immersive video transmission from a 3D scene. The video stream is a 360° video, either monoscopic or stereo in an over-under or side-by-side layout. The sample scenes use materials and RenderTextures from the Runtime folder. Note that streaming a 360° video takes a considerable amout of rendering resources.",
+      "description": "Streams a 360° video (monoscopic or stereo over-under) rendered from a 3D scene, using CubemapVideoSource on the sender and RenderTextureVideoSink on the receiver. Streaming 360° video takes considerable rendering resources.",
       "path": "Samples~/ImmersiveSample"
     }
   ]

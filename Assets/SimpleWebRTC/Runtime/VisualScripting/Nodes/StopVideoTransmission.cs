@@ -18,7 +18,7 @@ namespace SimpleWebRTC {
         }
 
         private ControlOutput SetupConnection(Flow flow) {
-            SimpleWebRTCSceneVariables.ClientConnection.StopVideoTransmission();
+            SimpleWebRTCSceneVariables.ClientConnection.VideoSender?.StopStreaming();
 
             return OutputTrigger;
         }

@@ -1,33 +1,36 @@
-const express = require("express");
-const app = express();
+// SimpleWebRTC signaling relay.
+// Relays every message to all other connected clients. Peers filter by room and receiver themselves,
+// so the server does not need to understand the SimpleWebRTC protocol.
+// Usage: npm install && npm start   (PORT environment variable, default 3000)
+
 const http = require("http");
-const server = http.createServer(app);
+const { WebSocketServer, WebSocket } = require("ws");
 
-server.listen(3000);
+const port = process.env.PORT || 3000;
 
-app.get("/", (req, res) => res.send('Signal Server Running!'));
+const server = http.createServer((req, res) => {
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end("SimpleWebRTC signaling server running!");
+});
 
-const webSocket = require("ws");
-const wss = new webSocket.Server({ server });
+const wss = new WebSocketServer({ server });
 
-wss.on("connection", function (socket) {
-    // Some feedback on the console
-    console.log("A client just connected");
+wss.on("connection", (socket, request) => {
+    console.log(`Client connected (${wss.clients.size} total) from ${request.socket.remoteAddress}`);
 
-    socket.on("message", function (msg) {
-        console.log("Received message from client: " + msg);
-        
-        // Broadcast that message to all connected clients except sender
-        wss.clients.forEach(function (client) {
-          console.log("Send to client: " + client + ": " + (client !== socket));
-          
-          if (client !== socket) {
-            client.send(msg);
-          }
-        });
+    socket.on("message", (data, isBinary) => {
+        for (const client of wss.clients) {
+            if (client !== socket && client.readyState === WebSocket.OPEN) {
+                client.send(data, { binary: isBinary });
+            }
+        }
     });
 
-    socket.on("close", function () {
-        console.log("Client disconnected");
+    socket.on("close", () => {
+        console.log(`Client disconnected (${wss.clients.size} total)`);
     });
+});
+
+server.listen(port, () => {
+    console.log(`SimpleWebRTC signaling server listening on ws://localhost:${port}`);
 });
